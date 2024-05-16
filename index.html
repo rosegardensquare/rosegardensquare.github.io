@@ -10,7 +10,7 @@
 <meta property="og:title" content="张帅的个人博客">
 <meta property="og:url" content="http://example.com/index.html">
 <meta property="og:site_name" content="张帅的个人博客">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale">
 <meta property="article:author" content="张帅">
 <meta name="twitter:card" content="summary">
   
@@ -57,10 +57,10 @@
         
           <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
   </div>
@@ -71,8 +71,8 @@
   
     <article id="post-泛型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2023/09/16/%E6%B3%9B%E5%9E%8B/" class="article-date">
-  <time class="dt-published" datetime="2023-09-15T16:00:00.000Z" itemprop="datePublished">2023-09-16</time>
+    <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2022-11-15T16:00:00.000Z" itemprop="datePublished">2022-11-16</time>
 </a>
     
   </div>
@@ -83,7 +83,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/09/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+      <a class="p-name article-title" href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
     </h1>
   
 
@@ -151,7 +151,77 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/09/16/%E6%B3%9B%E5%9E%8B/" data-id="clw928l5s0006w4uw51p27qqi" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clw94oinf0005qsuw6v7fcu5x" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-static" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/10/16/static/" class="article-date">
+  <time class="dt-published" datetime="2022-10-15T16:00:00.000Z" itemprop="datePublished">2022-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/10/16/static/">static</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：对-static-的理解"><a href="#1：对-static-的理解" class="headerlink" title="1：对 static 的理解"></a>1：对 static 的理解</h1><ul>
+<li><p>static 修饰的变量叫做类变量或者静态变量，在内存中只有一份；它跟 new 无关，所有的实例共享一份</p>
+<ul>
+<li><p>加载时机：</p>
+<p>随着类的加载而加载；因为类只加载一次，因此静态也只加载一次</p>
+</li>
+</ul>
+</li>
+<li><p>普通的变量叫做实例变量，存在堆中，每个对象有各自的；</p>
+<ul>
+<li><p>加载时机：</p>
+<p>随着对象的创建而创建</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="2：静态调用关系"><a href="#2：静态调用关系" class="headerlink" title="2：静态调用关系"></a>2：静态调用关系</h1><p>静态只能调用静态的</p>
+<p>静态下不能使用 this 或者 super;</p>
+<p>普通可以调任何；</p>
+<h1 id="3：类加载顺序"><a href="#3：类加载顺序" class="headerlink" title="3：类加载顺序"></a>3：类加载顺序</h1><ul>
+<li>父类静态属性、静态代码块</li>
+<li>子类静态属性、静态代码块</li>
+<li>父类普通代码块</li>
+<li>父类构造器（无参、有参）</li>
+<li>子类普通代码块</li>
+<li>子类构造器（无参、有参）</li>
+</ul>
+<h1 id="4：static-修饰的变量在内存中的位置"><a href="#4：static-修饰的变量在内存中的位置" class="headerlink" title="4：static 修饰的变量在内存中的位置"></a>4：static 修饰的变量在内存中的位置</h1><h2 id="1：-jdk-7-之前，不包含jdk7"><a href="#1：-jdk-7-之前，不包含jdk7" class="headerlink" title="1： jdk 7 之前，不包含jdk7"></a>1： jdk 7 之前，不包含jdk7</h2><p>方法区保存static 变量、字符串常量池、此时的方法区叫做永久代</p>
+<h2 id="2：jdk-7-开始"><a href="#2：jdk-7-开始" class="headerlink" title="2：jdk 7 开始"></a>2：jdk 7 开始</h2><p>static 变量和字符串常量池移到了堆中</p>
+<h2 id="3：-jdk-8-开始"><a href="#3：-jdk-8-开始" class="headerlink" title="3： jdk 8 开始"></a>3： jdk 8 开始</h2><p>方法区叫做元空间</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/16/static/" data-id="clw94oinb0003qsuw14xq5ax1" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -187,9 +257,8 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="1-为什么需要包装类"><a href="#1-为什么需要包装类" class="headerlink" title="1:  为什么需要包装类"></a>1:  为什么需要包装类</h1><p>有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如：</p>
-<p>equals(Object obj); 还有：集合的 add(Object)</p>
-<p>包装类的父类是 Number;</p>
+        <h1 id="1-为什么需要包装类"><a href="#1-为什么需要包装类" class="headerlink" title="1:  为什么需要包装类"></a>1:  为什么需要包装类</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如：equals(Object obj); 还有：集合的 add(Object)</span><br><span class="line">包装类的父类是 Number;</span><br></pre></td></tr></table></figure>
+
 <h1 id="2：基本数据类型和包装类在堆内存和栈内存的位置"><a href="#2：基本数据类型和包装类在堆内存和栈内存的位置" class="headerlink" title="2：基本数据类型和包装类在堆内存和栈内存的位置"></a>2：基本数据类型和包装类在堆内存和栈内存的位置</h1><p>基本数据类型存在栈中；</p>
 <p>包装类：它有一个变量被声明在栈中，然后指向在堆中的分配的真正的值</p>
 <h1 id="3：包装类和基本数据类型比较大小时"><a href="#3：包装类和基本数据类型比较大小时" class="headerlink" title="3：包装类和基本数据类型比较大小时"></a>3：包装类和基本数据类型比较大小时</h1><p>包装类会自动拆箱，因为成本低。</p>
@@ -210,7 +279,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clw928l5k0001w4uw8zhvclyp" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clw94oin70001qsuw2nq52mug" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -252,7 +321,72 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/16/brightloong/" data-id="clw928l5c0000w4uwgf1p7dxy" data-title="你好呀，欢迎来到我的博客！" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2020/01/16/brightloong/" data-id="clw94oin10000qsuwfnn6b7lt" data-title="你好呀，欢迎来到我的博客！" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-搭建个人博客网站" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" class="article-date">
+  <time class="dt-published" datetime="2020-01-01T09:23:59.000Z" itemprop="datePublished">2020-01-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/">搭建个人博客网站</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>本片介绍如何使用 Hexo + Github 搭建自己的博客网站。</p>
+<h1 id="1：创建个人-Github-账号"><a href="#1：创建个人-Github-账号" class="headerlink" title="1：创建个人 Github 账号"></a>1：创建个人 Github 账号</h1><p>既然提到了 Github Page ，首先就得<a href="https://link.zhihu.com/?target=https://github.com/signup">注册自己的 Github 账号</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果 Github 界面打不开，建议使用 [Watt Toolkit](https://link.zhihu.com/?target=https%3A//steampp.net/) ，（不仅可以加速 Steam、橙子、育碧，同时也能加速 Github）</span><br><span class="line">注册一个 Github 账号只需要邮箱，并且进行邮箱验证就能快速完成！ヾ(•ω•`)o</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-安装-Node-js"><a href="#2-安装-Node-js" class="headerlink" title="2: 安装 Node.js"></a>2: 安装 Node.js</h1><p>建议直接去Nodejs官网去下载比较新的版本。一般情况下nodejs会附带配套的npm（Node Package Manager，是一个用于Node.js环境的包<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">管理工具</a>），如果没有的话可以单独安装一下npm。</p>
+<h1 id="3-安装-Git"><a href="#3-安装-Git" class="headerlink" title="3: 安装 Git"></a>3: 安装 Git</h1><p>相信程序员伙伴们都认识这个工具，它实际上是一个非常强大的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E8%BD%AF%E4%BB%B6&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">版本控制软件</a>。</p>
+<h1 id="4-安装-Hexo"><a href="#4-安装-Hexo" class="headerlink" title="4 : 安装 Hexo"></a>4 : 安装 Hexo</h1><p>在命令行中执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<p>等待自动安装完成后，输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+
+<p>检查是否安装成功，若安装成功，应该显示hexo的版本号。</p>
+<h1 id="5-初始化-Hexo项目"><a href="#5-初始化-Hexo项目" class="headerlink" title="5: 初始化 Hexo项目"></a>5: 初始化 Hexo项目</h1><p>创建一个文件夹用于存放Hexo项目。比如创建一个名为blog的目录。</p>
+<p>进入blog目录，运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog</span><br></pre></td></tr></table></figure>
+
+<p>完成之后就已经成功在本地创建了一个网页，想查看的话，输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo cl &amp;&amp; hexo g  &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
+
+<p>默认的网址为<a href="https://link.zhihu.com/?target=http://localhost:4000/">http://localhost:4000/</a>。</p>
+<h1 id="6-发布到-Github"><a href="#6-发布到-Github" class="headerlink" title="6 :  发布到 Github"></a>6 :  发布到 Github</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d </span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" data-id="clw94oinc0004qsuwceuuhoua" data-title="搭建个人博客网站" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -296,9 +430,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -306,12 +440,16 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2023/09/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+            <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/16/static/">static</a>
           </li>
         
           <li>
@@ -320,6 +458,10 @@
         
           <li>
             <a href="/2020/01/16/brightloong/">你好呀，欢迎来到我的博客！</a>
+          </li>
+        
+          <li>
+            <a href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/">搭建个人博客网站</a>
           </li>
         
       </ul>
