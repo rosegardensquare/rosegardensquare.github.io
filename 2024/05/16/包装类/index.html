@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1:  为什么需要包装类有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如： equals(Object obj); 还有：集合的 add(Object) 包装类的父类是 Number; 2：基本数据类型和包装类在堆内存和栈内存的位置基本数据类型存在栈中； 包装类：它有一个变量被声明在栈中，然后指向在堆中的分配的真正的值 ![image-2024050917171323">
+<meta property="og:type" content="article">
+<meta property="og:title" content="张帅的个人博客">
+<meta property="og:url" content="http://example.com/2024/05/16/%E5%8C%85%E8%A3%85%E7%B1%BB/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:description" content="1:  为什么需要包装类有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如： equals(Object obj); 还有：集合的 add(Object) 包装类的父类是 Number; 2：基本数据类型和包装类在堆内存和栈内存的位置基本数据类型存在栈中； 包装类：它有一个变量被声明在栈中，然后指向在堆中的分配的真正的值 ![image-2024050917171323">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-16T09:13:03.917Z">
+<meta property="article:modified_time" content="2024-05-11T08:22:26.950Z">
+<meta property="article:author" content="张帅">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-包装类" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/05/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" class="article-date">
+  <time class="dt-published" datetime="2024-05-16T09:13:03.917Z" itemprop="datePublished">2024-05-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1-为什么需要包装类"><a href="#1-为什么需要包装类" class="headerlink" title="1:  为什么需要包装类"></a>1:  为什么需要包装类</h1><p>有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如：</p>
+<p>equals(Object obj); 还有：集合的 add(Object)</p>
+<p>包装类的父类是 Number;</p>
+<h1 id="2：基本数据类型和包装类在堆内存和栈内存的位置"><a href="#2：基本数据类型和包装类在堆内存和栈内存的位置" class="headerlink" title="2：基本数据类型和包装类在堆内存和栈内存的位置"></a>2：基本数据类型和包装类在堆内存和栈内存的位置</h1><p>基本数据类型存在栈中；</p>
+<p>包装类：它有一个变量被声明在栈中，然后指向在堆中的分配的真正的值</p>
+<p>![image-20240509171713235](C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\Java 基础\image-20240509171713235.png)</p>
+<h1 id="3：包装类和基本数据类型比较大小时"><a href="#3：包装类和基本数据类型比较大小时" class="headerlink" title="3：包装类和基本数据类型比较大小时"></a>3：包装类和基本数据类型比较大小时</h1><p>包装类会自动拆箱，因为成本低。</p>
+<h1 id="4：包装类和基本数据类型的转换"><a href="#4：包装类和基本数据类型的转换" class="headerlink" title="4：包装类和基本数据类型的转换"></a>4：包装类和基本数据类型的转换</h1><ol>
+<li><p>数字转包装类：装箱</p>
+<p>调用包装类的 api 方法 valueOf(1);</p>
+</li>
+<li><p>包装类转数字：拆箱</p>
+<p>包装类变量的 intValue();</p>
+</li>
+<li><p>字符串转为包装类</p>
+<p>调用包装类的 api 方法 parseInt(“1”);</p>
+</li>
+</ol>
+<h1 id="5：包装类和基本数据类型谁占用的内存大？"><a href="#5：包装类和基本数据类型谁占用的内存大？" class="headerlink" title="5：包装类和基本数据类型谁占用的内存大？"></a>5：包装类和基本数据类型谁占用的内存大？</h1><p>包装类占用的内存大。包装类在内存中，除了数据本身外，还有对象头、对齐填充等信息</p>
+<h1 id="6：对-Integer-最小值取绝对值，结果不一定是正数"><a href="#6：对-Integer-最小值取绝对值，结果不一定是正数" class="headerlink" title="6：对 Integer 最小值取绝对值，结果不一定是正数"></a>6：对 Integer 最小值取绝对值，结果不一定是正数</h1><p>![image-20240511105851601](C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\Java 基础\image-20240511105851601.png)</p>
+<p>原因是：出现了越界。解决办法是，转化为 Long 类型</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/05/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clw91aqns00007kuw3mwa21r4" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/05/16/static/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/05/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/05/16/static/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/05/16/%E5%AD%97%E7%AC%A6%E9%9B%86/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/05/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/05/16/%E5%BC%82%E5%B8%B8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
