@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>原子类 | 张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1：原子类相关对于 i++操作，它其实是分为三步骤，无法使用 volatile 保证原子性。可以使用sync 锁。 或者原子类，因此，引入原子类。 原子类底层是： cas + volatile 原子类内部调用 unsafe 类的 cas 方法。 2：unsafe它是CAS 的核心类； 因为 Java 无法直接访问底层操作系统，而是通过本地native方法访问； 但是 JVM 留了一个后门，那就是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原子类">
+<meta property="og:url" content="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:description" content="1：原子类相关对于 i++操作，它其实是分为三步骤，无法使用 volatile 保证原子性。可以使用sync 锁。 或者原子类，因此，引入原子类。 原子类底层是： cas + volatile 原子类内部调用 unsafe 类的 cas 方法。 2：unsafe它是CAS 的核心类； 因为 Java 无法直接访问底层操作系统，而是通过本地native方法访问； 但是 JVM 留了一个后门，那就是">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-05-23T04:43:28.896Z">
+<meta property="article:author" content="张帅">
+<meta property="article:tag" content="Java 并发编程">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-原子操作类" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-08-15T16:00:00.000Z" itemprop="datePublished">2021-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      原子类
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：原子类相关"><a href="#1：原子类相关" class="headerlink" title="1：原子类相关"></a>1：原子类相关</h1><p>对于 i++操作，它其实是分为三步骤，无法使用 volatile 保证原子性。可以使用sync 锁。</p>
+<p>或者原子类，因此，引入原子类。</p>
+<p>原子类底层是：</p>
+<p>cas + volatile</p>
+<p>原子类内部调用 unsafe 类的 cas 方法。</p>
+<h1 id="2：unsafe"><a href="#2：unsafe" class="headerlink" title="2：unsafe"></a>2：unsafe</h1><p>它是CAS 的核心类；</p>
+<p>因为 Java 无法直接访问底层操作系统，而是通过本地native方法访问；</p>
+<p>但是 JVM 留了一个后门，那就是 java 中的 unsafe 类。</p>
+<p>它提供了硬件层面的原子操作。</p>
+<p>unsafe 类提供了需要基础方法：</p>
+<ul>
+<li><p>数组操作</p>
+</li>
+<li><p>对象操作</p>
+</li>
+<li><p>CAS</p>
+</li>
+<li><p>分配对象的内存空间，反射创建对象</p>
+</li>
+<li><p>线程的 park、unpark 方法</p>
+</li>
+</ul>
+<h1 id="3：CAS"><a href="#3：CAS" class="headerlink" title="3：CAS"></a>3：CAS</h1><h2 id="1：啥是-CAS"><a href="#1：啥是-CAS" class="headerlink" title="1：啥是 CAS"></a>1：啥是 CAS</h2><p>CAS 是乐观锁的一种实现。</p>
+<p>是 compare and swap 的简称；</p>
+<p>意思是，先比较再替换。</p>
+<p>它有三个参数值：</p>
+<ul>
+<li>V：内存地址</li>
+<li>E：期望这个内存地址当前值是啥</li>
+<li>B：想要更新成啥</li>
+</ul>
+<p>在并发修改时，先取出内存地址中的值，对比是不是期望的值，如果是的话，就更新成新值。如果不是，其他线程也不会阻塞和挂起，而是再次尝试。</p>
+<p>CAS 保证同一个时刻只能有一个线程更新成功。</p>
+<h2 id="2：CAS-为啥能保证只有一个线程可以成功呢"><a href="#2：CAS-为啥能保证只有一个线程可以成功呢" class="headerlink" title="2：CAS 为啥能保证只有一个线程可以成功呢"></a>2：CAS 为啥能保证只有一个线程可以成功呢</h2><p>CAS 是一种原子操作，在操作系统层面，它的原理是基于硬件提供的原子指令。</p>
+<p>在 X86 架构的CPU中，它底层依赖 cmpxchg 指令。</p>
+<h3 id="1：-cmpchg-指令的作用"><a href="#1：-cmpchg-指令的作用" class="headerlink" title="1： cmpchg 指令的作用"></a>1： cmpchg 指令的作用</h3><h4 id="1：保证原子性"><a href="#1：保证原子性" class="headerlink" title="1：保证原子性"></a>1：保证原子性</h4><p>它是一个原子指令，CPU 在运行这个指令的时候，它会锁总线，防止其他CPU访问；</p>
+<p>而且它在操作期间，防止CPU中断，保证一组操作肯定能执行完毕。</p>
+<h2 id="3：CAS-对比-Sync-锁"><a href="#3：CAS-对比-Sync-锁" class="headerlink" title="3：CAS 对比 Sync 锁"></a>3：CAS 对比 Sync 锁</h2><p>相对于 Sycn 锁的阻塞算法，CAS 是非阻塞算法；</p>
+<p>CAS 主要用于实现：</p>
+<ul>
+<li>乐观锁</li>
+<li>自旋锁</li>
+</ul>
+<h2 id="4：CAS-出现-ABA-问题"><a href="#4：CAS-出现-ABA-问题" class="headerlink" title="4：CAS 出现 ABA 问题"></a>4：CAS 出现 ABA 问题</h2><h3 id="1：ABA-问题是啥"><a href="#1：ABA-问题是啥" class="headerlink" title="1：ABA 问题是啥"></a>1：ABA 问题是啥</h3><p>CAS 的 ABA 问题是指在使用 CAS 时，由于CAS 算法实现的一个重要前提是：取出内存中某时刻的值，在下一个时刻比较并且交换，那么在这个时间差内，有可能数据被篡改。</p>
+<p>比如：有两个线程 t1,t2;</p>
+<p>都从相同内存位置取出值 A，线程1修改为B，此时线程2以为某种原因让出CPU时间挂起了，线程1再把B改为A，之后呢，线程2恢复执行，比较内存地址是A，认为没有被改过，就继续执行自己的操作。线程2 的操作过程违背了 CAS 的思想。这就是 ABA 问题。</p>
+<h3 id="2：如何解决-ABA-问题"><a href="#2：如何解决-ABA-问题" class="headerlink" title="2：如何解决 ABA 问题"></a>2：如何解决 ABA 问题</h3><p>有两种方案：</p>
+<ul>
+<li><p>加版本号</p>
+<p>对内存位置的值，没修改一次，就对版本号 +1；</p>
+<p>在比较内存位置的值时候，也要比较下版本号有没有变化过，如果两个都没变过，那就执行成功。</p>
+</li>
+<li><p>Java 中提供的 AtomicStampedReference </p>
+<p>它维护了一个引用和一个时间戳。</p>
+<p>它检查引用地址是否被改过的同时，也会检查时间戳有没有被改过。</p>
+</li>
+</ul>
+<h2 id="5：乐观锁和悲观锁"><a href="#5：乐观锁和悲观锁" class="headerlink" title="5：乐观锁和悲观锁"></a>5：乐观锁和悲观锁</h2><h3 id="1：乐观锁"><a href="#1：乐观锁" class="headerlink" title="1：乐观锁"></a>1：乐观锁</h3><p>乐观锁是一种思想。它假设数据一般情况下不会造成冲突，所以在数据提交更新的时候，才会检查数据是否冲突。</p>
+<p>乐观锁的实现细节：</p>
+<ul>
+<li>检查冲突</li>
+<li>数据更新</li>
+</ul>
+<p>最典型的就是 CAS </p>
+<h3 id="2：悲观锁"><a href="#2：悲观锁" class="headerlink" title="2：悲观锁"></a>2：悲观锁</h3><p>悲观锁认为：数据被并发修改的概率比较大。在修改之前先要加上锁。防止被篡改。</p>
+<p>Sync 锁就是一种悲观锁。</p>
+<p>​	</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" data-id="clwirpos7000mrkuw373c8u6n" data-title="原子类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Java 包装类
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/07/16/Lock%20%E9%94%81/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">lock 锁</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/16/static/">static</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/Lock%20%E9%94%81/">lock 锁</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

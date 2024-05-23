@@ -151,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clw94oinf0005qsuw6v7fcu5x" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clwirposg0015rkuwafkueewy" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -221,7 +221,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/16/static/" data-id="clw94oinb0003qsuw14xq5ax1" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/10/16/static/" data-id="clwirpos3000frkuw51v1anil" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -279,7 +279,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clw94oin70001qsuw2nq52mug" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clwirpos6000jrkuw6y318mfm" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -293,10 +293,10 @@
 
 
   
-    <article id="post-brightloong" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-原子操作类" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2020/01/16/brightloong/" class="article-date">
-  <time class="dt-published" datetime="2020-01-16T09:23:59.000Z" itemprop="datePublished">2020-01-16</time>
+    <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-08-15T16:00:00.000Z" itemprop="datePublished">2021-08-16</time>
 </a>
     
   </div>
@@ -307,7 +307,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/01/16/brightloong/">你好呀，欢迎来到我的博客！</a>
+      <a class="p-name article-title" href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
     </h1>
   
 
@@ -315,17 +315,82 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>这是一个专门记录个人技术博客的网站，以及随想和一些杂谈。</p>
-<p>这是一个新的开始。</p>
+        <h1 id="1：原子类相关"><a href="#1：原子类相关" class="headerlink" title="1：原子类相关"></a>1：原子类相关</h1><p>对于 i++操作，它其实是分为三步骤，无法使用 volatile 保证原子性。可以使用sync 锁。</p>
+<p>或者原子类，因此，引入原子类。</p>
+<p>原子类底层是：</p>
+<p>cas + volatile</p>
+<p>原子类内部调用 unsafe 类的 cas 方法。</p>
+<h1 id="2：unsafe"><a href="#2：unsafe" class="headerlink" title="2：unsafe"></a>2：unsafe</h1><p>它是CAS 的核心类；</p>
+<p>因为 Java 无法直接访问底层操作系统，而是通过本地native方法访问；</p>
+<p>但是 JVM 留了一个后门，那就是 java 中的 unsafe 类。</p>
+<p>它提供了硬件层面的原子操作。</p>
+<p>unsafe 类提供了需要基础方法：</p>
+<ul>
+<li><p>数组操作</p>
+</li>
+<li><p>对象操作</p>
+</li>
+<li><p>CAS</p>
+</li>
+<li><p>分配对象的内存空间，反射创建对象</p>
+</li>
+<li><p>线程的 park、unpark 方法</p>
+</li>
+</ul>
+<h1 id="3：CAS"><a href="#3：CAS" class="headerlink" title="3：CAS"></a>3：CAS</h1><h2 id="1：啥是-CAS"><a href="#1：啥是-CAS" class="headerlink" title="1：啥是 CAS"></a>1：啥是 CAS</h2><p>CAS 是乐观锁的一种实现。</p>
+<p>是 compare and swap 的简称；</p>
+<p>意思是，先比较再替换。</p>
+<p>它有三个参数值：</p>
+<ul>
+<li>V：内存地址</li>
+<li>E：期望这个内存地址当前值是啥</li>
+<li>B：想要更新成啥</li>
+</ul>
+<p>在并发修改时，先取出内存地址中的值，对比是不是期望的值，如果是的话，就更新成新值。如果不是，其他线程也不会阻塞和挂起，而是再次尝试。</p>
+<p>CAS 保证同一个时刻只能有一个线程更新成功。</p>
+<h2 id="2：CAS-为啥能保证只有一个线程可以成功呢"><a href="#2：CAS-为啥能保证只有一个线程可以成功呢" class="headerlink" title="2：CAS 为啥能保证只有一个线程可以成功呢"></a>2：CAS 为啥能保证只有一个线程可以成功呢</h2><p>CAS 是一种原子操作，在操作系统层面，它的原理是基于硬件提供的原子指令。</p>
+<p>在 X86 架构的CPU中，它底层依赖 cmpxchg 指令。</p>
+<h3 id="1：-cmpchg-指令的作用"><a href="#1：-cmpchg-指令的作用" class="headerlink" title="1： cmpchg 指令的作用"></a>1： cmpchg 指令的作用</h3><h4 id="1：保证原子性"><a href="#1：保证原子性" class="headerlink" title="1：保证原子性"></a>1：保证原子性</h4><p>它是一个原子指令，CPU 在运行这个指令的时候，它会锁总线，防止其他CPU访问；</p>
+<p>而且它在操作期间，防止CPU中断，保证一组操作肯定能执行完毕。</p>
+<h2 id="3：CAS-对比-Sync-锁"><a href="#3：CAS-对比-Sync-锁" class="headerlink" title="3：CAS 对比 Sync 锁"></a>3：CAS 对比 Sync 锁</h2><p>相对于 Sycn 锁的阻塞算法，CAS 是非阻塞算法；</p>
+<p>CAS 主要用于实现：</p>
+<ul>
+<li>乐观锁</li>
+<li>自旋锁</li>
+</ul>
+<h2 id="4：CAS-出现-ABA-问题"><a href="#4：CAS-出现-ABA-问题" class="headerlink" title="4：CAS 出现 ABA 问题"></a>4：CAS 出现 ABA 问题</h2><h3 id="1：ABA-问题是啥"><a href="#1：ABA-问题是啥" class="headerlink" title="1：ABA 问题是啥"></a>1：ABA 问题是啥</h3><p>CAS 的 ABA 问题是指在使用 CAS 时，由于CAS 算法实现的一个重要前提是：取出内存中某时刻的值，在下一个时刻比较并且交换，那么在这个时间差内，有可能数据被篡改。</p>
+<p>比如：有两个线程 t1,t2;</p>
+<p>都从相同内存位置取出值 A，线程1修改为B，此时线程2以为某种原因让出CPU时间挂起了，线程1再把B改为A，之后呢，线程2恢复执行，比较内存地址是A，认为没有被改过，就继续执行自己的操作。线程2 的操作过程违背了 CAS 的思想。这就是 ABA 问题。</p>
+<h3 id="2：如何解决-ABA-问题"><a href="#2：如何解决-ABA-问题" class="headerlink" title="2：如何解决 ABA 问题"></a>2：如何解决 ABA 问题</h3><p>有两种方案：</p>
+<ul>
+<li><p>加版本号</p>
+<p>对内存位置的值，没修改一次，就对版本号 +1；</p>
+<p>在比较内存位置的值时候，也要比较下版本号有没有变化过，如果两个都没变过，那就执行成功。</p>
+</li>
+<li><p>Java 中提供的 AtomicStampedReference </p>
+<p>它维护了一个引用和一个时间戳。</p>
+<p>它检查引用地址是否被改过的同时，也会检查时间戳有没有被改过。</p>
+</li>
+</ul>
+<h2 id="5：乐观锁和悲观锁"><a href="#5：乐观锁和悲观锁" class="headerlink" title="5：乐观锁和悲观锁"></a>5：乐观锁和悲观锁</h2><h3 id="1：乐观锁"><a href="#1：乐观锁" class="headerlink" title="1：乐观锁"></a>1：乐观锁</h3><p>乐观锁是一种思想。它假设数据一般情况下不会造成冲突，所以在数据提交更新的时候，才会检查数据是否冲突。</p>
+<p>乐观锁的实现细节：</p>
+<ul>
+<li>检查冲突</li>
+<li>数据更新</li>
+</ul>
+<p>最典型的就是 CAS </p>
+<h3 id="2：悲观锁"><a href="#2：悲观锁" class="headerlink" title="2：悲观锁"></a>2：悲观锁</h3><p>悲观锁认为：数据被并发修改的概率比较大。在修改之前先要加上锁。防止被篡改。</p>
+<p>Sync 锁就是一种悲观锁。</p>
+<p>​	</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/16/brightloong/" data-id="clw94oin10000qsuwfnn6b7lt" data-title="你好呀，欢迎来到我的博客！" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" data-id="clwirpos7000mrkuw373c8u6n" data-title="原子类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
 
     </footer>
   </div>
@@ -335,10 +400,10 @@
 
 
   
-    <article id="post-搭建个人博客网站" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-Lock 锁" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" class="article-date">
-  <time class="dt-published" datetime="2020-01-01T09:23:59.000Z" itemprop="datePublished">2020-01-01</time>
+    <a href="/2021/07/16/Lock%20%E9%94%81/" class="article-date">
+  <time class="dt-published" datetime="2021-07-15T16:00:00.000Z" itemprop="datePublished">2021-07-16</time>
 </a>
     
   </div>
@@ -349,7 +414,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/">搭建个人博客网站</a>
+      <a class="p-name article-title" href="/2021/07/16/Lock%20%E9%94%81/">lock 锁</a>
     </h1>
   
 
@@ -357,40 +422,867 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>本片介绍如何使用 Hexo + Github 搭建自己的博客网站。</p>
-<h1 id="1：创建个人-Github-账号"><a href="#1：创建个人-Github-账号" class="headerlink" title="1：创建个人 Github 账号"></a>1：创建个人 Github 账号</h1><p>既然提到了 Github Page ，首先就得<a href="https://link.zhihu.com/?target=https://github.com/signup">注册自己的 Github 账号</a>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果 Github 界面打不开，建议使用 [Watt Toolkit](https://link.zhihu.com/?target=https%3A//steampp.net/) ，（不仅可以加速 Steam、橙子、育碧，同时也能加速 Github）</span><br><span class="line">注册一个 Github 账号只需要邮箱，并且进行邮箱验证就能快速完成！ヾ(•ω•`)o</span><br></pre></td></tr></table></figure>
+        <p>lock 接口下还有很多实现类。。。</p>
+<ul>
+<li><p>ReadWriteLock 读写锁</p>
+</li>
+<li><p>Condition 接口，实现等待通知模式</p>
+</li>
+<li><p>StampedLock 邮戳锁、票据锁，它是优化读写锁的缺点才引入</p>
+</li>
+</ul>
+<h1 id="1：ReentrantLock-用法"><a href="#1：ReentrantLock-用法" class="headerlink" title="1：ReentrantLock 用法"></a>1：ReentrantLock 用法</h1><p>由于 Sync 锁很重，JUC lock 包中，引入 ReentrantLock 锁，替代 Sync 锁；</p>
+<p>ReentrantLock 内部基于 AQS 实现；</p>
+<p>它和 Sync 锁一样，也是一个可重入锁；</p>
+<h1 id="2：ReentrantLock-如何获得可重入"><a href="#2：ReentrantLock-如何获得可重入" class="headerlink" title="2：ReentrantLock 如何获得可重入"></a>2：ReentrantLock 如何获得可重入</h1><p>它在加锁的的时候，先看下当前获得到锁的线程是不是自己，如果是的话，就可以再次获取到这个锁，只需要简单的把 state 加就行，增加可重入的次数。</p>
+<p>当它要释放锁的时候，那就得确保 state &#x3D; 0 才能释放，加锁几次，解锁也几次。</p>
+<h1 id="3：ReentrantLock-的公平和非公平性"><a href="#3：ReentrantLock-的公平和非公平性" class="headerlink" title="3：ReentrantLock 的公平和非公平性"></a>3：ReentrantLock 的公平和非公平性</h1><p>默认是非公平，可以通过它的构造方法设置。</p>
+<h2 id="1：非公平锁"><a href="#1：非公平锁" class="headerlink" title="1：非公平锁"></a>1：非公平锁</h2><p>多个线程不按照申请锁的顺序去获取锁；而是直接尝试 CAS 获取锁，要是获取不到，再进入等待队列不迟；</p>
+<p>获取不到锁，就把当前线封装成一个 node 放到队列尾部。这个队列是一个双向队列。</p>
+<h3 id="1：代码层面"><a href="#1：代码层面" class="headerlink" title="1：代码层面"></a>1：代码层面</h3><p>非公平锁的核心在内部类 NonFairSync ，它实现了 AQS 中的 Sync 类。</p>
+<h2 id="2：公平锁"><a href="#2：公平锁" class="headerlink" title="2：公平锁"></a>2：公平锁</h2><p>多个线程按照申请锁的顺序去获取锁， 所有的线程都在队列中排队，这样就保证队列中第一个线程先获取到锁。</p>
+<p>它进来之后，先看前面有没有前序节点，没有的话，就获取到锁；有的话，就进队列。</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h3 id="1：代码层面-1"><a href="#1：代码层面-1" class="headerlink" title="1：代码层面"></a>1：代码层面</h3><p>公平锁的核心在内部类 FairSync 中，它继承 AQS中的 Sync。</p>
+<p>它跟非公平锁，只有一点差别，那就是在获取锁之前，先判断下自己前面有没有人排队。</p>
+<h2 id="3-1：公平锁和非公平锁对比"><a href="#3-1：公平锁和非公平锁对比" class="headerlink" title="3-1：公平锁和非公平锁对比"></a>3-1：公平锁和非公平锁对比</h2><p>两种锁分别适用于不同的场景，存在着各自的优缺点。</p>
+<p>对于公平锁来说：它优点是，所有的线程都能获取到资源，不会饿死在队列中。但是它会造成吞吐量下降。队列中，没有获取到锁的，会被阻塞，CPU 唤醒线程的开销是最大缺点。</p>
+<p>对于非公平锁来说：它可以减少 CPU 唤醒锁的开销，整体吞吐量会高一点，但是会导致队列中一直获取不到锁的线程长时间等待，造成锁饥饿。</p>
+<h1 id="4：ReentrantLock-中的-CAS-涉及"><a href="#4：ReentrantLock-中的-CAS-涉及" class="headerlink" title="4：ReentrantLock 中的 CAS 涉及"></a>4：ReentrantLock 中的 CAS 涉及</h1><ul>
+<li>cas 在修改 volatile 修饰的 state 的时候，成功就代表获取锁</li>
+<li>入队列的操作也用到 CAS 。</li>
+</ul>
+<h1 id="5：AQS-待补充"><a href="#5：AQS-待补充" class="headerlink" title="5：AQS(待补充)"></a>5：AQS(待补充)</h1>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/16/Lock%20%E9%94%81/" data-id="clwirporx0005rkuwfd2v6qth" data-title="lock 锁" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
 
-<h1 id="2-安装-Node-js"><a href="#2-安装-Node-js" class="headerlink" title="2: 安装 Node.js"></a>2: 安装 Node.js</h1><p>建议直接去Nodejs官网去下载比较新的版本。一般情况下nodejs会附带配套的npm（Node Package Manager，是一个用于Node.js环境的包<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">管理工具</a>），如果没有的话可以单独安装一下npm。</p>
-<h1 id="3-安装-Git"><a href="#3-安装-Git" class="headerlink" title="3: 安装 Git"></a>3: 安装 Git</h1><p>相信程序员伙伴们都认识这个工具，它实际上是一个非常强大的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E8%BD%AF%E4%BB%B6&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">版本控制软件</a>。</p>
-<h1 id="4-安装-Hexo"><a href="#4-安装-Hexo" class="headerlink" title="4 : 安装 Hexo"></a>4 : 安装 Hexo</h1><p>在命令行中执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<p>等待自动安装完成后，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-<p>检查是否安装成功，若安装成功，应该显示hexo的版本号。</p>
-<h1 id="5-初始化-Hexo项目"><a href="#5-初始化-Hexo项目" class="headerlink" title="5: 初始化 Hexo项目"></a>5: 初始化 Hexo项目</h1><p>创建一个文件夹用于存放Hexo项目。比如创建一个名为blog的目录。</p>
-<p>进入blog目录，运行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog</span><br></pre></td></tr></table></figure>
-
-<p>完成之后就已经成功在本地创建了一个网页，想查看的话，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo cl &amp;&amp; hexo g  &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
-
-<p>默认的网址为<a href="https://link.zhihu.com/?target=http://localhost:4000/">http://localhost:4000/</a>。</p>
-<h1 id="6-发布到-Github"><a href="#6-发布到-Github" class="headerlink" title="6 :  发布到 Github"></a>6 :  发布到 Github</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d </span><br></pre></td></tr></table></figure>
+    </footer>
+  </div>
+  
+</article>
 
 
 
+  
+    <article id="post-Synchronized" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/16/Synchronized/" class="article-date">
+  <time class="dt-published" datetime="2021-06-15T16:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/06/16/Synchronized/">Synchronized</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：Syn-锁是怎么实现的"><a href="#1：Syn-锁是怎么实现的" class="headerlink" title="1：Syn 锁是怎么实现的"></a>1：Syn 锁是怎么实现的</h1><p>sync 是java 中很重要的关键字，主要用来加锁。</p>
+<p>无论是修饰方法还是代码块，它们的实现都是要依赖对象的监视器 monitor</p>
+<p>它可以修饰代码块、方法。</p>
+<ul>
+<li><p>同步代码块的锁</p>
+<p>使用 monitorenter 和 monitorexit 两个指令实现。可以把 monitorenter 理解为加锁，monitorexit 理解为释放锁；</p>
+<p>每一个对象都有一个计数器，用来记录被锁了几次，初始化值是0，每加一次锁，这个次数就加1。释放锁的时候，这个次数会减去1，直到0的时候，锁就被释放，其他线程后才能去获取锁。</p>
+</li>
+<li><p>方法级别的锁</p>
+<p>它是隐式的。同步方法的常量池中会有一个 ACC_SYNC 的标志，当一个线程要访问同步方法时，会先去检查这个标志，如果有设置，需要先去获取监视器锁，方法执行完之后才释放锁。这时候其他线程进来，会因为没办法获取监视器锁而阻塞。如何执行方法的时候出现了异常，代码也没有捕获处理异常，那么异常在被抛出来之前监视器会自动把这个锁给释放了。</p>
+</li>
+</ul>
+<h1 id="2：Syn-锁是可重入的"><a href="#2：Syn-锁是可重入的" class="headerlink" title="2：Syn 锁是可重入的"></a>2：Syn 锁是可重入的</h1><p>当一个线程获取到了锁，在没有释放锁之前还可以再次获取锁。</p>
+<h1 id="3：锁的对象不一样"><a href="#3：锁的对象不一样" class="headerlink" title="3：锁的对象不一样"></a>3：锁的对象不一样</h1><ul>
+<li>修饰方法<ul>
+<li>static 方法，那就是类锁</li>
+<li>普通方法，对象锁</li>
+</ul>
+</li>
+<li>修饰代码块，括号里的内容<ul>
+<li>锁的是 class ，就是类锁</li>
+<li>锁的是this, 那就是对象锁</li>
+</ul>
+</li>
+</ul>
+<h1 id="4：对象的监视器-monitor"><a href="#4：对象的监视器-monitor" class="headerlink" title="4：对象的监视器 monitor"></a>4：对象的监视器 monitor</h1><p>每个对象都有一个监视器。</p>
+<p>当去获取锁的时候，就是对这个对象的监视器操作。</p>
+<h2 id="1：monitor-的数据结构"><a href="#1：monitor-的数据结构" class="headerlink" title="1：monitor 的数据结构"></a>1：monitor 的数据结构</h2><p>在 HotSpot 虚拟机中，monitor 是 ObjectMonmitor.java 对应 c++ 中的 ObjectMonitor.c++。底层是 ObjectMonitor 对象。</p>
+<p>它有几个重要属性：</p>
+<ul>
+<li>_owner：谁获取了 objectMonitor, 它就指向哪个线程</li>
+<li>_EntrySet：等待获取锁的线程，这些线程都是阻塞状态。</li>
+<li>_WaitSet：处理waiting 状态的线程</li>
+<li>重入锁的次数</li>
+<li>获取锁计数器</li>
+</ul>
+<h2 id="2：加锁的流程形象比喻"><a href="#2：加锁的流程形象比喻" class="headerlink" title="2：加锁的流程形象比喻"></a>2：加锁的流程形象比喻</h2><p>有一个大楼，有一个特殊房间，每次只能有一个人进入，所有的想进去的人，都得在走廊排队，这个走廊就是 entrySet；</p>
+<p>有些特殊的已经获准进入的但是暂时无法脱身的人（比如线程挂起），它们会进入一个叫做 wiatSet 的房间，这些人稍后会被叫到重新进入特殊房间。</p>
+<h2 id="3：加锁在代码层面分析"><a href="#3：加锁在代码层面分析" class="headerlink" title="3：加锁在代码层面分析"></a>3：加锁在代码层面分析</h2><p>当多个线程访问同步代码块的时候，会先进入 extrySet 队列，此时如果某一个线程活得了 objectMonitor 对象后：</p>
+<ul>
+<li>它首先会进入一个 Owner 的区域，把owner 属性设置为自己；</li>
+<li>设置计数器 + 1</li>
+</ul>
+<p>这些弄完之后，就成功获取了锁。</p>
+<p>如果这个线程调用了 wait 方法，它就会进入 waitSet 中，会把 owner 设置为 null，把计数器 -1。等待被唤醒。</p>
+<h2 id="4：sync-锁很重"><a href="#4：sync-锁很重" class="headerlink" title="4：sync 锁很重"></a>4：sync 锁很重</h2><p>jdk 1.6 之前加锁时， sync 会直接调用 ObjectMonitor 的enter 方法，这个操作是重量级的。为啥这么说呢？</p>
+<p>因为 java 的自身不能启动线程，它的线程是基于操作系统深入到内核来完成的，应用程序创建线程后，调用 start 方法，此时操作系统就会从用户态切换到内核态，调用 c++ 源码中的 start0 方法，启动线程，因此这个操作很重。</p>
+<h2 id="5：锁优化"><a href="#5：锁优化" class="headerlink" title="5：锁优化"></a>5：锁优化</h2><p>jdk 6 开始，sync 就做了优化：</p>
+<ul>
+<li><p>引入偏向锁、轻量级锁</p>
+</li>
+<li><p>锁消除</p>
+<p>是 JVM 的 JIT 编译器对锁的优化，它是 JIT 编译期经过逃逸分析之后，发现加不加锁都不会发生线程安全。</p>
+<p>就是：经过分析，同步代码加不加锁都只会被同一个线程访问。那这时候就会锁消除。</p>
+<p>就比方说：我们经常定义局部变量 StringBuffer , 这时候 JIT 编译器就会帮锁消除。因为 StringBuffer 的方法加了 Sync 锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">f</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="type">Object</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">      <span class="keyword">synchronized</span>(a) &#123;</span><br><span class="line">          System.out.println(a);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 因为被加锁的对象的生命周期只在方法内部</span></span><br><span class="line">  被优化成：</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">f</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="type">Object</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">      System.out.println(a);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">- 锁粗化</span><br><span class="line"></span><br><span class="line">  大部分情况下，减少锁的粒度是正确的选择，我们尽量使用同步代码块代替同步方法。</span><br><span class="line"></span><br><span class="line">  只有一种特殊情况会发生锁粗化：就比如说，你去银行办五个业务分成了五次去办理，这时候可以一次搞定，也能节省排队取号啥的时间。</span><br><span class="line"></span><br><span class="line">  引申到代码层面：在同一段代码中，对同一个对象反复加锁解锁，很耗费资源，这种时候可适当放宽加锁条件。</span><br><span class="line"></span><br><span class="line">  背后的原理也是 JIT 做的优化：它发现加锁和解锁都是对同一个对象，因此它会扩大锁一次的范围。</span><br><span class="line"></span><br><span class="line">  就比如：在循环中加锁，会被优化成加锁，然后在里面循环。</span><br><span class="line"></span><br><span class="line">  ```java</span><br><span class="line">  <span class="title function_">for</span><span class="params">(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100000</span>;i++)</span>&#123;  </span><br><span class="line">      <span class="keyword">synchronized</span>(<span class="built_in">this</span>)&#123;  </span><br><span class="line">          <span class="keyword">do</span>();  </span><br><span class="line">  &#125;</span><br><span class="line">      </span><br><span class="line">  优化成：</span><br><span class="line">     </span><br><span class="line">  <span class="keyword">synchronized</span>(<span class="built_in">this</span>)&#123;  </span><br><span class="line">      <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100000</span>;i++)&#123;  </span><br><span class="line">          <span class="keyword">do</span>();  </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>默认开启自旋锁、自适应自旋</p>
+<p>自旋锁是 CPU 空转，没有放弃cpu 时间</p>
+</li>
+</ul>
+<h1 id="5：Sync-能保证原子性、可见性、有序性"><a href="#5：Sync-能保证原子性、可见性、有序性" class="headerlink" title="5：Sync 能保证原子性、可见性、有序性"></a>5：Sync 能保证原子性、可见性、有序性</h1><ul>
+<li><p>保证原子性</p>
+<p>他能保证同一时间只有一个线程去操作共享变量</p>
+</li>
+<li><p>可见性</p>
+<p>sync 锁在释放锁的时候，会将工作内存中的变量刷新到主内存中。这样，其他线程就能看到了。</p>
+</li>
+<li><p>有序性</p>
+<p>共享变量只有在全部 sync 包裹中才能保证有序；如果在 sync 作用范围外使用了这些变量，那么它不会有序。</p>
+<p>如果想要严格的保证有序，得使用 volatile。</p>
+</li>
+</ul>
+<h1 id="6-：mark-word"><a href="#6-：mark-word" class="headerlink" title="6 ：mark word"></a>6 ：mark word</h1><p>每一个 java 对象头中都有一个 mark word，它记录的是本对象的运行时数据：</p>
+<ul>
+<li>对象的哈希码</li>
+<li>分代年龄</li>
+<li>锁状态</li>
+</ul>
+<h1 id="7：Sync-锁升级"><a href="#7：Sync-锁升级" class="headerlink" title="7：Sync 锁升级"></a>7：Sync 锁升级</h1><ul>
+<li><p>无锁</p>
+<p>当一个线程第一次访问同步代码时，JVM 会先在对象头设置当前访问的线程的id，并将状态设置为偏向锁。</p>
+</li>
+<li><p>偏向锁</p>
+<p>偏向锁模式下，锁总是会偏向第一个获取锁的线程；</p>
+<p>此时，要是有其他线程过来，Jvm 会先检查对象头中偏向锁的标识，如果是自己的线程id，那就直接获取锁成功；如果</p>
+<p>不是自己的线程id：cas 修改偏向锁id，如果修改成功，当前线程获取了偏向锁；如果修改失败，</p>
+<p>就升级为轻量级锁，偏向锁撤销。偏向锁默认是关闭的。</p>
+<p>jdk 15 中偏向锁已经被废除。之前的版本中，jvm 对偏向锁是 4s 之后才启动。如果关闭偏向锁，锁从无锁直接到轻量级锁。</p>
+</li>
+<li><p>轻量级锁</p>
+<p>有三个动作：</p>
+<ul>
+<li><p>复制 mark word</p>
+<p>JVM 将对象头中 mark word 复制到线程栈中的锁记录（lock record），这个过程叫做 displaced mark word。</p>
+<p>为啥要复制呢？</p>
+<p>​	原因是：为了保留对象的原始信息，为了在释放锁的时候能正确的恢复对象头的原始状态。因为锁的获取和释放成对的。</p>
+</li>
+<li><p>cas 更新 mark word</p>
+<p>尝试使用 cas 更新 mark word 为指向锁记录的指针；</p>
+<p>如果这个动作成功，那么这个线程就成功获取轻量级锁；</p>
+<p>如果这个动作失败，表示有其他线程以及获得到了轻量级锁；</p>
+</li>
+<li><p>cas 失败后自旋等待锁释放</p>
+<p>java 8 中轻量级锁的自旋自动开启，之前就引入了只是默认关闭的；</p>
+<p>此时锁会自旋等待锁释放；自旋 15 次之后（JDK 6 之前默认是10次），仍然失败，会升级为重量级锁。</p>
+<p>jdk 6 之后的版本开始，引入了轻量级锁的自适应自旋；</p>
+<p>​	它是根据前一次自旋的时间和成功获取锁的概率进行自适应调整。这些都是 C++ 写的。</p>
+</li>
+</ul>
+</li>
+<li><p>重量级锁</p>
+<p>升级为重量级锁之后，jvm 会在对象头中记录指向等待队列的指针。</p>
+<p>这种状态下，一个线程想要获取锁，得下进入等待队列阻塞，</p>
+<p>这里的获取重量级锁也有一个自旋：</p>
+<p>​       jdk 8 中重量级锁自旋默认不开启。</p>
+<p>当锁释放之后，jvm 会从等待队列中选择一个线程唤醒。</p>
+<p>并将这个被选中的线程的状态设置为就绪状态，等待获取 cpu 时间片。</p>
+</li>
+</ul>
+<p>​	</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" data-id="clw94oinc0004qsuwceuuhoua" data-title="搭建个人博客网站" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/06/16/Synchronized/" data-id="clwirpos1000arkuwhvkq2ko5" data-title="Synchronized" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-volatile" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/16/volatile/" class="article-date">
+  <time class="dt-published" datetime="2021-05-15T16:00:00.000Z" itemprop="datePublished">2021-05-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/16/volatile/">volatile</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：volatile-能保证原子性吗"><a href="#1：volatile-能保证原子性吗" class="headerlink" title="1：volatile 能保证原子性吗"></a>1：volatile 能保证原子性吗</h1><p>不能，volatle 可以理解为轻量级锁sync 锁，但是它跟 sync 锁不同的是：它只能修饰共享变量。它只能保证可见性、有序性。</p>
+<h1 id="2：volatle-可见性"><a href="#2：volatle-可见性" class="headerlink" title="2：volatle 可见性"></a>2：volatle 可见性</h1><p>使用 volatile 修饰变量，写操作时，jvm 会向 cpu 发出 lock 前缀的指令，意思是将工作内存的数据更新到主内存。这样，其他 cpu 会遵守缓存一致性协议，将主内存的数据加载到自己的工作内存，那么其他线程就读到了最新的变量。</p>
+<p>因此，它保证了可见性。</p>
+<h2 id="1：解决缓存一致性问题"><a href="#1：解决缓存一致性问题" class="headerlink" title="1：解决缓存一致性问题"></a>1：解决缓存一致性问题</h2><p>由于 CPU 和主内存之间存在速度差异，为了弥补这个差异，人们在 CPU 和主内存之间加了几个高速缓存，有L1、L2甚至还有 L3；</p>
+<p>但是这么多的告诉缓存，也带来了数据不一致的问题。那么久引入了内存模型 JMM。它是一种规范：规定了内存之间共享变量的读写问题。它只是一个理论，实际上解决这个缓存不一致问题的，有两种方案：</p>
+<h3 id="1：总线锁"><a href="#1：总线锁" class="headerlink" title="1：总线锁"></a>1：总线锁</h3><p>在早期，人们解决这问题是在总线上加锁，保证同一时间只能由一个cpu 访问总线数据，为啥这样做呢，因为CPU个其他元件交互得通过总线。但是这样效率低啊，于是有了第二种方案。</p>
+<h4 id="1：总线锁导致总线风暴"><a href="#1：总线锁导致总线风暴" class="headerlink" title="1：总线锁导致总线风暴"></a>1：总线锁导致总线风暴</h4><p>锁总线的方案，是使用总线嗅探机制来检测是否有其他 CPU 修改了变量的值，如果有：就将缓存的值更新成新的值。</p>
+<p>但是，多个线程频繁的读写操作，会造成大量的总线通信，引发总线风暴。降低了性能。</p>
+<p>总线嗅探就是监视总线上的数据传输，以便于了解它传输的数据是否跟自己有关。</p>
+<h3 id="2：缓存一致性协议"><a href="#2：缓存一致性协议" class="headerlink" title="2：缓存一致性协议"></a>2：缓存一致性协议</h3><p>最著名的是 Intel 的 MESI 协议。</p>
+<p>它的核心思想是：当CPU在操作变量时候，发现它操作的是一个共享的变量，那么它会发出信号：其他CPU的缓存中失效，得从主内存取最新的值。</p>
+<h1 id="3：volatile-有序性"><a href="#3：volatile-有序性" class="headerlink" title="3：volatile 有序性"></a>3：volatile 有序性</h1><p> volatile 可以进制CPU指令重排序，它是通过内存屏障来实现。这保证了代码会严格按照顺序执行。</p>
+<p>如：单例模式中的双重检查锁，就是用 volatile 防止指令重排序。</p>
+<h2 id="1：内存屏障"><a href="#1：内存屏障" class="headerlink" title="1：内存屏障"></a>1：内存屏障</h2><p>它是一种CPU 指令，是 JVM 在java 的class 文件的某些位置，插入这些指令，防止指令重排序。</p>
+<p>具体是：</p>
+<p>vloatile 写之前：加上 storestore 指令和 loadstore 指令；</p>
+<p>volatile 写之后：加上 storeload 和 storestore</p>
+<p>volatile 读之后：加上 loadload 和 loadstaore 。</p>
+<p>各个操作系统上实现的方式还不一样。</p>
+<h1 id="4：JMM相关"><a href="#4：JMM相关" class="headerlink" title="4：JMM相关"></a>4：JMM相关</h1><h2 id="1：有了-MESI-为啥还要-JMM"><a href="#1：有了-MESI-为啥还要-JMM" class="headerlink" title="1：有了 MESI 为啥还要 JMM"></a>1：有了 MESI 为啥还要 JMM</h2><p>MESI 和 JMM 都是为了解决缓存一致性问题的，但是它们工作的范围和手段不一样。</p>
+<p>MESI 是硬件层面的，JMM 是java 软件层面提出的一套规范，而且JMM规范的内容和解决的问题更广。</p>
+<p>它们是不同维度的解决方案。</p>
+<h2 id="2：JMM"><a href="#2：JMM" class="headerlink" title="2：JMM"></a>2：JMM</h2><p>Java 内存模型。</p>
+<p>它屏蔽了各种硬件和操作系统的访问差异，规范了工作内存和主内存交互的细节，也规范了如何解决内存有序性。</p>
+<p>它不仅有一套规范，还提出了一些java 处理并发的关键字：sync 锁、volatile、fina、concurrent 包，供程序员使用。</p>
+<p>现在说的 JMM, 一般都是 JDK 5 开始的新的 JMM。</p>
+<p>他具体规范是：</p>
+<p>​	所有共享变量都存在主内存，各个线程有自己的工作内存，工作内存是主内存数据的一个副本，对共享变量只能在自己的工作内存操作，各个线程之间的工作内存独立且不能相互访问。</p>
+<h1 id="5：volatile-不能保证-i-的原子性操作"><a href="#5：volatile-不能保证-i-的原子性操作" class="headerlink" title="5：volatile 不能保证 i++ 的原子性操作"></a>5：volatile 不能保证 i++ 的原子性操作</h1><p>i ++ 操作分为三步骤：</p>
+<ul>
+<li>CPU 拿到主内存的原始值到工作内存</li>
+<li>加操作</li>
+<li>把工作内存数据写回主内存</li>
+</ul>
+<p>那就需要用到原子工具类、或者 sync 锁</p>
+<h1 id="6：为啥单例模式需要-volatile"><a href="#6：为啥单例模式需要-volatile" class="headerlink" title="6：为啥单例模式需要 volatile"></a>6：为啥单例模式需要 volatile</h1><h2 id="1：new-一个对象的三步骤"><a href="#1：new-一个对象的三步骤" class="headerlink" title="1：new 一个对象的三步骤"></a>1：new 一个对象的三步骤</h2><ul>
+<li>给对象分配内存空间</li>
+<li>对变量属性初始化</li>
+<li>将变量的引用地址写到内存</li>
+</ul>
+<p>这就是为啥单例双重检查锁中，需要volatile 禁止指令重排序。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/16/volatile/" data-id="clwirpos5000hrkuw8a6xecc3" data-title="volatile" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-线程池基础的东西" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/16/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" class="article-date">
+  <time class="dt-published" datetime="2021-04-15T16:00:00.000Z" itemprop="datePublished">2021-04-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/04/16/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/">线程池的基础东西</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：啥是线程池，是咋实现的"><a href="#1：啥是线程池，是咋实现的" class="headerlink" title="1：啥是线程池，是咋实现的"></a>1：啥是线程池，是咋实现的</h1><p>线程池是一种池化技术，所谓池化技术，就是提前保存大量的资源，以备不时之需；在机器资源有限的情况下，使用池化技术，有效提高资源利用率，提升性能；</p>
+<p>线程池，就是提前创建好一批线程，保存在线程池中，当有任务需要执行时，就从线程池中选一个线程去执行，执行完毕再放回去，供其他任务使用；线程池的好处是它能控制并发，而且复用，减少创建和销毁的时间。</p>
+<h2 id="1：池化"><a href="#1：池化" class="headerlink" title="1：池化"></a>1：池化</h2><p>线程池</p>
+<p>常量池</p>
+<p>连接池</p>
+<h2 id="2：线程池的继承关系"><a href="#2：线程池的继承关系" class="headerlink" title="2：线程池的继承关系"></a>2：线程池的继承关系</h2><ul>
+<li>Executor<ul>
+<li>ExecutorService 接口<ul>
+<li>FookJoinPool</li>
+<li>ThreadPoolExecutor<ul>
+<li>ScheduledThreadPoolExecutor</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3：一共有三种线程池"><a href="#3：一共有三种线程池" class="headerlink" title="3：一共有三种线程池"></a>3：一共有三种线程池</h2><h3 id="1：内置线程池"><a href="#1：内置线程池" class="headerlink" title="1：内置线程池"></a>1：内置线程池</h3><p>Executors 工具类是创建线程池的工具类</p>
+<p>它创建出来的线程，都实现了 ExecutorService 接口</p>
+<p>常用方法：</p>
+<ul>
+<li><p>newFixedThreadPool(线程个数)</p>
+<p>创建固定数量线程的线程池</p>
+</li>
+<li><p>newCachedThreadPool</p>
+<p>可以缓存的线程池；</p>
+</li>
+<li><p>newSingleThreadPoolExecutor</p>
+<p>创建的是单线程的线程池</p>
+</li>
+<li><p>newScheuledThreadPool</p>
+<p>支持定时及周期性的线程池，多数情况下可以替代 Timer</p>
+</li>
+</ul>
+<h3 id="2：自定义线程池"><a href="#2：自定义线程池" class="headerlink" title="2：自定义线程池"></a>2：自定义线程池</h3><h3 id="3：ForkJoinPool"><a href="#3：ForkJoinPool" class="headerlink" title="3：ForkJoinPool"></a>3：ForkJoinPool</h3><h1 id="2：线程池为啥能做到复用"><a href="#2：线程池为啥能做到复用" class="headerlink" title="2：线程池为啥能做到复用"></a>2：线程池为啥能做到复用</h1><p>在线程池中，同一个线程可以从阻塞队列中不断的提取任务来执行，其核心原理在于:</p>
+<p>线程池采用一个生产者-消费者模式，去实现线程的复用；生产者-消费者模型就是通过一个中间容器，来解耦生产者和消费者处理任务的过程，生产者不断生产任务放入阻塞队列，消费者不断从队列中取，当空闲的时候，消费者会阻塞，阻塞的时候释放CPU。</p>
+<p>映射到源码是这样的：</p>
+<p>​	他有一个 while 循环，从阻塞队列中获取任务，然后就调用线程的 run，而不是 new 一个线程。通过这种方式反复的获取任务并执行，达到线程复用的目的。</p>
+<h1 id="3：如何监控线程池"><a href="#3：如何监控线程池" class="headerlink" title="3：如何监控线程池"></a>3：如何监控线程池</h1><p>threadpoolexecutor提供了两个方法:</p>
+<p>beforeexecutor方法</p>
+<p>afterexecutor方法</p>
+<p>可以在这两个方法中:获取前后的线程池状态和任务状态</p>
+<h1 id="4：线程池的状态"><a href="#4：线程池的状态" class="headerlink" title="4：线程池的状态"></a>4：线程池的状态</h1><ul>
+<li><p>运行状态</p>
+</li>
+<li><p>shuntDown</p>
+<p>不再接受新的任务，会把剩余任务执行完毕</p>
+</li>
+<li><p>stop</p>
+<p>不再接受新任务，但也不执行</p>
+</li>
+<li><p>tiding</p>
+<p>此时所有线程的停止了。</p>
+</li>
+<li><p>终止</p>
+</li>
+</ul>
+<h1 id="5：自定义线程池"><a href="#5：自定义线程池" class="headerlink" title="5：自定义线程池"></a>5：自定义线程池</h1><p>所谓的线程池就是一个 HashSet，多余的任何会放在阻塞队列中；</p>
+<p>只有当阻塞队列也满了，才会触发非核心线程的创建。所以非核心线程只是过来打杂的。空闲时候，就会被销毁；</p>
+<h2 id="1：7个参数"><a href="#1：7个参数" class="headerlink" title="1：7个参数"></a>1：7个参数</h2><ul>
+<li><p>核心线程数</p>
+</li>
+<li><p>最大线程数</p>
+<p>包括临时工</p>
+</li>
+<li><p>阻塞队列</p>
+<p>多余的任务放这里，等着被处理</p>
+</li>
+<li><p>非核心线程等待的时间</p>
+<p>外包人员等了多久，还没有活干，就解雇</p>
+</li>
+<li><p>非核心线程等待时间的单位</p>
+</li>
+<li><p>创建线程的工厂</p>
+</li>
+<li><p>决绝策略</p>
+<p>任务是在是太多，咋办</p>
+</li>
+</ul>
+<h2 id="2：工作流程"><a href="#2：工作流程" class="headerlink" title="2：工作流程"></a>2：工作流程</h2><h2 id="2-1：也叫提交一个任务的流程"><a href="#2-1：也叫提交一个任务的流程" class="headerlink" title="2.1：也叫提交一个任务的流程"></a>2.1：也叫提交一个任务的流程</h2><p>当提交一个任务时，先看看核心线程数有没有达到上限；</p>
+<p>核心线程数没达到上限，就创建一个新核心的来执行任务；</p>
+<p>如何核心满了，就把任务放到等待队列；</p>
+<p>如果队列满了，就创建非核心线程从队列中取任务执行；</p>
+<p>如果最大的线程数满了，新任务要触发拒绝策略；</p>
+<p>当非核心线程数没有处理任务，超过它的空闲时间，就会被销毁。</p>
+<p>注意：核心线程也是可以被销毁的。</p>
+<h2 id="2-2：使用具体的参数，说明执行顺序"><a href="#2-2：使用具体的参数，说明执行顺序" class="headerlink" title="2.2：使用具体的参数，说明执行顺序"></a>2.2：使用具体的参数，说明执行顺序</h2><p>假如：核心线程数是 5，对列长度是100，最大核心数是50，并发是 200，线程池执行顺序是：</p>
+<p>前 5 个使用核心线程执行；</p>
+<p>6-105 （100个）放入队列；</p>
+<p>106-150（45个）非核心去执行；</p>
+<p>剩下的拒绝策略</p>
+<h2 id="3：4个拒绝策略"><a href="#3：4个拒绝策略" class="headerlink" title="3：4个拒绝策略"></a>3：4个拒绝策略</h2><p>都实现了 rejectedExecutionHandler接口（拒绝执行处理器），他里面只有一个方法:rejectedExecution，拒绝任务的代码就写在这里面，有两个参数:拒绝的任务runnable和线程池threadpoolexecutor</p>
+<p>4 种实现类</p>
+<ul>
+<li>AbortPolicy</li>
+</ul>
+<p>​	这是默认的拒绝策略。直接抛出异常</p>
+<ul>
+<li>DiscardPolicy</li>
+</ul>
+<p>​	直接无感知的丢弃。这种可能造成数据丢失。</p>
+<ul>
+<li>DisOldesyPolicy</li>
+</ul>
+<p>​	丢弃队列头，且时间最久的，会存在数据丢失可能</p>
+<ul>
+<li>CallersRunnerPolicy</li>
+</ul>
+<p>​	把任务交给提交该任务的线程去处理。</p>
+<h2 id="4：四大阻塞队列（待补充）"><a href="#4：四大阻塞队列（待补充）" class="headerlink" title="4：四大阻塞队列（待补充）"></a>4：四大阻塞队列（待补充）</h2><ul>
+<li><p>LinkedBlockingQueue</p>
+<p>默认是无解，但是可以设置长度</p>
+</li>
+<li><p>SynchroQueue</p>
+<p>同步队列，不存数据</p>
+</li>
+</ul>
+<h2 id="5：参数如何设计"><a href="#5：参数如何设计" class="headerlink" title="5：参数如何设计"></a>5：参数如何设计</h2><h3 id="1：要考虑几个维度"><a href="#1：要考虑几个维度" class="headerlink" title="1：要考虑几个维度"></a>1：要考虑几个维度</h3><p>线程数的设定需要根据程序的需求和运行环境来设置，没有一个固定值；</p>
+<p>首先看影响线程池因素有哪些：</p>
+<ul>
+<li><p>CPU核心数</p>
+<ul>
+<li>多核处理器</li>
+<li>超线程技术（英特尔的HT技术），目前，很多CPU都采用超线程技术，也就是利用特殊的硬件指令。把两个逻辑内核模拟成两个物理芯片，让单个处理器都能使用线程级并行计算。所以我们经常看到 4核8线程CPU，就是物理内核4核，逻辑内核8核。可以为每个核心分配更多的线程，因为超线程可以提高CPU利用率。</li>
+</ul>
+</li>
+<li><p>应用类型</p>
+<ul>
+<li><p>CPU密集型</p>
+<p>主要是更多的计算，线程数的公式是：核心线程数 * 1 或者 1.5 ；因为这些主要是消耗 CPU，线程的上下文切换反而影响性能</p>
+</li>
+<li><p>IO密集型</p>
+<p>IO密集型主要涉及到很多的阻塞、等待（比如：数据库操作、文件操作、网络操作）；这样的看可以配置更多的线程，</p>
+<p>设置为 2 倍核心，因为线程需要更长的时间去处理更多的任务。</p>
+</li>
+</ul>
+</li>
+<li><p>JVM 和内存资源</p>
+<ul>
+<li>内存大小</li>
+<li>操作系统的线程大小限制</li>
+</ul>
+</li>
+<li><p>其他考虑</p>
+<ul>
+<li><p>RT 要求（响应时间的要求）</p>
+<p>需要更多的线程</p>
+</li>
+<li><p>任务类型的不同</p>
+<p>长时间的任务、短时间的任务、同步任务或者异步任务</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2：有没有公式"><a href="#2：有没有公式" class="headerlink" title="2：有没有公式"></a>2：有没有公式</h3><p>根据前面的公式，主要维度是核心数、应用类型；</p>
+<p>公式可以作为参考：</p>
+<ul>
+<li><p>CPU 密集型</p>
+<p>线程池大小 &#x3D; N +1</p>
+<p>为啥要加1，是为了预留出某些线程异常的时候</p>
+</li>
+<li><p>IO密集型</p>
+<p>线程池大小 &#x3D; 2N + 1</p>
+</li>
+</ul>
+<h3 id="3：咋知道是计算密集还是-IO-密集型"><a href="#3：咋知道是计算密集还是-IO-密集型" class="headerlink" title="3：咋知道是计算密集还是 IO 密集型"></a>3：咋知道是计算密集还是 IO 密集型</h3><p>还有一个通用公式：</p>
+<p>线程数 &#x3D; CPU 核心数 * （1 + 线程等待时间 &#x2F; 线程运行总时间）</p>
+<ul>
+<li><p>线程等待时间：</p>
+<p>线程没有使用 CPU 的时候的时间，比如阻塞在了 IO</p>
+</li>
+<li><p>线程运行总时间</p>
+</li>
+</ul>
+<h3 id="4：不建议直接套公式"><a href="#4：不建议直接套公式" class="headerlink" title="4：不建议直接套公式"></a>4：不建议直接套公式</h3><p>我们有时候看到的 CPU 核心数并不一定是真实的；</p>
+<p>很多时候，项目部署在云服务器上，有时候分配的机器显示的是8核，但是实际上使用的是虚拟机，并不是物理机；实际上并不能发挥出8核的作用；</p>
+<p>可以在刚上线的时候，现根据公式设置一个值，然后再根据实际业务，以及不断的压测，再不断调整；最终达到一个合理的值。</p>
+<p>然后在压测的时候，也要说清楚压测可接受的响应耗时是多少，大于这个阈值是错误的，错误率应该多少能接受。这样给出的线程池数量才是合理的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">### 1：核心线程数设计 </span><br><span class="line"></span><br><span class="line">1. 需要根据任务的执行时间和每秒产生的任务来确定。</span><br><span class="line"></span><br><span class="line">​	假如：</span><br><span class="line"></span><br><span class="line">​	执行一个任务需要 1s，系统 80% 时间每秒都会产生 100 个线程，想要在 1s 内，处理完所有任务，就需要 100 个线程。</span><br><span class="line"></span><br><span class="line">​	此时，核心线程数可以设置为 100。</span><br><span class="line"></span><br><span class="line">​	按照 28 原则：80% 的情况下设计核心线程数，剩下 20% 的情况，可以利用最大线程数处理</span><br><span class="line"></span><br><span class="line">2. 如果系统存在 io 密集型和 CPU 密集型的任务混搭，这时，可以把最大线程数设置为核心线程数的几倍，以便于任务突发情况。</span><br><span class="line"></span><br><span class="line">### 2：任务队列长度</span><br><span class="line"></span><br><span class="line">​	任务队列长度 = 核心线程数 / (单个任务执行时间 * 每个任务最大等待时间-》可以设置为 1s 或者 2s)</span><br><span class="line"></span><br><span class="line">​	假如：单个任务执行时间是 0.1 s，核心线程数是 10，任务队列长度 = 10 / (0.1 * 2 ) = 200 </span><br><span class="line"></span><br><span class="line">​	任务队列最好使用 arrayblockingqueue</span><br><span class="line"></span><br><span class="line">​	因为是有界的，不会无限制的存入任务导致oom</span><br><span class="line"></span><br><span class="line">### 3：最大线程数</span><br><span class="line"></span><br><span class="line">​	最大线程数 = （系统每秒最大产生的任务数 - 任务队列长度）* 单个任务的执行时间 </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> ### 4：最大空闲时间</span><br><span class="line"></span><br><span class="line">​	这个参数完全参考系统运行环境和硬件压力，没有固定的参考值。</span><br><span class="line"></span><br><span class="line">​	凭系统产生任务的时间间隔来确定</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 5：线程工厂</span><br><span class="line"></span><br><span class="line">​	使用谷歌提供的 ThreadFactoryBuilder </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 6：拒绝策略</span><br><span class="line"></span><br><span class="line">​	除了使用四种拒绝策略外，</span><br><span class="line"></span><br><span class="line">​	也可以实现 RejectedExecutionHandler 实现自己的拒绝策略，重写 rejectedExecution方法，执行自定义的策略:打印日志、重试、	暂存任务</span><br></pre></td></tr></table></figure>
+
+<h3 id="5：总结"><a href="#5：总结" class="headerlink" title="5：总结"></a>5：总结</h3><p>自定义线程池其实就是一个 HashSet，多余的任务放任务队列；</p>
+<p>队列满了，才会创建非核心线程执行。</p>
+<h3 id="6：钩子函数"><a href="#6：钩子函数" class="headerlink" title="6：钩子函数"></a>6：钩子函数</h3><ul>
+<li>beforeExecutor</li>
+<li>afterExecutor</li>
+</ul>
+<p>我们可以在执行任务前后，做一些事情。</p>
+<h3 id="7-：设置线程池参数的工具"><a href="#7-：设置线程池参数的工具" class="headerlink" title="7 ：设置线程池参数的工具"></a>7 ：设置线程池参数的工具</h3><p>hippop4j 对线程池监控从而合理设置参数</p>
+<h2 id="6：如何直到线程池中所有线程已经执行完毕"><a href="#6：如何直到线程池中所有线程已经执行完毕" class="headerlink" title="6：如何直到线程池中所有线程已经执行完毕"></a>6：如何直到线程池中所有线程已经执行完毕</h2><p>不管是线程池内部还是外部，想要直到线程池中一个线程是否执行完毕，我们必须要获取线程执行结束后的状态，而线程本身是没有返回值的，所以只能通过阻塞、唤醒的方式来实现；</p>
+<h3 id="1：在内部咋知道"><a href="#1：在内部咋知道" class="headerlink" title="1：在内部咋知道"></a>1：在内部咋知道</h3><p>​	线程池中的工作线程，是通过同步调用线程的 run 方法，等待 run 方法返回后，再去统计线程的完成数量；</p>
+<h3 id="2：在外部咋知道"><a href="#2：在外部咋知道" class="headerlink" title="2：在外部咋知道"></a>2：在外部咋知道</h3><p>​	第一种：countDownLatch 计数器；</p>
+<p>​        第二种：线程池的 submit 方法会返回 future()，如果future 没有返回结果会一直阻塞，可以通过 future.get 判断线程是否执行完毕</p>
+<h2 id="7：如何让一个任务不进入阻塞队列，而是直接触发非核心线程去执行任务"><a href="#7：如何让一个任务不进入阻塞队列，而是直接触发非核心线程去执行任务" class="headerlink" title="7：如何让一个任务不进入阻塞队列，而是直接触发非核心线程去执行任务"></a>7：如何让一个任务不进入阻塞队列，而是直接触发非核心线程去执行任务</h2><p>​	将线程池中的阻塞队列换成 SynchroQueue，这个队列啥也不存，没生产一个任务就会启动一个消费者去执行，否则就会阻塞生产者；  </p>
+<h2 id="8：核心和非核心线程空闲时的回收"><a href="#8：核心和非核心线程空闲时的回收" class="headerlink" title="8：核心和非核心线程空闲时的回收"></a>8：核心和非核心线程空闲时的回收</h2><p>首先说线程池中核心线程和非核心线程都能被回收，但是一般不会回收核心线程，因为我们用线程池就是为了复用。</p>
+<ul>
+<li><p>核心线程在任务空闲的时候是阻塞的，不会占用CPU，调用的是 Queue的take方法；s</p>
+</li>
+<li><p>非核心线程会被回收，因为调用的是 Queue的pull 方法；如果poll 方法返回null，代表空闲，非核心就要被回收</p>
+</li>
+</ul>
+<h2 id="9：为啥核心线程数满了，不是直接调用非核心去执行任务，而是放入队列"><a href="#9：为啥核心线程数满了，不是直接调用非核心去执行任务，而是放入队列" class="headerlink" title="9：为啥核心线程数满了，不是直接调用非核心去执行任务，而是放入队列"></a>9：为啥核心线程数满了，不是直接调用非核心去执行任务，而是放入队列</h2><p>这样做是为了避免核心线程执行的快，频繁的创建过多的非核心造成资源的浪费，而且还得回收，比较耗时；只有当队列满了，说明此时执行任务的压力比较大，才去使用临时工。</p>
+<h2 id="10：为啥不建议用内置线程池"><a href="#10：为啥不建议用内置线程池" class="headerlink" title="10：为啥不建议用内置线程池"></a>10：为啥不建议用内置线程池</h2><p>因为线程池工具去创建，不能控制资源，没有指定队列长度、拒绝策略，如果请求过多会造成内存溢出。</p>
+<h2 id="11：线程池中的线程出现异常咋办"><a href="#11：线程池中的线程出现异常咋办" class="headerlink" title="11：线程池中的线程出现异常咋办"></a>11：线程池中的线程出现异常咋办</h2><p>出现异常时，默认会把异常往外抛出；同时这个工作线程会销毁。</p>
+<p>我们需要自己去设置应对异常的方式：</p>
+<ul>
+<li>对放到线程池中的任务要做异常捕获</li>
+<li>使用自定义线程工厂，设置异常处理机制</li>
+</ul>
+<h2 id="12：spring-线程池和-JDK-线程池的选择"><a href="#12：spring-线程池和-JDK-线程池的选择" class="headerlink" title="12：spring 线程池和 JDK 线程池的选择"></a>12：spring 线程池和 JDK 线程池的选择</h2><ul>
+<li>jdk 线程池是 threadpoolExecutor</li>
+<li>spring 线程池是 threadPoolTaskExecutor</li>
+</ul>
+<p>spring 提供的线程池封装了 jdk 原生的线程池。</p>
+<p>它提供了更多方便：</p>
+<p>如控制生命周期、优雅关闭线程池。</p>
+<h2 id="13：如果线程池中的线程正在执行，要上线咋办"><a href="#13：如果线程池中的线程正在执行，要上线咋办" class="headerlink" title="13：如果线程池中的线程正在执行，要上线咋办"></a>13：如果线程池中的线程正在执行，要上线咋办</h2><h2 id="13-1：如何优雅关闭线程池"><a href="#13-1：如何优雅关闭线程池" class="headerlink" title="13.1：如何优雅关闭线程池"></a>13.1：如何优雅关闭线程池</h2><p>我们一般使用 spring 线程池中，设置 waitForComplateShuntDown  &#x3D; true;</p>
+<p>然后设置：awaitTime 时间。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/16/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clwirposk001frkuwh9jpajs3" data-title="线程池的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-线程基础的东西" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" class="article-date">
+  <time class="dt-published" datetime="2021-03-15T16:00:00.000Z" itemprop="datePublished">2021-03-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/">线程的基础东西</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：并发、并行"><a href="#1：并发、并行" class="headerlink" title="1：并发、并行"></a>1：并发、并行</h1><p>并发（Concurrent）:</p>
+<p>​	两个进程，交替使用同一个 CPU。CPU的处理速度很快，用户觉察不出它的停顿，看来其就像同时干很多事情，这其实是cpu时间片技术，并发完成的；</p>
+<p>并行：</p>
+<p>​	是对一个操作系统有 1 个以上的 CPU 来说的；当一个cpu 执行一个进程，另一个CPU执行另一个进程，两个进程间互不干扰可以同时进行，成为并行。</p>
+<h1 id="2：进程、线程"><a href="#2：进程、线程" class="headerlink" title="2：进程、线程"></a>2：进程、线程</h1><p>进程：一个任务就是一个进程，比如：打开一个浏览器就是一个浏览器进程，打开一个记事本，就是一个记事本进程；</p>
+<p>​	进程是分配资源的基本单位；</p>
+<p>线程：在一个进程内部，要同时干很多事，就需要同时运行多个子任务，这些子任务叫做线程；</p>
+<p>​	线程是执行任务的基本单位；线程是比进程更轻量级的执行单元；</p>
+<p>同一个进程中的多个线程共享资源；</p>
+<h1 id="3：创建内核线程的4种方式"><a href="#3：创建内核线程的4种方式" class="headerlink" title="3：创建内核线程的4种方式"></a>3：创建内核线程的4种方式</h1><ul>
+<li><p>继承 Thread 类</p>
+<p>重写 run 方法；</p>
+</li>
+<li><p>实现 runnable 接口</p>
+<p>重写 run 方法, 需要将 runnable 提交到Trhread 中才能执行；</p>
+<p>将 Runnable 作为参数传入 Thread 构造方法；</p>
+</li>
+<li><p>实现有返回值的callable </p>
+<p>重写 call 方法，跟runnable 一样，它也是一个任务，需要提交到 Thread 中才能执行</p>
+</li>
+<li><p>futureTask 创建线程</p>
+</li>
+<li><p>线程池</p>
+<p>其实使用的是线程工厂创建；</p>
+<p>DefaultThreadFactory实现ThreadFactory接口，最终还是使用new thread当时创建线程</p>
+</li>
+</ul>
+<h1 id="4：Runnable-和-Callable-区别"><a href="#4：Runnable-和-Callable-区别" class="headerlink" title="4：Runnable 和 Callable 区别"></a>4：Runnable 和 Callable 区别</h1><p>都可以用来创建线程；</p>
+<p>实现Runnable 需要重写 run 方法；实现 callable 接口，需要重写 call 方法；</p>
+<p>runnable 的 run  方法没有返回值；callable 的 call 方法返回 Object 类型；</p>
+<h1 id="5：FutureTask-实现类"><a href="#5：FutureTask-实现类" class="headerlink" title="5：FutureTask 实现类"></a>5：FutureTask 实现类</h1><h2 id="1：Future-接口"><a href="#1：Future-接口" class="headerlink" title="1：Future 接口"></a>1：Future 接口</h2><p>代表一个异步执行的结果；执行完成通过 get 获取执行结果；get 方法会阻塞；如果想取消，调用 cancel 方法；</p>
+<p>FutureTask 是 Future 接口的实现类；</p>
+<h1 id="6：线程的状态相关"><a href="#6：线程的状态相关" class="headerlink" title="6：线程的状态相关"></a>6：线程的状态相关</h1><h2 id="1：线程的6种状态"><a href="#1：线程的6种状态" class="headerlink" title="1：线程的6种状态"></a>1：线程的6种状态</h2><ul>
+<li><p>初始 new 状态</p>
+<p>新建后还没有调用 start 方法之前</p>
+</li>
+<li><p>runnable 运行状态</p>
+<p>​	Java 线程中将 ready 就绪和运行 running 统称为运行状态；</p>
+<ul>
+<li><p>就绪</p>
+<p>线程被调用了 start 方法，并不是马上就执行，需要等待获取 cpu 时间片；</p>
+</li>
+<li><p>运行</p>
+<p>就绪状态的线程获取到了 cpu 时间片，开始执行代码</p>
+</li>
+</ul>
+</li>
+<li><p>blocked 阻塞</p>
+<p>线程阻塞于锁</p>
+<p>被 sync 修饰的同步代码，所有因为获取不到锁的线程，会进入 EntryList 队列；</p>
+<p>被 Lock 修饰的同步代码，所有因为获取不到锁的线程，会进入 WaitingSet 队列(没有获取reentrantLock 锁的线程，当被唤醒时，正序唤醒 -&gt; 拿到队头节点的下一个节点 ）：	</p>
+<p>Thread 线程封装为 Node 对象 &#x3D;》AQS 维护 Waitingset队列  </p>
+</li>
+<li><p>waiting 等待</p>
+</li>
+<li><p>time-waiting 超时等待</p>
+</li>
+<li><p>线程执行完毕</p>
+</li>
+</ul>
+<h2 id="3：为啥线程没有-running-状态"><a href="#3：为啥线程没有-running-状态" class="headerlink" title="3：为啥线程没有 running 状态"></a>3：为啥线程没有 running 状态</h2><p>cpu 的时间片很短，大概在 10-20 毫秒左右；</p>
+<p>也就是说 1s 之内，同一个线程有可能处于就绪状态或者运行状态，如果明确的定义下来，其实状态时不准的；</p>
+<p>当我们看到线程时 running 状态，它有可能已经失去cpu时间；</p>
+<p>因此，对于线程，我们只需要直到它当前有没有获取时间片就行，这其实就是 runnable 状态；</p>
+<h1 id="7：线程中的关键字及区别"><a href="#7：线程中的关键字及区别" class="headerlink" title="7：线程中的关键字及区别"></a>7：线程中的关键字及区别</h1><h2 id="1：run-和-start-的区别"><a href="#1：run-和-start-的区别" class="headerlink" title="1：run 和 start 的区别"></a>1：run 和 start 的区别</h2><p>创建好线程后，想要启动线程需要调用 start 方法。因此，start 方法是启动一个线程的入口；</p>
+<p>start 方法底层加了sync 锁，底层通过 jvm 配合操作系统，调用的是操作系统的 start0 方法来启动线程；</p>
+<h2 id="2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别"><a href="#2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别" class="headerlink" title="2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别"></a>2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别</h2><ul>
+<li><p>作用的地方不同</p>
+<p>sleep方法 可以在任何地方使用；</p>
+<p>wait 方法只能在（sync）同步方法和同步代码块中使用；</p>
+</li>
+</ul>
+<p>​       为啥要在同步代码中执行：因为，wait 方法执行前必须先持有锁，调用对象的wait方法；</p>
+<ul>
+<li><p>是否释放锁</p>
+<p>wait 方法会释放锁</p>
+<p>sleep 方法不会释放锁；</p>
+</li>
+<li><p>调用 wait 方法之后</p>
+<p>JVM 会把该线程放入等待队列 waitSet 队列 </p>
+<p>会释放锁</p>
+</li>
+</ul>
+<h2 id="3：notify-和-notifyAll-的区别"><a href="#3：notify-和-notifyAll-的区别" class="headerlink" title="3：notify 和 notifyAll 的区别"></a>3：notify 和 notifyAll 的区别</h2><p>当一个线程wait 之后，必须等待其他线程调用 notify 或者 notify all 方法，才会从等待队列中移出‘；</p>
+<p>使用 notify all，会使所有线程从wait 状态唤醒，进入锁的争夺队列中，notify 只能唤醒一个线程；</p>
+<p>被唤醒的这些线程只是进入争夺队列，并不表示立即获得CPU执行权，只是表示它们可以竞争锁，只有当竞争到锁之后才能有机会</p>
+<p>被CPU调度；</p>
+<h1 id="8：用户线程和守护线程"><a href="#8：用户线程和守护线程" class="headerlink" title="8：用户线程和守护线程"></a>8：用户线程和守护线程</h1><p>用户线程执行的是用户级别的线程；</p>
+<p>守护线程执行的是后台任务；</p>
+<p>​	最典型的是 GC；</p>
+<p>这俩区别是：</p>
+<p>​	JVM在所有的用户线程执行完毕之后退出，不等守护线程是否执行完毕；</p>
+<h2 id="7-1：创建守护线程"><a href="#7-1：创建守护线程" class="headerlink" title="7.1：创建守护线程"></a>7.1：创建守护线程</h2><p>setDemo(true);</p>
+<p>isDemo 判断是否是守护线程；</p>
+<p>我们必须在线程启动之前调用 setDemo ,否则会抛出异常；</p>
+<h1 id="9：虚拟线程"><a href="#9：虚拟线程" class="headerlink" title="9：虚拟线程"></a>9：虚拟线程</h1><p>虚拟线程是jdk 21 新特性之一；它也叫做协程；它是用户态线程；</p>
+<p>虚拟线程不同于普通的线程，它不在对应操作系统中的一个轻量级进程，而是将多个虚拟线程映射到少量的操作系统线程中，通过有效的调度减少上下文切换；因为它的切换不需要操作系统的参数；那么它的切换时怎么实现的呢？它是在 jvm 层面做的一些保持和恢复线程的信息，这些成本也是很低的。</p>
+<p>创建虚拟线程：</p>
+<p>​	Thread.startVitureThread()</p>
+<h1 id="10：对线程安全的理解"><a href="#10：对线程安全的理解" class="headerlink" title="10：对线程安全的理解"></a>10：对线程安全的理解</h1><p>线程安全就是解决多线程之间共享变量的问题；这个很重要。</p>
+<p>在处理这个问题的时候要满足三个原则：</p>
+<ul>
+<li>原子性</li>
+<li>可见性 </li>
+<li>有序性</li>
+</ul>
+<h2 id="1：Java-中的变量"><a href="#1：Java-中的变量" class="headerlink" title="1：Java 中的变量"></a>1：Java 中的变量</h2><ul>
+<li><p>类变量</p>
+<p>主要是指 static 修饰的，它在方法区</p>
+</li>
+<li><p>成员变量</p>
+<p>它在栈中</p>
+</li>
+<li><p>局部变量</p>
+<p>它在堆中</p>
+</li>
+</ul>
+<h2 id="2：Java-中的共享变量有哪些"><a href="#2：Java-中的共享变量有哪些" class="headerlink" title="2：Java 中的共享变量有哪些"></a>2：Java 中的共享变量有哪些</h2><p>共享变量有：类变量、成员变量；</p>
+<p>主要集中在方法区和栈中；</p>
+<p>这些地方的共享变量需要考虑线程安全问题。</p>
+<h2 id="3：如何保证线程安全"><a href="#3：如何保证线程安全" class="headerlink" title="3：如何保证线程安全"></a>3：如何保证线程安全</h2><p>或者说线程同步的方式有哪些？</p>
+<ul>
+<li><p>互斥锁</p>
+<p>sync 锁、Lock 锁</p>
+</li>
+<li><p>并发集合类</p>
+<p>CopyOnWritexxx</p>
+<p>ConcurrentHashMap</p>
+</li>
+<li><p>原子操作类</p>
+</li>
+<li><p>ThreadLocal</p>
+</li>
+<li><p>不可变的类</p>
+</li>
+<li><p>线程同步工具</p>
+</li>
+</ul>
+<h1 id="11：关于线程上下文切换"><a href="#11：关于线程上下文切换" class="headerlink" title="11：关于线程上下文切换"></a>11：关于线程上下文切换</h1><p>线程上下切换发生在一个 CPU在多个线程之间的操作；</p>
+<p>上下文切换是指：CPU从一个线程切换到另一个线程时，需要保存当前线程的状态，以便于下次恢复这个线程的时候能正常执行；</p>
+<p>上下文信息包括：</p>
+<p>​	当前这个线程的状态、程序计数器、寄存器、栈指针等；</p>
+<p>上下文切换这个动作会降低CPU的执行效率，这个动作是操作系统级别的切换；</p>
+<p>底层需要操作系统在用户态和内核态之间切换，为啥这样呢？因为，一个Java线程它是对应操作系统中的一个轻量级进程，线程的创建和启动等动作，都需要操作系统参与；</p>
+<h1 id="12：线程中断机制"><a href="#12：线程中断机制" class="headerlink" title="12：线程中断机制"></a>12：线程中断机制</h1><p>调用了 inturrupt 中断方法的线程，并不会立马中断；</p>
+<p>中断只是一个协商机制</p>
+<h1 id="13：线程顺序执行"><a href="#13：线程顺序执行" class="headerlink" title="13：线程顺序执行"></a>13：线程顺序执行</h1><p>让线程能够顺序执行，主要就是想办法让多个线程之间能通信或者排队；</p>
+<ul>
+<li><p>通信</p>
+<ul>
+<li><p>join方法</p>
+<p>join 的原理是：将当前子线程加入主线程，主线程阻塞，等到加入的子线程执行完后再执行</p>
+</li>
+<li><p>线程同步工具</p>
+</li>
+</ul>
+</li>
+<li><p>排队</p>
+<ul>
+<li><p>线程池</p>
+<p>线程池内部使用的是队列来存任务，所以线程的执行顺序会按照加入队列的顺序执行，但这不是绝对的，有可能后面加入的先执行；但是我们可以定义一下只有一个线程的线程池，加入一些任务。</p>
+</li>
+<li><p>java 8 的 compalteFuture</p>
+<p>它是一个异步编程工具，提供任务的创建组合及转换管理功能</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="14：创建线程有哪些方式"><a href="#14：创建线程有哪些方式" class="headerlink" title="14：创建线程有哪些方式"></a>14：创建线程有哪些方式</h1><h2 id="1：内核方式创建线程"><a href="#1：内核方式创建线程" class="headerlink" title="1：内核方式创建线程"></a>1：内核方式创建线程</h2><p>Java 中的线程都是采用内核方式创建的线程，你初始化一个线程，他会经过应用程序调用操作系统然后，操作系统调用内核中的C++库，包含有启动线程的 start0 方法，之后再交由硬件的 cpu 来调度线程；</p>
+<p>操作系统支持创建的线程个数是有上限的， 无限制的创建，会出现 OOM，Linux 中线程上限是 1W多；</p>
+<h2 id="2：用户线程"><a href="#2：用户线程" class="headerlink" title="2：用户线程"></a>2：用户线程</h2><h2 id="3：内核和用户的混合方式创建线程"><a href="#3：内核和用户的混合方式创建线程" class="headerlink" title="3：内核和用户的混合方式创建线程"></a>3：内核和用户的混合方式创建线程</h2><h1 id="15：为啥需要多线程"><a href="#15：为啥需要多线程" class="headerlink" title="15：为啥需要多线程"></a>15：为啥需要多线程</h1><p>是为了充分利用多核CPU</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clwirposi001brkuwfk9qeo2g" data-title="线程的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-基本数据类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-02-15T16:00:00.000Z" itemprop="datePublished">2021-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Java 基本数据类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：基本数据类型的分类"><a href="#1：基本数据类型的分类" class="headerlink" title="1：基本数据类型的分类"></a>1：基本数据类型的分类</h1><ul>
+<li><p>byte</p>
+<p>-128 - 127 ，占1字节;</p>
+<p>1 个 byte 等于 8 个 bit </p>
+</li>
+<li><p>short</p>
+<p>占 2 字节</p>
+</li>
+<li><p>char</p>
+<p>占 2 字节，unicode 字符集</p>
+</li>
+<li><p>int</p>
+<p>-2  ^ 31 - 2 ^ 31-1, 大约 21 亿，占 4 字节</p>
+</li>
+<li><p>float</p>
+<p>4 字节；单精度，小数点之后可以精确到7 位；</p>
+<p>定义 float 时，结尾要加 f , 啥也不加就是 double 类型了</p>
+</li>
+<li><p>double</p>
+<p>8 字节；双精度，它的精度是 float 的 2 倍；</p>
+<p>写一个小数，后面啥也不加，默认数据类型是 double 类型, 当然，也可以加一个 d, 表示是 double 类型；</p>
+<p>浮点数都有舍入误差，例如：0.1 + 0.2 ≠ 0.3</p>
+</li>
+<li><p>long</p>
+<p>8 字节；定义 long 类型，后面需要加上 L</p>
+</li>
+<li><p>boolean </p>
+<p>4 字节；默认是 false</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">关于浮点类型：</span><br><span class="line"></span><br><span class="line">java 中的浮点类型都只是一个近似值，为什么说它是一个近似值呢？可能是因为：一个10 进制的负次幂，转化为计算机底层的</span><br><span class="line"></span><br><span class="line">二进制之后，并不能精确。也就是说二进制不能精确表示 10 的负次幂这样。</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2：基本数据类型之间的运算"><a href="#2：基本数据类型之间的运算" class="headerlink" title="2：基本数据类型之间的运算"></a>2：基本数据类型之间的运算</h1><ol>
+<li><p>byte、short、char 三个之间或者自己和自己做运算时，会首先把各自的类型提升为 int</p>
+</li>
+<li><p>long l &#x3D; 123;</p>
+</li>
+</ol>
+<p>   123 默认是 int 类型，它自动提升为 long 类型</p>
+<ol start="3">
+<li>long l  &#x3D; 123d;</li>
+</ol>
+<p>   123d 是 double 类型，double 类型赋值给 long 类型，double 会自动转为 long 类型</p>
+<ol start="4">
+<li>long l &#x3D; 23 亿；</li>
+</ol>
+<p>   编译报错，23 亿超出 int 的最大值范围</p>
+<ol start="5">
+<li>int i &#x3D; (int)0.5；</li>
+</ol>
+<p>   编译不报错，这里做了一个强制类型转换，将 double 类型强转为 int 类型，会丢失精度</p>
+<h1 id="3：十进制浮点型转化为二进制"><a href="#3：十进制浮点型转化为二进制" class="headerlink" title="3：十进制浮点型转化为二进制"></a>3：十进制浮点型转化为二进制</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用浮点小数 * 2 = 积</span><br><span class="line"></span><br><span class="line">将上一步的积取整，剩下的小数部分 * 2 = 积</span><br><span class="line"></span><br><span class="line">。。。。</span><br><span class="line"></span><br><span class="line">如此进行，直到积中的小数部分为 0 </span><br></pre></td></tr></table></figure>
+
+<h1 id="4：金融计算使用-BigDecimal-代替浮点"><a href="#4：金融计算使用-BigDecimal-代替浮点" class="headerlink" title="4：金融计算使用 BigDecimal 代替浮点"></a>4：金融计算使用 BigDecimal 代替浮点</h1><ol>
+<li>比较两个 Bigdecimal 的大小时候，不能使用 BigDecimal 的 equals 方法，要使用它的 CompareTo 方法，这是阿里巴巴开发手册上写的。更不能使用 &#x3D;&#x3D; 比较，因为 Big 是对象。</li>
+</ol>
+<p>   原因是：equals 方法比较的是两个数字的整数部分和小数部分，不会忽略精度。假如 0.1 和 0.10 的两个 BigDecimal 作 equals 比较，结果是fasle </p>
+<ol start="2">
+<li><p>减法：sub</p>
+<p>乘法：mu</p>
+<p>除法：div</p>
+<p>​	需要指定保留几位</p>
+</li>
+<li><p>Bigdecimal(0.1) 和 BigDecimal(“0.1”) 的区别</p>
+<p>它们的舍入误差不一样；0.1转化为 BigDecimal 时，得先转化为二进制之后是 0.1111111……；</p>
+<p>阿里巴巴开发手册中说：进制把浮点转化为 BigDecimal</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" data-id="clwirposa000rrkuw9fgd9lyw" data-title="Java 基本数据类型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
 
     </footer>
   </div>
@@ -401,6 +1293,11 @@
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
+  </nav>
 
 </section>
         
@@ -413,7 +1310,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
     </div>
   </div>
 
@@ -423,7 +1320,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+      <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
     </div>
   </div>
 
@@ -432,7 +1329,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -457,11 +1354,11 @@
           </li>
         
           <li>
-            <a href="/2020/01/16/brightloong/">你好呀，欢迎来到我的博客！</a>
+            <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
           </li>
         
           <li>
-            <a href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/">搭建个人博客网站</a>
+            <a href="/2021/07/16/Lock%20%E9%94%81/">lock 锁</a>
           </li>
         
       </ul>

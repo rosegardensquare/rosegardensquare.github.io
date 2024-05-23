@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="张帅的个人博客">
+<meta property="og:url" content="http://example.com/page/2/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:locale">
+<meta property="article:author" content="张帅">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-ConcurrentHashMap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/01/ConcurrentHashMap/" class="article-date">
+  <time class="dt-published" datetime="2021-02-01T09:23:59.000Z" itemprop="datePublished">2021-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/01/ConcurrentHashMap/">ConcurrentHashMap</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：ConcurrentHashMap-的数据结构"><a href="#1：ConcurrentHashMap-的数据结构" class="headerlink" title="1：ConcurrentHashMap 的数据结构"></a>1：ConcurrentHashMap 的数据结构</h1><h2 id="1：JDK-1-8-之前"><a href="#1：JDK-1-8-之前" class="headerlink" title="1：JDK 1.8 之前"></a>1：JDK 1.8 之前</h2><p>使用分段锁保证线程安全；它将哈希表默认分为 16 个桶，在加锁的时候，针对某一个桶加锁。其他桶不受影响；这样锁的粒度很小；虽然锁力度小，但是高并发下仍然会出现锁竞争；</p>
+<h2 id="2：JDK-1-8-开始"><a href="#2：JDK-1-8-开始" class="headerlink" title="2：JDK 1.8 开始"></a>2：JDK 1.8 开始</h2><p>采用 cas + synchronized 加锁，也叫锁分离，节点锁的思想；</p>
+<p>在添加元素时，该位置上为空，采用 cas 加入元素；</p>
+<p>如果该位置上不是空，第一个节点的哈希值是 move，表示当前这个哈希槽正在进行扩容，那么就调用 helpTransFer 方法协助扩容；</p>
+<p>​	如果没有在扩容，那么使用 sync 锁，锁住当前节点后添加元素；</p>
+<h1 id="2：为啥-JDK-8-中要采用新的加锁方式"><a href="#2：为啥-JDK-8-中要采用新的加锁方式" class="headerlink" title="2：为啥 JDK 8 中要采用新的加锁方式"></a>2：为啥 JDK 8 中要采用新的加锁方式</h1><p>jdk 7 中的分段锁，虽然提高的并发度，但是当段数固定时，并发很高的时候，任然可能导致热点段，出现性能瓶颈；另外，每个段都是独立结构，这可能导致较高的内存占用；</p>
+<p>因此，jdk 8 不再使用分段锁，采用的是以桶为维度的节点锁；内部采用大量的 CAS 操作。为的是提高并发减少锁竞争；</p>
+<h1 id="3：它为啥使用-Sync-锁而不是-ReentrantLock-锁"><a href="#3：它为啥使用-Sync-锁而不是-ReentrantLock-锁" class="headerlink" title="3：它为啥使用 Sync 锁而不是 ReentrantLock 锁"></a>3：它为啥使用 Sync 锁而不是 ReentrantLock 锁</h1><p>我们都知道，大多数情况下，ReentrantLock 锁都比 Sync 锁更好；</p>
+<p>在 JDK 1.7 中，ConcurrHas 把哈希表分为多个 Segment， Segment 继承 ReentrantLock，也就是说 Segmrnt 本身就是一个锁。</p>
+<p>JDK 8 中是对每个桶加锁，并发冲突小很多，毕竟对同一个桶去同时既要读又要写的概率很低，在并发度不高的场景，Sync 锁不会频繁升级为重量级锁，大多数情况下是在轻量级锁和偏向锁就搞定。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/01/ConcurrentHashMap/" data-id="clwirporn0000rkuw18id1e31" data-title="ConcurrentHashMap" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-HashMap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/01/HashMap/" class="article-date">
+  <time class="dt-published" datetime="2021-01-01T09:23:59.000Z" itemprop="datePublished">2021-01-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/01/HashMap/">HashMap</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：HashMap-的数据结构"><a href="#1：HashMap-的数据结构" class="headerlink" title="1：HashMap 的数据结构"></a>1：HashMap 的数据结构</h1><ul>
+<li><p>jdk 1.8 之前，是 Entry 数组 + 链表；</p>
+</li>
+<li><p>jdk 1.8 开始，是 Node 数组 + 链表+ TreeNode 红黑树</p>
+<p>为了解决链表过长，引入红黑树，红黑树是一个双向链表；</p>
+</li>
+</ul>
+<p>​	Entry 数组是内部类，每一个 Entry 包含一个 K、V；数组是主体；</p>
+<h1 id="2：遍历-HashMap"><a href="#2：遍历-HashMap" class="headerlink" title="2：遍历 HashMap"></a>2：遍历 HashMap</h1><h2 id="1：使用-Entry-遍历"><a href="#1：使用-Entry-遍历" class="headerlink" title="1：使用 Entry 遍历"></a>1：使用 Entry 遍历</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Map.Entry&lt;String, Integer&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> entry.getKey();</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> entry.getValue();</span><br><span class="line">    <span class="comment">// 对 key 和 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2：通过-keySet-遍历所有的-k"><a href="#2：通过-keySet-遍历所有的-k" class="headerlink" title="2：通过 keySet 遍历所有的 k"></a>2：通过 keySet 遍历所有的 k</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> map.get(key);</span><br><span class="line">    <span class="comment">// 对 key 和 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3：通过-values-遍历所有的v"><a href="#3：通过-values-遍历所有的v" class="headerlink" title="3：通过 values 遍历所有的v"></a>3：通过 values 遍历所有的v</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Integer value : map.values()) &#123;</span><br><span class="line">    <span class="comment">// 对 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3：HashMap-的-put方法、get-方法分析"><a href="#3：HashMap-的-put方法、get-方法分析" class="headerlink" title="3：HashMap 的 put方法、get 方法分析"></a>3：HashMap 的 put方法、get 方法分析</h1><h2 id="1：put-流程"><a href="#1：put-流程" class="headerlink" title="1：put 流程"></a>1：put 流程</h2><ul>
+<li><p>首先根据 k 计算哈希值，为了使 k 分配的均匀，增加了扰动函数；并经过哈希值与数组长度取模，计算 k 在数组中的位置；</p>
+</li>
+<li><p>如果该位置上为空，直接就存了；</p>
+</li>
+<li><p>如果该位置上有元素，那么遍历该位置上的元素，使用 equas 比较 k 是否相等:</p>
+<ul>
+<li><p>如果相等，那么新的 v 覆盖旧的 v;</p>
+</li>
+<li><p>如果不相等：</p>
+<ul>
+<li><p>jdk 8 之前：</p>
+<p>头插法，新元素存数组位置，来的元素挂在它的后面，形成一个链表；</p>
+</li>
+<li><p>jdk 8 开始：</p>
+<p>判断当前位置的数据结构：</p>
+<p>1：如果是链表，那么就尾插法，新元素跟在老元素后面；</p>
+<p>​	尾插法之后，要判断是否需要树化：</p>
+<p>​	当链表长度 &gt;8 开始树化，如果此时数组长度 &lt; 64 ,不树化，只扩容；</p>
+<p>​	否则，树化。</p>
+<p>​	当链表长度 &#x3D; 6 ，把树变成链表。</p>
+<p>2：如果是红黑树结构，封装当前新元素为 TreeNode，加入红黑树中；</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>一切结束，在判断一次是否需要扩容。</p>
+</li>
+</ul>
+<h2 id="2：get-流程"><a href="#2：get-流程" class="headerlink" title="2：get 流程"></a>2：get 流程</h2><ul>
+<li><p>首先根据 k 计算出所在数组中的位置；</p>
+</li>
+<li><p>如果该位置上没元素，直接返回 null;</p>
+</li>
+<li><p>如果有元素：遍历元素：</p>
+<ul>
+<li><p>比较 equals 是否相等，相等的话就直接返回；</p>
+</li>
+<li><p>equals 不相等，判断该结构数据结构：</p>
+<ul>
+<li><p>链表结构</p>
+<p>也是 equals 遍历链表元素</p>
+</li>
+<li><p>树形结构</p>
+<p>也是</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-1：HashMap-如何确定-k-在数组位置"><a href="#3-1：HashMap-如何确定-k-在数组位置" class="headerlink" title="3-1：HashMap 如何确定 k 在数组位置"></a>3-1：HashMap 如何确定 k 在数组位置</h1><p>通过 k 的哈希值取模数组长度；</p>
+<p>通过源码发现, HashMap 并不是这种方式，采用了一些骚操作；</p>
+<p>它是通过 k 的哈希值右移 16 位，之后跟数组长度 -1 ，做 &amp; 计算；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(table.length - <span class="number">1</span>) &amp; (key.hashCode ^ (key.hashCode &gt;&gt; <span class="number">16</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="1：-为啥要用这种骚操作呢"><a href="#1：-为啥要用这种骚操作呢" class="headerlink" title="1： 为啥要用这种骚操作呢"></a>1： 为啥要用这种骚操作呢</h2><h3 id="1：为啥要用-不用"><a href="#1：为啥要用-不用" class="headerlink" title="1：为啥要用&amp;不用%"></a>1：为啥要用&amp;不用%</h3><p>是基于内存的二进制直接计算；比 % 十进制取模更高效；</p>
+<p>这也就是为啥它要每次扩容是 2的N次方的原因，它是想用位运算呀</p>
+<h3 id="2：为啥要保持数组容量为-2-的N次方"><a href="#2：为啥要保持数组容量为-2-的N次方" class="headerlink" title="2：为啥要保持数组容量为 2 的N次方"></a>2：为啥要保持数组容量为 2 的N次方</h3><p>在高效计算 k 在数组中的位置的时候使用；</p>
+<h4 id="1：初始化保证"><a href="#1：初始化保证" class="headerlink" title="1：初始化保证"></a>1：初始化保证</h4><h4 id="2：扩容保证"><a href="#2：扩容保证" class="headerlink" title="2：扩容保证"></a>2：扩容保证</h4><h3 id="3：为啥哈希值要右移-16-位呢"><a href="#3：为啥哈希值要右移-16-位呢" class="headerlink" title="3：为啥哈希值要右移 16 位呢"></a>3：为啥哈希值要右移 16 位呢</h3><p>它是为了增加哈希值的扰动，使得哈希分布的尽可能均匀。说白了，就是将hashCode的高16和低16位，进行异或，使得hashCode的值更加分散一点。</p>
+<h1 id="3-2：HashMap-如何找-k"><a href="#3-2：HashMap-如何找-k" class="headerlink" title="3-2：HashMap 如何找 k"></a>3-2：HashMap 如何找 k</h1><p>先计算出 k 的哈希值，进一步计算出在数组中的位置，然后使用 equals 比较找到 k；</p>
+<p>因此，在使用 HashMap 的时候，k 都要重写 hashcode 和 equasl 方法</p>
+<h1 id="3-3：关于扩容相关的"><a href="#3-3：关于扩容相关的" class="headerlink" title="3-3：关于扩容相关的"></a>3-3：关于扩容相关的</h1><h2 id="1：加载因子"><a href="#1：加载因子" class="headerlink" title="1：加载因子"></a>1：加载因子</h2><p>加载因子是为扩容服务，决定了每次扩容多少；</p>
+<h2 id="2：为啥加载因子是-0-75f"><a href="#2：为啥加载因子是-0-75f" class="headerlink" title="2：为啥加载因子是 0.75f"></a>2：为啥加载因子是 0.75f</h2><p>为啥选 0.75，为啥不是1，为啥不是 0.5、0.8 等呢</p>
+<p>在 jdk 官方文档中是这样说明的：</p>
+<p>0.75 是时间和空间成本的权衡；它是经过大量的数学计算得来的；太小会浪费空间，动不动就要扩容，太大会造成更多的哈希冲突；</p>
+<h2 id="3：咋扩容的"><a href="#3：咋扩容的" class="headerlink" title="3：咋扩容的"></a>3：咋扩容的</h2><p>首先说为啥需要扩容？</p>
+<p>扩容是为了降低哈希冲突的概率；</p>
+<p>扩容发生在 put 方法中，当当前元素个数 &gt; 当前容量的 3&#x2F;4 时，就扩容 2 倍；</p>
+<p>扩容会涉及3点：</p>
+<ul>
+<li>如果某位置没有形成链表，那么就 rehash ，将元素放到新位置</li>
+<li>如果某位置是链表，也将链表重新链接</li>
+<li>如果某位置是树，但是链表长度 &lt; 6 ,取消树化，当然 remove 的时候也会判断是否取消树化</li>
+</ul>
+<h1 id="3-4：关于初始化相关的"><a href="#3-4：关于初始化相关的" class="headerlink" title="3-4：关于初始化相关的"></a>3-4：关于初始化相关的</h1><h2 id="1：初始化容量应该设置多少合适"><a href="#1：初始化容量应该设置多少合适" class="headerlink" title="1：初始化容量应该设置多少合适"></a>1：初始化容量应该设置多少合适</h2><p>阿里巴巴开发手册建议初始化的时候设置一个默认容量，</p>
+<p>提高性能；</p>
+<p>大小 &#x3D; 默认是 16 </p>
+<p>或者：大小 &#x3D; 你需要存几个元素 &#x2F; 0.75 + 1 </p>
+<h1 id="4：为啥-jdk-8-开始链表转红黑树"><a href="#4：为啥-jdk-8-开始链表转红黑树" class="headerlink" title="4：为啥 jdk 8 开始链表转红黑树"></a>4：为啥 jdk 8 开始链表转红黑树</h1><p>HashMap 解决哈希冲突采用的是链地址法，新元素会增加到链表上，这样就会产生一个问题，当冲突很多，链表有可能会很长，这样，在插入删除和查询的时候，实践复杂度是 On。尽管 JDK 1.8 之后，为了减少哈希冲突， 优化了扰动函数，使不同的 key 尽量分散开，但是效果不是太好；</p>
+<p>我们可以想一个问题：当元素过多，应该用那种数据结构来替代链表呢。我们很自然的想到使用二叉树，所谓二叉查找树，一定是 left &lt; root &lt; right，这样我们遍历的时间复杂度从 On 下降到了 O logn。但是极端情况下，二叉查找树会退化成链表。因此我们就需需要二叉平衡树 （AVL树），它在每次插入的时候，会检查左子树和右子树的高度差 &lt;&#x3D;1，如果 &gt; 1:  就需要左旋或者右旋，使时间复杂度维持在 logn。但是这也不是绝对万无一失的，我们不仅要保证增删的时间复杂度，也要保证查询的时间复杂度。二叉平衡树为了维持高度差 &lt;&#x3D;1，非常严格，追求绝对的平衡，在每次插入和查找的时候都要左旋或者右旋，消耗时间；因此，对于那些频繁插入和删除的场景，二叉平衡树显然不合适；为了维持插入删除和查询的时间复杂度维持在一个均衡的状态，引入了红黑树。</p>
+<p>红黑树的查找、删除、新增的时间复杂度都是 Ologn;</p>
+<p>在红黑树中，所有的叶子节点都是黑色的 null, 不存数据。相邻节点不能同时是红色，两个红色之间用黑色间隔。红黑树不会像二叉平衡树那样追求绝对的平衡，它的插入最多旋转 2 次，删除最多旋转 3次；在频繁的插入删除场景中，红黑树效率优于二叉查找树。</p>
+<h1 id="5：为啥链表长度-8-时，才转红黑树？"><a href="#5：为啥链表长度-8-时，才转红黑树？" class="headerlink" title="5：为啥链表长度&#x3D; 8 时，才转红黑树？"></a>5：为啥链表长度&#x3D; 8 时，才转红黑树？</h1><p>这个问题引入两个子问题：</p>
+<h2 id="1：为啥不在冲突开始的时候就转呢"><a href="#1：为啥不在冲突开始的时候就转呢" class="headerlink" title="1：为啥不在冲突开始的时候就转呢"></a>1：为啥不在冲突开始的时候就转呢</h2><p>不立刻转的原因是：从空间维度来说，红黑树的空间占用是链表的2倍，立刻转的话，太浪费空间了，从时间维度上来说，红黑树虽然查找效率高于链表，但是插入没有链表快。每次插入都要旋转和变色，如果 &lt; 8 就立马转，时间和空间没有做到平衡；</p>
+<h2 id="2：为啥一定要在-8-的时候才转？"><a href="#2：为啥一定要在-8-的时候才转？" class="headerlink" title="2：为啥一定要在 8 的时候才转？"></a>2：为啥一定要在 8 的时候才转？</h2><p>源码中有做解释：</p>
+<p>基于泊松分布，官方在做了大量的数学实验后，得出结论，链表长度 &#x3D; 8 的概率是 0.00000006，这是一个极小的概率；而且红黑树的 TreeNode 节点的内存占用是链表 Node 节点的 2 倍；</p>
+<h2 id="3：为啥又在-6-的时候转回来？"><a href="#3：为啥又在-6-的时候转回来？" class="headerlink" title="3：为啥又在 6 的时候转回来？"></a>3：为啥又在 6 的时候转回来？</h2><p>这个设计的主要原因是：基于性能和空间的考虑；8 的时候转红黑树，如何小于8就立马转回去，那就导致转换频繁，所以要选择一个 &lt;8 的值，根据官方做的实验，在 6 的时候，红黑树的优势已经不那么明显了。</p>
+<h1 id="6：HashMap、HashTable-、ConcurrentHashMap-比较"><a href="#6：HashMap、HashTable-、ConcurrentHashMap-比较" class="headerlink" title="6：HashMap、HashTable 、ConcurrentHashMap 比较"></a>6：HashMap、HashTable 、ConcurrentHashMap 比较</h1><h2 id="1：线程安全角度"><a href="#1：线程安全角度" class="headerlink" title="1：线程安全角度"></a>1：线程安全角度</h2><p>HashMap 不是线程安全的；</p>
+<p>HashTable 方法加锁，是线程安全；</p>
+<p>ConcurrentHs, 也是线程安全的。</p>
+<h2 id="2：继承关系角度"><a href="#2：继承关系角度" class="headerlink" title="2：继承关系角度"></a>2：继承关系角度</h2><p>HashMap 继承 AsbstractMap 实现 Map 接口；</p>
+<p>HashTable 继承古老的 Dictory 接口；</p>
+<p>ConcurrentHs 继承 AbstractMap 继承 ConcurrentMap 接口；</p>
+<h2 id="3：是否为-null-角度"><a href="#3：是否为-null-角度" class="headerlink" title="3：是否为 null 角度"></a>3：是否为 null 角度</h2><p> HashMap 允许 null;</p>
+<p>HashTable 和 ConcurrentHs 不允许有 null；</p>
+<h1 id="7-：-HashMap-在并发场景会有啥问题"><a href="#7-：-HashMap-在并发场景会有啥问题" class="headerlink" title="7 ： HashMap 在并发场景会有啥问题"></a>7 ： HashMap 在并发场景会有啥问题</h1><p>这个问题只是会出现在 JDK 7 之前，JDK 8 开始久修复了</p>
+<p>发生在扩容的时候，jdk 7 中，采用头插法，之所以采用头插法，是因为 JDK 作者认为后插入的元素使用频率较高，更大概率成为热点数据；采用头插法把他们放在头部，就可以提高查询效率。</p>
+<p>但是，正是因为把当前元素作为链表得到头节点，在并发扩容时，产生循环引用，造成链表死循环。导致 CPU 飙升。</p>
+<p>jdk 8 开始的版本，已经解决了这个问题：</p>
+<p>jdk 8 开始采用尾插法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/01/HashMap/" data-id="clwirport0001rkuwfsjs9lpe" data-title="HashMap" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Set 接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time class="dt-published" datetime="2020-12-15T16:00:00.000Z" itemprop="datePublished">2020-12-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/">Set 接口</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：-Set-接口总述"><a href="#1：-Set-接口总述" class="headerlink" title="1： Set 接口总述"></a>1： Set 接口总述</h1><p>元素不重复</p>
+<ul>
+<li><p>TreeSet 底层是TreeMap, 是红黑树实现；</p>
+<p>自动排好序；</p>
+<p>不能存 null，要不然没法比较大小；</p>
+<p>添加的元素都要实现排序</p>
+</li>
+<li><p>HashSet 是 HashMap 实现；</p>
+<p>无序，可以有一个null</p>
+</li>
+</ul>
+<h1 id="2：Set-如何保证不重复元素"><a href="#2：Set-如何保证不重复元素" class="headerlink" title="2：Set 如何保证不重复元素"></a>2：Set 如何保证不重复元素</h1><h2 id="1：HashSet-如何保证元素不重复"><a href="#1：HashSet-如何保证元素不重复" class="headerlink" title="1：HashSet 如何保证元素不重复"></a>1：HashSet 如何保证元素不重复</h2><p>其实也就是 HashMap 咋存元素的过程</p>
+<h2 id="2：TreeSet-如何保证元素不重复"><a href="#2：TreeSet-如何保证元素不重复" class="headerlink" title="2：TreeSet 如何保证元素不重复"></a>2：TreeSet 如何保证元素不重复</h2><p>TreeSet 底层是 TreeMap 的 keySet方法，TreeMap 底层是红黑树，红黑树是一种平衡二叉树；</p>
+<p>它能保证任何一个左右子树的高度差不会超过较矮的那颗的一倍。</p>
+<p>TreeMap 的排序是按照 key 来排序，元素在插入时候，根据 comparTo 方法比较大小，所以 TreeMap</p>
+<p>中的元素要实现 Coparable 接口；</p>
+<p>TreeSet 是根据 ComparTo 方法判断是否重复元素。</p>
+<h1 id="3：-LinkedHashSet"><a href="#3：-LinkedHashSet" class="headerlink" title="3： LinkedHashSet"></a>3： LinkedHashSet</h1><p>不仅元素不重复，还能记录插入和查询顺序；</p>
+<p>基于 LinkedHashMap; 哈希表+双链表</p>
+<p>通过双向链表记录插入顺序；</p>
+<h1 id="4：啥是-BitSet"><a href="#4：啥是-BitSet" class="headerlink" title="4：啥是 BitSet"></a>4：啥是 BitSet</h1><p>BitSet 是位集合；</p>
+<p>位集合的底层结构是一个 bit 数组，如果第 n 位是1，则表示数组 n 在这个集合中；</p>
+<p>比如：当调用 BitSet 的 set(10) ，业务的意思是把 10 放到这个集合中，内部的操作是把二进制的第 10 位置为 1，</p>
+<p>表示 10 在这个集合中；</p>
+<p>在Java 中，它的底层是一个 long 数组，它最大的好处是对于多个数字来说，降低了内存空间，正常情况下，要把所有的 int</p>
+<p>类型的正整数，存起来，需要 8G内存，但是使用 bitSet 的话，只需要原来内存的 1&#x2F;32;</p>
+<h2 id="BitSet-常用在哪"><a href="#BitSet-常用在哪" class="headerlink" title="BitSet 常用在哪"></a>BitSet 常用在哪</h2><ul>
+<li><p>现在有一千万个随机数，随机数的范围在 1 - 1亿之间，求出 1-1亿之间的数字，哪些没有在这批随机数中？</p>
+</li>
+<li><p>将 N 个数字排序</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/" data-id="clwirpos00008rkuwf6d62or1" data-title="Set 接口" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-List 接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time class="dt-published" datetime="2020-11-15T16:00:00.000Z" itemprop="datePublished">2020-11-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/">List 接口</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：List-接口总述"><a href="#1：List-接口总述" class="headerlink" title="1：List 接口总述"></a>1：List 接口总述</h1><p>有序</p>
+<p>可重复</p>
+<p>它有索引</p>
+<p>这里的有序是指: 存入的元素的顺序和取出时的顺序是否一致。</p>
+<h1 id="2：ArrayList"><a href="#2：ArrayList" class="headerlink" title="2：ArrayList"></a>2：ArrayList</h1><p>它是一个可变长度的数组；也就是动态数组；</p>
+<p>因为元素有下标，因此根据下标查找速度很快；</p>
+<p>但是增加或者删除元素，需要移动后面的元素，所以效率低；</p>
+<p>它扩容是 1.6 倍；</p>
+<p>线程不安全；</p>
+<h2 id="1：ArrayList-如何扩容？"><a href="#1：ArrayList-如何扩容？" class="headerlink" title="1：ArrayList 如何扩容？"></a>1：ArrayList 如何扩容？</h2><p>先申请一个容量为 10 的数组，当存入第 11 个元素时候，就扩容为之前的 1.5 倍；并将老数组复制到新数组中完成扩容；</p>
+<h2 id="2：ArrayList-的序列化时如何实现的？"><a href="#2：ArrayList-的序列化时如何实现的？" class="headerlink" title="2：ArrayList 的序列化时如何实现的？"></a>2：ArrayList 的序列化时如何实现的？</h2><p>ArrayList 中重写了序列化和反序列化的两个方法：writeObject 和 readObject </p>
+<h1 id="3：LinkedList"><a href="#3：LinkedList" class="headerlink" title="3：LinkedList"></a>3：LinkedList</h1><p>它是一个双向的链表；</p>
+<p>在 jdk 8 中每个元素是一个 Node;</p>
+<p>因为每个元素都记录前后元素的地址，所以它增删元素的时候，只用修改前后的地址就行，增删的效率高；</p>
+<p>查找某个元素，得遍历，所以它查找效率有点低；</p>
+<p>这些比较都是基于数据量大的时候，数据量小没啥意义。</p>
+<p>这家伙还实现了 Queue 和 Dequeue 接口；</p>
+<h1 id="4：Vector"><a href="#4：Vector" class="headerlink" title="4：Vector"></a>4：Vector</h1><p>初始大小是10，它扩容是 2 倍；</p>
+<p>它的所有操作都加了锁，是一个读写互斥的集合</p>
+<h1 id="5：如何使用-List-实现-LRU-？"><a href="#5：如何使用-List-实现-LRU-？" class="headerlink" title="5：如何使用 List 实现 LRU ？"></a>5：如何使用 List 实现 LRU ？</h1><h2 id="1：-啥是-LRU-呀？"><a href="#1：-啥是-LRU-呀？" class="headerlink" title="1： 啥是 LRU 呀？"></a>1： 啥是 LRU 呀？</h2><p>LRU 是一种缓存淘汰策略；</p>
+<p>就是最近最少使用策略；</p>
+<p>它的思想是：</p>
+<p>​	如果一个数据在最近一段时间内，访问的频率很低，就认为在将来访问的次数也很少，因此当空间满的时候，就优先淘汰     这批数据；</p>
+<p>缓存淘汰策略有：</p>
+<ul>
+<li>LRU</li>
+</ul>
+<p> Redis 的 GuavaMap 就是使用这个策略淘汰缓存</p>
+<ul>
+<li><p>LFU</p>
+</li>
+<li><p>TTL</p>
+</li>
+</ul>
+<p> 淘汰过期的</p>
+<ul>
+<li>随机算法</li>
+</ul>
+<h2 id="2：使用-LinkedList-实现-LRU"><a href="#2：使用-LinkedList-实现-LRU" class="headerlink" title="2：使用 LinkedList 实现 LRU"></a>2：使用 LinkedList 实现 LRU</h2><p>因为 LinkedList 基于双向链表，记录了前后前后元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LruListCache</span>&lt;E&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> maxSize;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LinkedList&lt;E&gt; list = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">LruListCache</span><span class="params">(<span class="type">int</span> maxSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.maxSize = maxSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (list.size() &lt; maxSize) &#123;</span><br><span class="line">            list.addFirst(e);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            list.removeLast();</span><br><span class="line">            list.addFirst(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="type">E</span> <span class="variable">e</span> <span class="operator">=</span> list.get(index);</span><br><span class="line">        list.remove(e);</span><br><span class="line">        add(e);</span><br><span class="line">        <span class="keyword">return</span> e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> list.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/" data-id="clwirporx0004rkuw38lt3iz9" data-title="List 接口" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-哈希冲突如何解决" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" class="article-date">
+  <time class="dt-published" datetime="2020-10-15T16:00:00.000Z" itemprop="datePublished">2020-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/">哈希冲突如何解决</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：哈希冲突如何解决"><a href="#1：哈希冲突如何解决" class="headerlink" title="1：哈希冲突如何解决"></a>1：哈希冲突如何解决</h1><p>有五种方式解决：</p>
+<ul>
+<li><p>开放地址法</p>
+<p>就是一旦发生冲突，就去寻找下一个空地址，这种方式的缺点是导致元素聚集</p>
+</li>
+<li><p>链地址法</p>
+<p>这也是 HashMap 在处理哈希冲突时的解决办法；</p>
+<p>其实就是将数组和链表结合起来，发挥两者优势；</p>
+</li>
+<li><p>再哈希法</p>
+<p>当发生冲突后，使用另外一个哈希函数获取地址，直到找到合适的地址</p>
+</li>
+<li><p>建立公共溢出区</p>
+<p>将哈希表分为基本表和溢出区，冲突的元素放溢出区</p>
+</li>
+<li><p>一致性哈希</p>
+<p>主要用于分布式系统中，如：分布式缓存，是将数据均分到不同的节点上以减少冲突</p>
+<p>分库分表？？</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" data-id="clwirpos8000orkuwgqr31np5" data-title="哈希冲突如何解决" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-集合算是归类吧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" class="article-date">
+  <time class="dt-published" datetime="2020-09-15T16:00:00.000Z" itemprop="datePublished">2020-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/">算是集合归类吧</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：-Collection-接口和-Collections-工具类的区别"><a href="#1：-Collection-接口和-Collections-工具类的区别" class="headerlink" title="1： Collection 接口和 Collections 工具类的区别"></a>1： Collection 接口和 Collections 工具类的区别</h1><p>Collections 是一个工具类；</p>
+<p>提供了静态方法，服务于 Collection 接口；</p>
+<h1 id="2：Collection-接口的类如何遍历"><a href="#2：Collection-接口的类如何遍历" class="headerlink" title="2：Collection 接口的类如何遍历"></a>2：Collection 接口的类如何遍历</h1><ul>
+<li><p>传统的 for 循环</p>
+</li>
+<li><p>增强for 循环</p>
+<p>内部使用 Itterator 方式</p>
+</li>
+<li><p>迭代器 Iterator </p>
+</li>
+<li><p>stream 方式</p>
+<p>jdk 1.8 开始</p>
+</li>
+</ul>
+<h1 id="3：Iterable-接口和-Iterator-方式"><a href="#3：Iterable-接口和-Iterator-方式" class="headerlink" title="3：Iterable 接口和 Iterator 方式"></a>3：Iterable 接口和 Iterator 方式</h1><p>这俩都是接口；</p>
+<p>Iterator 是 Collection 接口的父接口，代表可以被遍历，提供了 Iterator 接口的遍历方法</p>
+<p>这俩不是同时出现的，Iterator 接口出现的早，Iterable 接口后出现；</p>
+<p>Iteraable 是代表是否具有迭代功能，Iterator 代表迭代方式，将是否具有迭代功能抽出来，符合单一职责原则。</p>
+<h2 id="1：迭代器的原理"><a href="#1：迭代器的原理" class="headerlink" title="1：迭代器的原理"></a>1：迭代器的原理</h2><p>迭代器在遍历元素时，内部用指针跟踪元素，首先指针会指向第一个元素的上方；当调用 hashNext 方法时，如果返回 true，</p>
+<p>此时调用 next 方法，指针会下移，将当前指针指向谁就返回谁。</p>
+<h1 id="4：集合的排序"><a href="#4：集合的排序" class="headerlink" title="4：集合的排序"></a>4：集合的排序</h1><h2 id="1：Comparable-接口"><a href="#1：Comparable-接口" class="headerlink" title="1：Comparable 接口"></a>1：Comparable 接口</h2><p>让类实现 Comparable 接口，重写 compareTo 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> <span class="keyword">implements</span> <span class="title class_">Comparable</span>&lt;Student&gt;&#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compareTo</span><span class="params">(Student o)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="built_in">this</span>.name.compareTo(o.name); </span><br><span class="line">        <span class="keyword">if</span>(flag == <span class="number">0</span>) &#123; </span><br><span class="line">        	flag = <span class="built_in">this</span>.age - o.age; </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">return</span> flag; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line">Collections.sort(students);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2：Compartor-接口比较器"><a href="#2：Compartor-接口比较器" class="headerlink" title="2：Compartor 接口比较器"></a>2：Compartor 接口比较器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">	<span class="keyword">private</span> <span class="type">int</span> age; </span><br><span class="line">&#125;</span><br><span class="line">Collections.sort(students, (o1, o2) -&gt; &#123;</span><br><span class="line">	<span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> o1.getName().compareTo(o2.getName()); </span><br><span class="line">    <span class="keyword">if</span>(flag == <span class="number">0</span>) &#123; </span><br><span class="line">        flag = o1.getAge() - o2.getAge(); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> flag; </span><br><span class="line">&#125;); </span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-Comparable-接口和-Compartor-接口"><a href="#5-Comparable-接口和-Compartor-接口" class="headerlink" title="5: Comparable 接口和 Compartor 接口"></a>5: Comparable 接口和 Compartor 接口</h1><p>这俩都是接口，able 代表它有这个能力，conpartor 代表自定义比较；</p>
+<p>对于一些第三方的没有实现 able接口的，可以使用 comaprtor 接口比较器；</p>
+<h1 id="6：-快速失败机制"><a href="#6：-快速失败机制" class="headerlink" title="6： 快速失败机制"></a>6： 快速失败机制</h1><p>集合中有使用到快速失败机制；</p>
+<p>在集合中为了避免并发修改异常，会维护一个 expectedModCount 期望修改次数的字段，表示集合被迭代器预期修改的次数。</p>
+<p>还有一个 modeCount 字段，表示实际被修改的次数。在集合被修改的过程中，会去比较这俩值，如果不一致，就会触发快速失败机制。抛出 ConcurrentModifyException，并发修改异常。</p>
+<p>当多个线程对结合进行修改时候，会抛出这个异常。</p>
+<p>在 增强 for 循环中，对集合中元素增加删除操作，会抛出这个异常；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; userNames = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;() &#123;&#123;</span><br><span class="line">    add(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;c&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;d&quot;</span>);</span><br><span class="line">&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String userName : userNames) &#123;</span><br><span class="line">    <span class="keyword">if</span> (userName.equals(<span class="string">&quot;a&quot;</span>)) &#123;</span><br><span class="line">        userNames.remove(userName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">System.out.println(userNames);</span><br><span class="line"></span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.util.ConcurrentModificationException</span><br><span class="line">at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:<span class="number">909</span>)</span><br><span class="line">at java.util.ArrayList$Itr.next(ArrayList.java:<span class="number">859</span>)</span><br><span class="line">at com.hollis.ForEach.main(ForEach.java:<span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="1：报错原因解析"><a href="#1：报错原因解析" class="headerlink" title="1：报错原因解析"></a>1：报错原因解析</h2><p>modeCount 是集合的成员变量，而 expextedModeCount 是Iterator 迭代器内部定义的变量；</p>
+<p>在遍历过程中，对结合的增加和删除，只会修改 modeCount 的值，而不会修改 expectedModeCount的值，导致这俩值</p>
+<p>不相等。</p>
+<h2 id="2：如何避免快速失败异常"><a href="#2：如何避免快速失败异常" class="headerlink" title="2：如何避免快速失败异常"></a>2：如何避免快速失败异常</h2><ul>
+<li><p>因此为了避免快速失败的异常，应该使用迭代器自己的增加和删除方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">iteratorRemove</span><span class="params">()</span> &#123; </span><br><span class="line">    List&lt;Student&gt; students = <span class="built_in">this</span>.getStudents(); </span><br><span class="line">    Iterator&lt;Student&gt; stuIter = students.iterator(); </span><br><span class="line">    <span class="keyword">while</span> (stuIter.hasNext()) &#123; </span><br><span class="line">        <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> stuIter.next(); </span><br><span class="line">        <span class="keyword">if</span> (student.getId() % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//这里要使用Iterator的remove方法移除当前对象，如果使用List的remove方法，则同样会出现ConcurrentModificationException </span></span><br><span class="line">        	stuIter.remove();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>使用 CopyOnWriteArrayList </p>
+<p>它是先把集合拷贝一份，在副本上做修改，add 和 remove 方法都是加锁控制并发。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cowRemove</span><span class="params">()</span> &#123; </span><br><span class="line">      List&lt;String&gt; students = <span class="keyword">new</span> <span class="title class_">CopyOnWriteArrayList</span>&lt;&gt;(<span class="built_in">this</span>.getStudents());</span><br><span class="line">      <span class="keyword">for</span>(Student stu : students) &#123;</span><br><span class="line">          <span class="keyword">if</span>(needDel(stu)) &#123;</span><br><span class="line">              students.remove(stu);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">- 普通 <span class="keyword">for</span> 循环</span><br><span class="line"></span><br><span class="line">- 通过 stream 的方式</span><br><span class="line"></span><br><span class="line">  因为每次 stream 之后，都会产生一个新的 stream，不存在并发问题</span><br><span class="line"></span><br><span class="line">  ```java</span><br><span class="line">  <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">streamRemove</span><span class="params">()</span> &#123; </span><br><span class="line">      List&lt;String&gt; students = <span class="built_in">this</span>.getStudents();</span><br><span class="line">      <span class="keyword">return</span> students.stream()</span><br><span class="line">          .filter(<span class="built_in">this</span>::notNeedDel)</span><br><span class="line">          .collect(Collectors.toList());</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 List集合的 removeIf 方法</p>
+<p>从 jdk 8 开始 List 才有</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arraylist.removeIf(<span class="built_in">this</span>::needDel);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="3：快速失败引出-CopyOnWrite"><a href="#3：快速失败引出-CopyOnWrite" class="headerlink" title="3：快速失败引出 CopyOnWrite"></a>3：快速失败引出 CopyOnWrite</h2><h3 id="1：ConpyOnWrite-的-add-remove-方法都加了锁，为啥还要copy-一份"><a href="#1：ConpyOnWrite-的-add-remove-方法都加了锁，为啥还要copy-一份" class="headerlink" title="1：ConpyOnWrite 的 add&#x2F;remove 方法都加了锁，为啥还要copy 一份"></a>1：ConpyOnWrite 的 add&#x2F;remove 方法都加了锁，为啥还要copy 一份</h3><p>CopyOnWrite 当只有要 add 或者 remove 的时候，才 Copy 一份去修改，这是一种延时懒惰策略；</p>
+<p>它是一种写时复制的容器；</p>
+<p>修改完毕，再将原来容器指向 Copy 的容器地址；</p>
+<p>它的 add 和 remove 方法加锁，是为了防止在 Copy 的时候，Copy 出来多个副本，导致并发写；</p>
+<p>但是它的读操作没有加锁；</p>
+<p>这样做的好处是，我们可以并发读，当然这里读取到的数据有可能不是最新的，</p>
+<p>因为写时复制的思想是通过延时懒惰更新的策略，来实现数据最终一致性，并非强一致性。</p>
+<p>因此，CopyOnWrite 是一种读写分离的思想，读和写不同的容器, 使用于都多写少的场景；</p>
+<p>常用于：白名单黑名单，商品类目的访问或者更新场景。</p>
+<h3 id="2：-它和线程安全的vector-有啥区别"><a href="#2：-它和线程安全的vector-有啥区别" class="headerlink" title="2： 它和线程安全的vector 有啥区别"></a>2： 它和线程安全的vector 有啥区别</h3><p>Vector 始终都是对一个容器操作，读写互斥，同时只能做一件事；</p>
+<h3 id="3：CopyOnWrite-如何保证线程安全"><a href="#3：CopyOnWrite-如何保证线程安全" class="headerlink" title="3：CopyOnWrite 如何保证线程安全"></a>3：CopyOnWrite 如何保证线程安全</h3><p>jdk 1.5 开始在并法包中出现，CopyOnWriteArrayList 和 CopyOnWriteArraySet;</p>
+<p>它们是线程安全的 ArrayList 和 Set; </p>
+<h3 id="4：弱一致性"><a href="#4：弱一致性" class="headerlink" title="4：弱一致性"></a>4：弱一致性</h3><p>并发高和一致性是矛盾的，需要权衡</p>
+<ol>
+<li>ConcurrentHashMap 的 get</li>
+<li>CopyOnWriteArrayList 的 get </li>
+<li>数据库的 MVCC 是弱一致性的表现</li>
+</ol>
+<h1 id="7：集合中有哪些线程安全的集合"><a href="#7：集合中有哪些线程安全的集合" class="headerlink" title="7：集合中有哪些线程安全的集合"></a>7：集合中有哪些线程安全的集合</h1><ul>
+<li><p>Concurrentxxx</p>
+</li>
+<li><p>CopyOnWritexxx</p>
+<p>它们允许在遍历的时候删除元素</p>
+</li>
+</ul>
+<h1 id="7：如何将集合变成线程安全的集合"><a href="#7：如何将集合变成线程安全的集合" class="headerlink" title="7：如何将集合变成线程安全的集合"></a>7：如何将集合变成线程安全的集合</h1><h2 id="1：对集合的增删改方法加锁"><a href="#1：对集合的增删改方法加锁" class="headerlink" title="1：对集合的增删改方法加锁"></a>1：对集合的增删改方法加锁</h2><h2 id="2：使用-ThreadLocal"><a href="#2：使用-ThreadLocal" class="headerlink" title="2：使用 ThreadLocal"></a>2：使用 ThreadLocal</h2><p>将集合放到线程内部使用，这样集合就不能被其他线程访问</p>
+<h2 id="3：Collections-synchronizedXX"><a href="#3：Collections-synchronizedXX" class="headerlink" title="3：Collections.synchronizedXX()"></a>3：Collections.synchronizedXX()</h2><h2 id="4：使用不可变的集合封装"><a href="#4：使用不可变的集合封装" class="headerlink" title="4：使用不可变的集合封装"></a>4：使用不可变的集合封装</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.collect.ImmutableList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ImmutableCollectionExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ImmutableList&lt;Integer&gt; immutableList = ImmutableList.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> immutableList.get(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" data-id="clwirposk001hrkuw4w9xfkbd" data-title="算是集合归类吧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-零碎的点" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" class="article-date">
+  <time class="dt-published" datetime="2020-09-15T16:00:00.000Z" itemprop="datePublished">2020-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/">零碎的点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：值传递和引用传递"><a href="#1：值传递和引用传递" class="headerlink" title="1：值传递和引用传递"></a>1：值传递和引用传递</h1><p>除了集合、数组、对象会改变最终的值，因为三者是引用传递，其余都不会改变，因为其余的都是值传递，你传的是值过去，里面</p>
+<p>做啥操作，跟外面没关系；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">    <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    setXXX(list, a);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// list 的值会改变</span></span><br><span class="line">    System.out.println(list);</span><br><span class="line">    <span class="comment">// int 的值不会改变</span></span><br><span class="line">    System.out.println(a);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setXXX</span><span class="params">(List&lt;String&gt; list, <span class="type">int</span> a)</span>&#123;</span><br><span class="line">    a = <span class="number">2</span>;</span><br><span class="line">    list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2：-和"><a href="#2：-和" class="headerlink" title="2：&amp; 和 &amp;&amp;"></a>2：&amp; 和 &amp;&amp;</h1><p>&amp;&amp; 有短路功能；</p>
+<p>&amp;&amp; 的左边是fasle,  右边就不再执行了；</p>
+<h1 id="3：抽象类和接口的区别"><a href="#3：抽象类和接口的区别" class="headerlink" title="3：抽象类和接口的区别"></a>3：抽象类和接口的区别</h1><h2 id="1：接口"><a href="#1：接口" class="headerlink" title="1：接口"></a>1：接口</h2><ul>
+<li>接口的方法默认是 public 修饰；</li>
+<li>接口不能有构造方法；</li>
+<li>从设计层面来说：接口相当于一种规范；</li>
+</ul>
+<h2 id="2：抽象类"><a href="#2：抽象类" class="headerlink" title="2：抽象类"></a>2：抽象类</h2><ul>
+<li><p>一个类只能有一个父类；</p>
+</li>
+<li><p>从设计层面来说：抽象类相当于一种模板设计；</p>
+</li>
+<li><p>抽象类可以有构造方法；</p>
+</li>
+<li><p>抽象类主要是为了复用；我们经常说的模板方法模式；</p>
+</li>
+</ul>
+<h1 id="4-：成员变量和局部变量的区别"><a href="#4-：成员变量和局部变量的区别" class="headerlink" title="4 ：成员变量和局部变量的区别"></a>4 ：成员变量和局部变量的区别</h1><p>成员变量</p>
+<p>​	属于类变量或者实例；</p>
+<p>​	如果是 sttaic 修饰就是类变量，如果没有static 修饰就是实例变量；</p>
+<p>​	成员变量随着类的创建而存在；</p>
+<p>​	成员变量会自动赋值默认值；</p>
+<p>局部变量</p>
+<p>​	属于方法中定义的变量或者方法参数；对象存在堆内存，局部变量也存在栈内存</p>
+<pre><code>局部变量随着方法的调用结束而结束；
+</code></pre>
+<p>​	局部变量不会自动赋值；</p>
+<h1 id="5-：-静态方法和实例方法"><a href="#5-：-静态方法和实例方法" class="headerlink" title="5 ： 静态方法和实例方法"></a>5 ： 静态方法和实例方法</h1><p>静态只能访问静态的，不能访问实例方法；</p>
+<p>实例方法没有这方面的限制；</p>
+<h1 id="6：final-关键字"><a href="#6：final-关键字" class="headerlink" title="6：final 关键字"></a>6：final 关键字</h1><p>能作用的地方</p>
+<ul>
+<li>类</li>
+<li>方法</li>
+<li>变量</li>
+</ul>
+<h1 id="7-：深拷贝和浅拷贝"><a href="#7-：深拷贝和浅拷贝" class="headerlink" title="7 ：深拷贝和浅拷贝"></a>7 ：深拷贝和浅拷贝</h1><p>深拷贝是创建一个一模一样的新对象，新旧对象之间不共享任何内存，新对象的修改不会影响老对象；</p>
+<p>浅拷贝，拷贝的是地址；</p>
+<p>无论是深拷贝还是浅拷贝，都需要实现 cloneable 接口；并在 clone 方法中重写拷贝的逻辑</p>
+<h1 id="8：如何理解多态"><a href="#8：如何理解多态" class="headerlink" title="8：如何理解多态"></a>8：如何理解多态</h1><p>多态的概念比较简单：简单来说就是同一个操作作用于不同的对象，可以有不同的解释，产生不同的结果；</p>
+<p>如果按照这个理解，多态是运行期的一种状态， Java 的重写是多态的体现，不过也有人提出重写是静态多态的提现，这个问题在 StackOverflow 上有很多讨论，但我更倾向于动态多态；</p>
+<p>要实现这个运行期的动态绑定，就要满足 3 个条件：</p>
+<p>​	1：有类的继承或者实现</p>
+<p>​	2：要有重写</p>
+<p>​	3：父类引用指向子类对象</p>
+<h1 id="9：重载和重写的区别"><a href="#9：重载和重写的区别" class="headerlink" title="9：重载和重写的区别"></a>9：重载和重写的区别</h1><p>1：重写是运行期的概念，只是参数列表不同；重载是编译期的概念，发生在父子类之间</p>
+<p>2：运行期绑定，就是说在运行的时候，根据变量的引用指向子类对象，来调用具体的方法；</p>
+<p>​	编译期绑定，就是说在编译期根据参数的不同来决定调用哪个方法；	 </p>
+<h1 id="10-：零拷贝（待补充）"><a href="#10-：零拷贝（待补充）" class="headerlink" title="10 ：零拷贝（待补充）"></a>10 ：零拷贝（待补充）</h1><p>磁盘的读写速度跟内存相差 10 倍以上；</p>
+<p>所以针对磁盘的优化技术有很多：</p>
+<ul>
+<li>零拷贝</li>
+<li>直接 IO</li>
+<li>异步 IO</li>
+</ul>
+<p>这些优化的目的是为了提高磁盘的吞吐量；</p>
+<p>另外 OS 内核的高偶素缓冲区，也可以有效减少磁盘的访问次数；</p>
+<p>零拷贝是为了提高 I&#x2F;O 的吞吐效率；</p>
+<p>kafka 利用零拷贝；</p>
+<p>Nginx 也利用零拷贝；</p>
+<p>所以 kafuka 之所以这么快的原因之一；</p>
+<h1 id="11：如何创建一个对象"><a href="#11：如何创建一个对象" class="headerlink" title="11：如何创建一个对象"></a>11：如何创建一个对象</h1><h2 id="1：new"><a href="#1：new" class="headerlink" title="1：new"></a>1：new</h2><h2 id="2：反射"><a href="#2：反射" class="headerlink" title="2：反射"></a>2：反射</h2><h2 id="3：序列化和反序列化"><a href="#3：序列化和反序列化" class="headerlink" title="3：序列化和反序列化"></a>3：序列化和反序列化</h2><h2 id="4：拷贝（深浅）"><a href="#4：拷贝（深浅）" class="headerlink" title="4：拷贝（深浅）"></a>4：拷贝（深浅）</h2><p>实现 Cloneable 接口</p>
+<h2 id="5：Unsafe"><a href="#5：Unsafe" class="headerlink" title="5：Unsafe"></a>5：Unsafe</h2><p>它是 JVM 提供的底层的不安全的操作：包括创建对象；是在内存中直接分配对象的实例，并返回对象的引用；</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" data-id="clwirposl001jrkuw0j0sd1mg" data-title="零碎的点" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-枚举" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/16/%E6%9E%9A%E4%B8%BE/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T16:00:00.000Z" itemprop="datePublished">2020-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/16/%E6%9E%9A%E4%B8%BE/">枚举</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：枚举的特点"><a href="#1：枚举的特点" class="headerlink" title="1：枚举的特点"></a>1：枚举的特点</h1><p>枚举其实就是一个语法糖，定义的 Enum 类型，反映到字节码文件中就是 final class XXX extends java.lang.Enum</p>
+<p>定义的属性反映到字节码上是：public static final aa</p>
+<ul>
+<li>构造方法私有，保证了只读不写，针对只读不写，我们只提供 get 方法，不提供 set 方法；</li>
+<li>该类是 final 修饰、hashCode 方法也是 final 修饰、属性是 static final 修饰</li>
+<li>枚举其实继承了 Enum 类</li>
+</ul>
+<h1 id="2：枚举中的方法"><a href="#2：枚举中的方法" class="headerlink" title="2：枚举中的方法"></a>2：枚举中的方法</h1><ul>
+<li><p>toString 方法</p>
+</li>
+<li><p>hashcode 方法</p>
+<p>不能被重写，因为是 final 修饰</p>
+</li>
+<li><p>values 方法</p>
+<p>返回枚举中的所有对象，下一步可以遍历</p>
+</li>
+<li><p>valueOf 方法</p>
+<p>通过常量名字获取枚举对象</p>
+</li>
+<li><p>ordinal</p>
+<p>属性的索引</p>
+</li>
+<li><p>compareTo 方法</p>
+<p>调用 ordinal 对两个属性相减</p>
+</li>
+</ul>
+<h2 id="1-封装通用枚举"><a href="#1-封装通用枚举" class="headerlink" title="1:  封装通用枚举"></a>1:  封装通用枚举</h2><p>各个枚举类中的 valueOf 方法其实可以抽离出来</p>
+<p>以下是代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通用枚举</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BaseEnum</span> &#123;</span><br><span class="line"></span><br><span class="line">    Integer <span class="title function_">getCode</span><span class="params">()</span>;</span><br><span class="line">    String <span class="title function_">getDesc</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> BaseEnum <span class="title function_">valueOf</span><span class="params">(Class&lt;? extends BaseEnum&gt; enumClass, Integer value)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(value == <span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        BaseEnum[] enumConstants = enumClass.getEnumConstants();</span><br><span class="line">        <span class="keyword">if</span>(enumConstants != <span class="literal">null</span> &amp;&amp; enumConstants.length &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(BaseEnum baseEnum : enumConstants)&#123;</span><br><span class="line">                <span class="keyword">if</span>(value.equals(baseEnum.getCode()))&#123;</span><br><span class="line">                    <span class="keyword">return</span> baseEnum;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---------------------- 枚举类如下：</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">OrderAuditingStatus</span> <span class="keyword">implements</span> <span class="title class_">BaseEnum</span>&#123;</span><br><span class="line"></span><br><span class="line">    NO_AUDITING(<span class="number">0</span>, <span class="string">&quot;未审核&quot;</span>),</span><br><span class="line">    PASS(<span class="number">1</span>, <span class="string">&quot;审核通过&quot;</span>),</span><br><span class="line">    UN_PASS(<span class="number">2</span>, <span class="string">&quot;审核不通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String desc;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    OrderAuditingStatus(Integer code, String desc)&#123;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//    public static OrderAuditingStatus valueOf(Integer value) &#123;</span></span><br><span class="line"><span class="comment">//        for (OrderAuditingStatus orderLogType : values()) &#123;</span></span><br><span class="line"><span class="comment">//            if (Objects.equals(orderLogType.code, value)) &#123;</span></span><br><span class="line"><span class="comment">//                return orderLogType;</span></span><br><span class="line"><span class="comment">//            &#125;</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//        return null;</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="3：-枚举的好处"><a href="#3：-枚举的好处" class="headerlink" title="3： 枚举的好处"></a>3： 枚举的好处</h1><ul>
+<li>它是天然的 单例。线程安全。这是因为底层做了保证</li>
+<li>枚举的单例可以避免被反序列化破坏</li>
+</ul>
+<h1 id="4：-枚举的比较方式"><a href="#4：-枚举的比较方式" class="headerlink" title="4： 枚举的比较方式"></a>4： 枚举的比较方式</h1><ul>
+<li>使用 equals 或者 &#x3D;&#x3D; 都行</li>
+<li>枚举的 equals 底层也是 &#x3D;&#x3D;</li>
+</ul>
+<h1 id="5-：-啥时候使用枚举"><a href="#5-：-啥时候使用枚举" class="headerlink" title="5 ： 啥时候使用枚举"></a>5 ： 啥时候使用枚举</h1><p>当一个对象，天生有一组预定义的值，而且这些值不会轻易改变，只读不改，这个时候就可以使用枚举。</p>
+<h2 id="1：-有了常量了为啥还要用枚举"><a href="#1：-有了常量了为啥还要用枚举" class="headerlink" title="1： 有了常量了为啥还要用枚举"></a>1： 有了常量了为啥还要用枚举</h2><p>你要是使用常量也能做到，但是常量使用时候，调用者可以传递任何值都行，你要是使用枚举，那调用者在传入其他任何值的时候会编译报错，这时就规范了调用者的传参。   </p>
+<h1 id="6：-纯粹是零碎的点"><a href="#6：-纯粹是零碎的点" class="headerlink" title="6： 纯粹是零碎的点"></a>6： 纯粹是零碎的点</h1><p>只能重写枚举的 toString 方法，不能下重写 hahscode 方法，因为 hashcode 是 final 定义；</p>
+<h1 id="7：枚举与单例模式相关"><a href="#7：枚举与单例模式相关" class="headerlink" title="7：枚举与单例模式相关"></a>7：枚举与单例模式相关</h1><h2 id="1：为什么说枚举是最好的单例实现"><a href="#1：为什么说枚举是最好的单例实现" class="headerlink" title="1：为什么说枚举是最好的单例实现"></a>1：为什么说枚举是最好的单例实现</h2><p>effective java 这本书中说：</p>
+<p>​	枚举实现的单例是最佳实践；</p>
+<p>​	原因在于：</p>
+<p>​	1：写法简单；</p>
+<p>​	2：枚举类的单例是线程安全的；</p>
+<p>​	3：避免被反序列化破坏；</p>
+<p>​	4：枚举实现的单例避免反射破坏</p>
+<h2 id="2：为什么说枚举的单例是线程安全的"><a href="#2：为什么说枚举的单例是线程安全的" class="headerlink" title="2：为什么说枚举的单例是线程安全的"></a>2：为什么说枚举的单例是线程安全的</h2><p>枚举类反编译的字节码文件中可以看到：</p>
+<p>​	该类是final 修饰继承 Enum 类；</p>
+<p>​	各个属性是 final static 修饰；</p>
+<pre><code>静态代码块中加载所有属性；
+</code></pre>
+<p>既然是 static 修饰的属性，在类加载过程中就会被初始化，然而 Java 类的加载和初始化过程都是线程安全的；</p>
+<p>因此，枚举类天生是线程安全的；</p>
+<h2 id="3：枚举类如何解决反序列化破坏单例"><a href="#3：枚举类如何解决反序列化破坏单例" class="headerlink" title="3：枚举类如何解决反序列化破坏单例"></a>3：枚举类如何解决反序列化破坏单例</h2><h3 id="1：反序列化如何破坏单例"><a href="#1：反序列化如何破坏单例" class="headerlink" title="1：反序列化如何破坏单例"></a>1：反序列化如何破坏单例</h3><p>从Enum的源码中看到，大部分的方法都是final修饰的，特别是<strong>clone、readObject、writeObject</strong>这三个方法</p>
+<p>不能通过克隆、序列化和反序列化复制枚举</p>
+<h2 id="4：-枚举单例如何解决反射破坏"><a href="#4：-枚举单例如何解决反射破坏" class="headerlink" title="4： 枚举单例如何解决反射破坏"></a>4： 枚举单例如何解决反射破坏</h2><p>即使单例类的构造方法是私有的，但是还是可以通过反射来破坏它；</p>
+<p>枚举的构造方法虽然也是私有的，但是枚举是在类加载的时候加载，而普通方式实现的单例是在运行期调用的时候加载，这是两者的关键区别；因此，枚举不会被反射破坏，而普通方式ide单例会被反射破坏。</p>
+<h1 id="8-：枚举-模版模式-策略模式-工厂模式相关"><a href="#8-：枚举-模版模式-策略模式-工厂模式相关" class="headerlink" title="8 ：枚举+模版模式+策略模式+工厂模式相关"></a>8 ：枚举+模版模式+策略模式+工厂模式相关</h1><p>根据枚举值不同，调用不同的业务实现类</p>
+<h1 id="9-：-双值枚举"><a href="#9-：-双值枚举" class="headerlink" title="9 ： 双值枚举"></a>9 ： 双值枚举</h1><p>说白了也就是，默认情况下枚举只有一个值，但是你可以在常量后面加额外的值表示额外的行为</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/16/%E6%9E%9A%E4%B8%BE/" data-id="clwirposh0019rkuwbvz94esx" data-title="枚举" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-集合体系" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T16:00:00.000Z" itemprop="datePublished">2020-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/">集合体系</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="集合体系"><a href="#集合体系" class="headerlink" title="集合体系"></a>集合体系</h1><p>集合体系包含 Collection 接口个 Map 接口</p>
+<h1 id="1：Collection-接口"><a href="#1：Collection-接口" class="headerlink" title="1：Collection 接口"></a>1：Collection 接口</h1><p>Collection 接口实现了 Iterable 接口，说明子类都是可以遍历的</p>
+<h2 id="1：-List-接口"><a href="#1：-List-接口" class="headerlink" title="1： List 接口"></a>1： List 接口</h2><ul>
+<li>ArrayList 实现类</li>
+<li>LinkedList 实现类</li>
+<li>vector 实现类<ul>
+<li>Stack 实现类</li>
+</ul>
+</li>
+</ul>
+<h2 id="2：Set-接口"><a href="#2：Set-接口" class="headerlink" title="2：Set 接口"></a>2：Set 接口</h2><ul>
+<li>HashSet 实现类<ul>
+<li>LinkedHashSet 实现类</li>
+</ul>
+</li>
+<li>TreeSet 实现类</li>
+</ul>
+<h2 id="3：Queue-接口"><a href="#3：Queue-接口" class="headerlink" title="3：Queue 接口"></a>3：Queue 接口</h2><ul>
+<li><p>BlockingQueue 实现类</p>
+</li>
+<li><p>Dequeue 实现类</p>
+<ul>
+<li>LinkedList</li>
+</ul>
+</li>
+<li><p>PriorityQueue 实现类</p>
+</li>
+</ul>
+<h1 id="2：Map-接口"><a href="#2：Map-接口" class="headerlink" title="2：Map 接口"></a>2：Map 接口</h1><ul>
+<li>HashMap 实现类<ul>
+<li>LinkedHashMap 实现类</li>
+</ul>
+</li>
+<li>TreeMap 实现类</li>
+<li>HashTable 实现类</li>
+<li>CurrentHashMap 实现类</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" data-id="clwirposj001drkuwcgnparf7" data-title="集合体系" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-数组" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/07/16/%E6%95%B0%E7%BB%84/" class="article-date">
+  <time class="dt-published" datetime="2020-07-15T16:00:00.000Z" itemprop="datePublished">2020-07-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/07/16/%E6%95%B0%E7%BB%84/">数组</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：-数组的特点"><a href="#1：-数组的特点" class="headerlink" title="1： 数组的特点"></a>1： 数组的特点</h1><p>1:   数组存的是相同类型的元素</p>
+<p>2：数组一旦初始化后，长度就固定。</p>
+<p>3：数组中的元素可以重复</p>
+<p>4：数组中元素是有序的，有序的意思是遍历的顺序跟加入的顺序一样</p>
+<p>5：查询的复杂度是 O(1)</p>
+<p>6：数组的长度是 length(),  指的是元素的个数，它没有 size() </p>
+<p>7 ： 数组下标从 0  开始，是因为下标表示元素距离首地址的偏移量</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/07/16/%E6%95%B0%E7%BB%84/" data-id="clwirposf0013rkuw5dj25x07" data-title="数组" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/">&laquo; zurück</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">weiter &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/16/static/">static</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/Lock%20%E9%94%81/">lock 锁</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
