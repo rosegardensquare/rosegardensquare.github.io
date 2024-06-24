@@ -69,6 +69,739 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-设计模式总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" class="article-date">
+  <time class="dt-published" datetime="2023-12-15T16:00:00.000Z" itemprop="datePublished">2023-12-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/">设计模式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="1：策略-模版-工厂"><a href="#1：策略-模版-工厂" class="headerlink" title="1：策略 + 模版 + 工厂"></a>1：策略 + 模版 + 工厂</h2><p>当我们有多个分支的时候，我们可以把这些分支作为一个个的策略，公共的东西放到模板中，多个策略交给工厂去管理；</p>
+<p>具体的：</p>
+<p>​	比如，有一个支付流程包括三个逻辑：</p>
+<ul>
+<li>支付前置处理</li>
+<li>支付处理</li>
+<li>支付后置处理</li>
+</ul>
+<p>其中，支付前置和后置都是公共的，可以把他们放在抽象类中，直接实现；</p>
+<p>然后支付处理，根据不同的支付类型实现不同的实现类，作为策略；</p>
+<p>策略交给工厂去管理，在工厂中创建一个 Map，所有策略注入进去，然后提供一个通过支付类型获取对应支付策略的get 方法；</p>
+<h3 id="2：具体代码"><a href="#2：具体代码" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><ul>
+<li>模版：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractPayService</span> <span class="keyword">implements</span> <span class="title class_">PayService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">      	<span class="comment">//前置检查</span></span><br><span class="line">        validateRequest(payRequest);</span><br><span class="line">      	<span class="comment">//支付核心逻辑</span></span><br><span class="line">        doPay(payRequest);</span><br><span class="line">      	<span class="comment">//后置处理</span></span><br><span class="line">        postPay(payRequest);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">postPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//支付成功的后置处理</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">validateRequest</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//参数检查</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多个策略</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AlipayPayService</span> <span class="keyword">extends</span> <span class="title class_">AbstractPayService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//支付宝支付逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WechatPayService</span> <span class="keyword">extends</span> <span class="title class_">AbstractPayService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//微信支付逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>工厂</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ConcurrentHashMap;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PayServiceFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, PayService&gt; payServiceMap = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PayService <span class="title function_">getPayService</span><span class="params">(String payChannel)</span> &#123;</span><br><span class="line">        <span class="comment">// alipay -&gt; alipayPayService</span></span><br><span class="line">        <span class="comment">// wechat -&gt; wechatPayService</span></span><br><span class="line">        <span class="keyword">return</span> payServiceMap.get(payChannel + <span class="string">&quot;PayService&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>使用的时候</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PayDomainService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    PayServiceFactory payServiceFactory;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">payChannel</span> <span class="operator">=</span> payRequest.getPayChannel();</span><br><span class="line">        payServiceFactory.getPayService(payChannel).pay(payRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2：享元模式-工厂模式"><a href="#2：享元模式-工厂模式" class="headerlink" title="2：享元模式 + 工厂模式"></a>2：享元模式 + 工厂模式</h2><p>当我们需要用不同的司机账户参数创建对象时，可以在工厂类中定义一个 Map 作为缓存。每次从 Map 中根据不同的参数获取对应的对象，如果对象不存在，就先创建这个对象并放入 Map 中，然后下次再遇到相同参数时，直接从 Map 中获取已创建的对象。</p>
+<h3 id="2：具体代码-1"><a href="#2：具体代码-1" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 具体的汽车类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Car</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String brand;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String color;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ConcreteCar</span><span class="params">(String brand, String color)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.brand = brand;</span><br><span class="line">        <span class="built_in">this</span>.color = color;</span><br><span class="line">        System.out.println(<span class="string">&quot;Creating a new &quot;</span> + color + <span class="string">&quot; &quot;</span> + brand + <span class="string">&quot; car.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 汽车工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CarFactory</span> &#123;</span><br><span class="line">    <span class="comment">// 缓存汽车实例的 Map</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String, Car&gt; carMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Car <span class="title function_">getCar</span><span class="params">(String brand, String color)</span> &#123;</span><br><span class="line">        <span class="comment">// 根据品牌和颜色生成唯一的 key</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> brand + <span class="string">&quot;-&quot;</span> + color;</span><br><span class="line">        <span class="comment">// 从缓存中获取汽车实例</span></span><br><span class="line">        <span class="type">Car</span> <span class="variable">car</span> <span class="operator">=</span> carMap.get(key);</span><br><span class="line">        <span class="comment">// 如果不存在，则创建新的汽车实例并放入缓存</span></span><br><span class="line">        <span class="keyword">if</span> (car == <span class="literal">null</span>) &#123;</span><br><span class="line">            car = <span class="keyword">new</span> <span class="title class_">ConcreteCar</span>(brand, color);</span><br><span class="line">            carMap.put(key, car);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> car;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FlyweightPatternExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Car</span> <span class="variable">car1</span> <span class="operator">=</span> CarFactory.getCar(<span class="string">&quot;Toyota&quot;</span>, <span class="string">&quot;Red&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">Car</span> <span class="variable">car2</span> <span class="operator">=</span> CarFactory.getCar(<span class="string">&quot;Toyota&quot;</span>, <span class="string">&quot;Red&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3：责任链模式"><a href="#3：责任链模式" class="headerlink" title="3：责任链模式"></a>3：责任链模式</h2><p>类似于审批流这样的场景中，每一步通过后才能流转到下一步；</p>
+<p>那么，我们先定义一个 handler 接口，提供两个抽象方法：处理具体逻辑的方法、传递到下一个handler 的方法 setNextHandler 方法；</p>
+<p>每一步都是一个handler 实现handler 接口，用的时候，定义好责任链顺序，通过不断的 setNext ，流转到下一个handler。如果检验不通过，流转终止。</p>
+<p>在责任链模式下，要新增和删除一个分支流程也是很方便的。</p>
+<h3 id="2：具体代码-2"><a href="#2：具体代码-2" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 抽象处理器接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 参数校验处理器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ParameterValidationHandler</span> <span class="keyword">implements</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> OrderHandler nextHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException &#123;</span><br><span class="line">        <span class="comment">// 假设检查订单参数是否为空</span></span><br><span class="line">        <span class="keyword">if</span> (order == <span class="literal">null</span> || order.getParameter() == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OrderProcessingException</span>(<span class="string">&quot;参数校验失败: 订单参数不能为空&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;参数校验通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nextHandler != <span class="literal">null</span>) &#123;</span><br><span class="line">            nextHandler.handleOrder(order);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.nextHandler = nextHandler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 库存校验处理器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">StockValidationHandler</span> <span class="keyword">implements</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> OrderHandler nextHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException &#123;</span><br><span class="line">        <span class="comment">// 假设检查库存是否充足</span></span><br><span class="line">        <span class="keyword">if</span> (!order.isStockAvailable()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OrderProcessingException</span>(<span class="string">&quot;库存校验失败: 库存不足&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;库存校验通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nextHandler != <span class="literal">null</span>) &#123;</span><br><span class="line">            nextHandler.handleOrder(order);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.nextHandler = nextHandler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义头节点</span></span><br><span class="line"><span class="type">OrderHandler</span> <span class="variable">parameterValidationHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ParameterValidationHandler</span>();</span><br><span class="line">      <span class="type">OrderHandler</span> <span class="variable">stockValidationHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StockValidationHandler</span>();</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 设置责任链顺序</span></span><br><span class="line">      parameterValidationHandler.setNextHandler(stockValidationHandler);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 创建订单</span></span><br><span class="line">      <span class="type">Order</span> <span class="variable">order</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Order</span>(<span class="string">&quot;Product123&quot;</span>, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">          parameterValidationHandler.handleOrder(order);</span><br><span class="line">          System.out.println(<span class="string">&quot;订单处理成功&quot;</span>);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (OrderProcessingException e) &#123;</span><br><span class="line">          System.err.println(e.getMessage());</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4：代理模式"><a href="#4：代理模式" class="headerlink" title="4：代理模式"></a>4：代理模式</h2><p>一般用到静态代理和 JDK 的动态代理；</p>
+<ul>
+<li><p>静态代理是定义一个代理类，实现接口，然后在里面注入目标实现类，这样在重写的方法可以增强；</p>
+</li>
+<li><p>JDK 动态代理是使用反射。定义一个 handler 实现 InvocationHandler 接口，重写 invoke 方法，然后使用 Proxy.newProxyInstance 创建代理，然后在执行方法的时候，会走到代理类的 invoke 方法。</p>
+</li>
+</ul>
+<h1 id="1：设计模式-7-大原则"><a href="#1：设计模式-7-大原则" class="headerlink" title="1：设计模式 7 大原则"></a>1：设计模式 7 大原则</h1><ul>
+<li>单一职责</li>
+</ul>
+<p>​	一个类只做一件事</p>
+<ul>
+<li><p>接口隔离原则</p>
+<p>强调的是应该使用多个小的接口，而不是一个大的接口啥都包含</p>
+</li>
+<li><p>开放闭合原则</p>
+<p>开放性的对外扩展，而不是通过修改代码来实现</p>
+</li>
+<li><p>里氏替换原则</p>
+<p>强调的是继承关系的正确性</p>
+</li>
+<li><p>依赖倒置原则</p>
+<p>高层模块和底层模块的解耦，应该是通过抽象接口或者抽象类</p>
+</li>
+<li><p>迪米特法则</p>
+<p>强调的是将负责的模块，拆分成小的模块，模块之间通过最少的接口交互</p>
+</li>
+<li><p>聚合和复用原则</p>
+<p>构建对象的时候，应该用复用和聚合，而不是继承关系。</p>
+</li>
+</ul>
+<h1 id="2：工厂模式"><a href="#2：工厂模式" class="headerlink" title="2：工厂模式"></a>2：工厂模式</h1><p>它是将对象的创建和使用分离开；</p>
+<p>通过工厂创建对象代替 new ；避免重复写创建对象的代码；</p>
+<p>工厂模式分为：</p>
+<ul>
+<li><p>简单工厂</p>
+<p>它也叫静态工厂；</p>
+</li>
+<li><p>工厂方法</p>
+</li>
+<li><p>抽象工厂</p>
+</li>
+</ul>
+<h1 id="3：观察者模式"><a href="#3：观察者模式" class="headerlink" title="3：观察者模式"></a>3：观察者模式</h1><p>就是一个对象发生改变的时候，跟他相关的对象都能感知，并自动更新。</p>
+<p>这种模式减少对象之间的耦合度；</p>
+<ul>
+<li>举例子</li>
+</ul>
+<h1 id="4：装饰器模式"><a href="#4：装饰器模式" class="headerlink" title="4：装饰器模式"></a>4：装饰器模式</h1><p>给一个对象增加更多的功能的时候，不是直接在这个对象上修改代码，而是动态的去增加；</p>
+<p>这种可以使对象的功能扩张更加可控和灵活；</p>
+<h1 id="5：单例模式"><a href="#5：单例模式" class="headerlink" title="5：单例模式"></a>5：单例模式</h1><p>就是提供全局的唯一的访问点，不管多少次，访问的都是同一个实例；</p>
+<h1 id="6：模板方法模式"><a href="#6：模板方法模式" class="headerlink" title="6：模板方法模式"></a>6：模板方法模式</h1><p>它的主要作用就是复用代码；</p>
+<p>我们把公共的业务逻辑定义在父类中，然后在子类中定制化自己的业务逻辑；</p>
+<p>我们通常会把策略模式、工厂模式和模版方法模式结合使用；</p>
+<h1 id="7：享元模式"><a href="#7：享元模式" class="headerlink" title="7：享元模式"></a>7：享元模式</h1><p>享元模式是对一些共享对象的复用思想；这样做的好处是：减少了创建重复对象的开销，节省系统资源和内存；</p>
+<p>很多地方都使用到了享元模式的思想：池化技术、包装类的缓存、字符串常量池；</p>
+<p>它一般和工厂模式结合使用。工厂模式负责管理创建出来的对象，获取它的一个享元抽象或者实现类，从而实现复用思想。</p>
+<h2 id="1：哪些地方使用了享元模式"><a href="#1：哪些地方使用了享元模式" class="headerlink" title="1：哪些地方使用了享元模式"></a>1：哪些地方使用了享元模式</h2><ul>
+<li><p>包装类中的缓存</p>
+</li>
+<li><p>string 的字符串常量池</p>
+</li>
+</ul>
+<h1 id="8：责任链模式"><a href="#8：责任链模式" class="headerlink" title="8：责任链模式"></a>8：责任链模式</h1><p>就是将请求发送者和多个接收者组成一条链，沿着这条链传递请求，直到有一个处理者处理它为止。</p>
+<ul>
+<li><p>例子：</p>
+<p>过滤器链；</p>
+<p>异常处理链</p>
+<p>认证授权</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" data-id="clxs9nvuj0026ikuwf3g1fd61" data-title="设计模式" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-微服务相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/" class="article-date">
+  <time class="dt-published" datetime="2023-11-15T16:00:00.000Z" itemprop="datePublished">2023-11-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/">微服务</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：啥是微服务"><a href="#1：啥是微服务" class="headerlink" title="1：啥是微服务"></a>1：啥是微服务</h1><p>微服务是分布式系统中的其中一种架构，分布式架构包括：</p>
+<ul>
+<li>BS 架构</li>
+<li>CS 架构</li>
+<li>微服务架构</li>
+<li>SOA 架构</li>
+<li>P2P 架构</li>
+</ul>
+<p>微服务关注的是业务层面的拆分、分布式架构关注的是系统级别的拆分；</p>
+<h1 id="2：如果做微服务拆分"><a href="#2：如果做微服务拆分" class="headerlink" title="2：如果做微服务拆分"></a>2：如果做微服务拆分</h1><p>要做好微服务拆分，需要考虑的方面很多；</p>
+<p>但是一般按照业务拆分成不同的业务模块，模块单独部署；</p>
+<p>但是微服务拆分还要考虑服务治理问题；</p>
+<h1 id="3：啥是-DevOps"><a href="#3：啥是-DevOps" class="headerlink" title="3：啥是 DevOps"></a>3：啥是 DevOps</h1><p>DevOps 是一种开发流程，或者说是一种开发文化；</p>
+<p>它是通过软件开发与运维结合，保证软件能够安全、快速的交付；</p>
+<p>能做到这一点是因为有，自动化的持续集成持续部署的软件出现。</p>
+<h1 id="4：微服务中的-CI、CD-是啥"><a href="#4：微服务中的-CI、CD-是啥" class="headerlink" title="4：微服务中的 CI、CD 是啥"></a>4：微服务中的 CI、CD 是啥</h1><p>CI ：是持续继承</p>
+<p>CD：持续部署</p>
+<p>他们都是 DecOps 中的自动化流程。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/" data-id="clxs9nvu8001pikuw11y80m6e" data-title="微服务" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-分布式理论" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" class="article-date">
+  <time class="dt-published" datetime="2023-10-15T16:00:00.000Z" itemprop="datePublished">2023-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">分布式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：分布式、集群"><a href="#1：分布式、集群" class="headerlink" title="1：分布式、集群"></a>1：分布式、集群</h1><h2 id="1：啥是集中式"><a href="#1：啥是集中式" class="headerlink" title="1：啥是集中式"></a>1：啥是集中式</h2><p>最早的集中式是把数据库、系统服务放在一起，集中对外提供一个访问入口，这种容易出现单点故障、可扩展性差；</p>
+<p>这种单点故障问题在分布式中可以解决。</p>
+<h2 id="2：啥是分布式"><a href="#2：啥是分布式" class="headerlink" title="2：啥是分布式"></a>2：啥是分布式</h2><p>分布式就是把一个单体应用按照业务功能垂直拆分，成不同的子模块系统</p>
+<p>，分别部署在不同机器上防止单点故障，各个服务之间远程调用，对外也只是提供唯一的访问入口。比如：用户服务，订单服务。</p>
+<p>原来在一块，现在各自成为一个服务。</p>
+<h3 id="1：分布式系统要解决啥问题"><a href="#1：分布式系统要解决啥问题" class="headerlink" title="1：分布式系统要解决啥问题"></a>1：分布式系统要解决啥问题</h3><p>分布式系统存在通信延迟，一致性问题。</p>
+<h4 id="1：一致性问题都有啥"><a href="#1：一致性问题都有啥" class="headerlink" title="1：一致性问题都有啥"></a>1：一致性问题都有啥</h4><pre><code> 按照分类：
+</code></pre>
+<ul>
+<li><p>强一致性</p>
+<p>就是任意时间点每个读操作，都是最近写操作的结果；</p>
+<p>强一致性通常式牺牲可用性来保证。</p>
+<p>强一致性又分为顺序一致性和线性一致性；</p>
+</li>
+<li><p>弱一致性</p>
+<p>弱一致性放宽了一致性的严格条件；</p>
+<p>它为了高可用性，牺牲了访问某些节点时候，读到的数据可以不是最新的。</p>
+</li>
+<li><p>最终一致性</p>
+<p>它允许系统故障网络延迟之后一段时间，各个节点之间的数据最终都是相同的，保证的式一段时间内的一致性。</p>
+</li>
+</ul>
+<h2 id="3：集群"><a href="#3：集群" class="headerlink" title="3：集群"></a>3：集群</h2><p>把分布式系统，在不同的机器上复制多份。通过负载均衡对外提供服务。</p>
+<h1 id="2：分布式系统的第一步"><a href="#2：分布式系统的第一步" class="headerlink" title="2：分布式系统的第一步"></a>2：分布式系统的第一步</h1><p>CAP 原则，是分布式系统需要考虑的因素。</p>
+<h2 id="1：CAP-原则"><a href="#1：CAP-原则" class="headerlink" title="1：CAP 原则"></a>1：CAP 原则</h2><ul>
+<li><p>C 强一致性</p>
+<p>每次的读操作，都会收到最近写操作的结果；</p>
+</li>
+<li><p>A 可用性</p>
+<p>每个请求都能有所响应。</p>
+</li>
+<li><p>P 分区容错性</p>
+<p>某些节点挂了，但是系统整体还是能提供对外服务。</p>
+</li>
+</ul>
+<h2 id="2：BASE-理论-软状态"><a href="#2：BASE-理论-软状态" class="headerlink" title="2：BASE 理论 - 软状态"></a>2：BASE 理论 - 软状态</h2><p>BASE 理论是对 CAP 理论的一个补充。是说，如果达不到强一致性，使用中间状态软状态 + 降级，达到最终一致性也行，保证系统的核心功能和高可用。</p>
+<p>BASE 理论和 ACID 不一样， ACID 是数据库层面的，它是一种强一致性的模型，BASE 是分布式系统中的，它是一种最终一致性的模型。</p>
+<h1 id="4：分布式一致性问题"><a href="#4：分布式一致性问题" class="headerlink" title="4：分布式一致性问题"></a>4：分布式一致性问题</h1><h2 id="1：分布式一致性问题是啥"><a href="#1：分布式一致性问题是啥" class="headerlink" title="1：分布式一致性问题是啥"></a>1：分布式一致性问题是啥</h2><p>引出了拜占庭将军问题。</p>
+<p>就是为了阐述分布式系统中相互独立的节点如何达成共识。</p>
+<p>拜占庭将军问题就是分布式系统中的研究的一个重要问题。</p>
+<h2 id="2：咋解决一致性问题"><a href="#2：咋解决一致性问题" class="headerlink" title="2：咋解决一致性问题"></a>2：咋解决一致性问题</h2><p>解决拜占庭将军问题的方法有很多：投票算法、共识性算法。</p>
+<p>投票机制的背后原理是半数机制。</p>
+<p>引入一致性算法；</p>
+<h2 id="3：一致性算法有哪些"><a href="#3：一致性算法有哪些" class="headerlink" title="3：一致性算法有哪些"></a>3：一致性算法有哪些</h2><h3 id="1：Paxos-算法"><a href="#1：Paxos-算法" class="headerlink" title="1：Paxos 算法"></a>1：Paxos 算法</h3><p>它是最早提出来的解决分布式一致性问题的一种算法</p>
+<h3 id="2：Raft-算法"><a href="#2：Raft-算法" class="headerlink" title="2：Raft 算法"></a>2：Raft 算法</h3><p>Raft 算法是为了替代难以理解的Paxos 算法；</p>
+<p>Nacos 是 Raft 协议选举</p>
+<h3 id="3：ZAB-协议"><a href="#3：ZAB-协议" class="headerlink" title="3：ZAB 协议"></a>3：ZAB 协议</h3><p>是 ZK 中的，专门为了解决 ZK 中节点同步的一致性算法。</p>
+<p>ZAB 协议借鉴了 Paxos 算法；</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" data-id="clxs9nvtv000zikuw94oaeg5c" data-title="分布式" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Nacos" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/16/Nacos/" class="article-date">
+  <time class="dt-published" datetime="2023-09-15T16:00:00.000Z" itemprop="datePublished">2023-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/09/16/Nacos/">nacos</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：nacos-配置中心变化，项目如何感知"><a href="#1：nacos-配置中心变化，项目如何感知" class="headerlink" title="1：nacos 配置中心变化，项目如何感知"></a>1：nacos 配置中心变化，项目如何感知</h1><p>客户端感知配置中心的变化，一般就两种模式：那么推，要么拉；</p>
+<p>拉的模式：</p>
+<p>​	客户端不断轮询服务端，有变化就把数据拉取回来。缺点是：无法实时性，轮询还会对服务端造成压力。</p>
+<p>推的模式：</p>
+<p>​	客户端跟服务端建立 TCP 连接，当服务端有变化时，通过这个连接，把数据推送给客户端；</p>
+<p>​	优点是：实时性比较高，缺点是服务端要维护大量的 TCP，占用大量的 CPU 和内存。</p>
+<p>nacos 中的做法是：</p>
+<p>​	nacos 1 中使用长轮询，Long Polling;</p>
+<p>​		过程是这样的：客户端向服务端发起长轮询请求，这是一个 Http 请求；nacos 不会立即返回结果，而是将这个请求挂起默认30s，当有变化时候，才响应客户端, 配置中心会为每个配置文件生成 MD5，比较的是 MD5 值有没有变化。这种方式是客户端需要不断的发起 HTTP 请求，实时性不是很高。这种是拉的模式。</p>
+<p>​	nacos 2 采用 gRpc, 长连接；</p>
+<p>​		过程是这样的：服务端主动发起，跟客户端建立 TCP 长连接；它们会保持心跳机制。客户端被动接受服务端变化的数据。这种的实时性更高。这种是推的模式。</p>
+<h1 id="2：Nacos-能同时满足-AP-和-CP-的原因是啥"><a href="#2：Nacos-能同时满足-AP-和-CP-的原因是啥" class="headerlink" title="2：Nacos 能同时满足 AP 和 CP 的原因是啥"></a>2：Nacos 能同时满足 AP 和 CP 的原因是啥</h1><p>默认 AP 协议采用 raft 协议；</p>
+<p>CP 协议采用 Disto 协议；</p>
+<p>在这两种协议间切换。</p>
+<h1 id="3：Nacos-相关"><a href="#3：Nacos-相关" class="headerlink" title="3：Nacos 相关"></a>3：Nacos 相关</h1><h2 id="1：两个模块"><a href="#1：两个模块" class="headerlink" title="1：两个模块"></a>1：两个模块</h2><p>nacos 有两个核心的模块，naming server 提供注册功能，config server 提供配置功能；</p>
+<p>它还继承普罗米修斯来提供监控功能，granfna 提供面板可视化。</p>
+<h2 id="2：配置文件优先级"><a href="#2：配置文件优先级" class="headerlink" title="2：配置文件优先级"></a>2：配置文件优先级</h2><ul>
+<li>backend.yml</li>
+<li>beckend-dev.yml</li>
+<li>扩展文件</li>
+<li>共享文件</li>
+</ul>
+<h1 id="4：注册中心流程"><a href="#4：注册中心流程" class="headerlink" title="4：注册中心流程"></a>4：注册中心流程</h1><ul>
+<li><p>注册中心</p>
+<p>NameService</p>
+</li>
+</ul>
+<p>提供者将自己的实例注册到注册中心，之后，注册中心封装成一个 ConcurrentHashMap，缓存到内存；</p>
+<p>消费者启动后：</p>
+<p>​	会从注册中心读取需要的提供者的信息，缓存到本地；并开启一个定时任务线程池每隔 10 s 轮询从注册中心获取服务最新列表, 调用的是 NameService 的 getInstance 方法。会有 10s 的延迟。</p>
+<p>注册中心会建立一个跟提供者的心跳机制，监控提供者的情况，当发现提供者有连接超时，就把消息推送给消费者更新本地缓存。</p>
+<p>心跳机制是一个 UDP 协议的连接，是一个不可靠的传输，但是它无序保证消息变更的实时性，因为还有消费者的 pull 消息。</p>
+<h2 id="1：提供者咋注册"><a href="#1：提供者咋注册" class="headerlink" title="1：提供者咋注册"></a>1：提供者咋注册</h2><p>其实就是发起一个 HTTP 请求到注册中心，注册中心是 nameService 这个接口，调用它的 registerInstance（instance） 。</p>
+<p>临时实例：封装好信息去注册，同时发送 http 心跳，每隔 5 s 心跳一次。</p>
+<p> 永久实例不心跳。</p>
+<h3 id="1：namingservice-咋处理心跳机制"><a href="#1：namingservice-咋处理心跳机制" class="headerlink" title="1：namingservice 咋处理心跳机制"></a>1：namingservice 咋处理心跳机制</h3><p>得到心跳数据之后，更新实例的心跳时间。</p>
+<p>如果一个服务在 3 个心跳周期内，还没发送心跳，那么就标记为不健康；</p>
+<p>如果在 6 个心跳周期内，还没发送心跳，那么就下线它</p>
+<p>永久实例的心跳是主动检测模式。</p>
+<h2 id="2：注册中心拿到请求之后呢"><a href="#2：注册中心拿到请求之后呢" class="headerlink" title="2：注册中心拿到请求之后呢"></a>2：注册中心拿到请求之后呢</h2><p>会封装到一个 ConcurerentHashMap 中：</p>
+<h3 id="1-：Nacos-的分级存储模型"><a href="#1-：Nacos-的分级存储模型" class="headerlink" title="1 ：Nacos 的分级存储模型"></a>1 ：Nacos 的分级存储模型</h3><p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240602173327956.png" alt="image-20240602173327956"></p>
+<h3 id="2：NamingService-在存储这个结构的时候，是如何抗住10W并发"><a href="#2：NamingService-在存储这个结构的时候，是如何抗住10W并发" class="headerlink" title="2：NamingService 在存储这个结构的时候，是如何抗住10W并发"></a>2：NamingService 在存储这个结构的时候，是如何抗住10W并发</h3><p>也就是注册时候，服务端保存注册数据的流程；</p>
+<p>一方面它会做集群、负载均衡，另一方面它会在代码层面做了优化；</p>
+<p>代码上咋做优化的呢：</p>
+<ul>
+<li><p>先注册保存到 Map</p>
+<p>它在保存的时候，不着急保存，而是把这些要保存的数据放到阻塞队列中走异步保存；它在namingService 启动的时候，就已经启动了一个线程一个死循环，从阻塞队列中拿数据做处理。这个死循环不会对性能造成影响，因为没数据时，它会释放CPU。</p>
+</li>
+<li><p>做数据同步到 Follower 节点</p>
+<p>临时实例用的是：Distor 协议</p>
+<p>永久实例用的是：Raft 协议</p>
+<p>默认是临时实例。</p>
+<p>这一步是比较耗时的，里边也是采用阻塞队列异步执行。</p>
+</li>
+</ul>
+<h3 id="3：要是在保存到-map-过程中有并发读写问题，咋处理"><a href="#3：要是在保存到-map-过程中有并发读写问题，咋处理" class="headerlink" title="3：要是在保存到 map 过程中有并发读写问题，咋处理"></a>3：要是在保存到 map 过程中有并发读写问题，咋处理</h3><p>它利用 CopyOnwrite 思想，同时加了 sync 锁，锁的对象是实例，单个实例之间串行执行，多个实例之间互不影响。</p>
+<h1 id="5：Nacos-节点之间通信的变化"><a href="#5：Nacos-节点之间通信的变化" class="headerlink" title="5：Nacos 节点之间通信的变化"></a>5：Nacos 节点之间通信的变化</h1><p>1.0 中节点之间是 Http 协议。</p>
+<p>2.0 中是 grpc 协议。</p>
+<p>grpc 协议是基于 Http 2.0 。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/16/Nacos/" data-id="clxs9nvtd0008ikuw4y5pd4w7" data-title="nacos" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nacos/" rel="tag">nacos</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Springcloud" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/08/16/Springcloud/" class="article-date">
+  <time class="dt-published" datetime="2023-08-15T16:00:00.000Z" itemprop="datePublished">2023-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/08/16/Springcloud/">服务治理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：服务治理"><a href="#1：服务治理" class="headerlink" title="1：服务治理"></a>1：服务治理</h1><h2 id="1：网关-GateWay"><a href="#1：网关-GateWay" class="headerlink" title="1：网关 GateWay"></a>1：网关 GateWay</h2><h3 id="1：GateWay-总结"><a href="#1：GateWay-总结" class="headerlink" title="1：GateWay 总结"></a>1：GateWay 总结</h3><p>gateway 路由转发，全局过滤器；</p>
+<p>作为项目网关；统一的入口；</p>
+<p>每个路由都有自己的过滤器，还可以设置一个全局的过滤器；</p>
+<p>我们这个 gateway 主要是做一个 JWT 的一个认证，用户登录后会生成一个 JWT 的 token，然后前端请求在 header 中携带这个 token,</p>
+<p>gateway 做拦截，之后解析，并做一个续期放到 redis 中，超时redis 会删除它。gateway 主要做一个 JWT 的一个 filter, 一个 golbalFilter 拦截，然后转发给对应的服务。</p>
+<h3 id="2：这样写"><a href="#2：这样写" class="headerlink" title="2：这样写"></a>2：这样写</h3><p>这样配置 </p>
+<p>​	routes</p>
+<p>​		id: 服务名字</p>
+<p>​		uri:</p>
+<p>​		lb 动态路由从注册中心获取的服务名一样</p>
+<p>​		 predicate：断言</p>
+<p>​			path:</p>
+<h3 id="3：gateway-三大核心"><a href="#3：gateway-三大核心" class="headerlink" title="3：gateway 三大核心"></a>3：gateway 三大核心</h3><ul>
+<li><p>路由</p>
+<p>它是由 id 一般就是服务名唯一，URI 组成</p>
+</li>
+<li><p>断言</p>
+<p>就是一个boolean 值</p>
+</li>
+<li><p>过滤器</p>
+<p>是对路由的增强，在路由前后做一些事</p>
+<p>它是根据断言是否匹配，来路由到具体的服务。</p>
+</li>
+</ul>
+<h3 id="4：gateway-的工作流程是啥"><a href="#4：gateway-的工作流程是啥" class="headerlink" title="4：gateway 的工作流程是啥"></a>4：gateway 的工作流程是啥</h3><p>它大致分为几个步骤：</p>
+<ul>
+<li><p>路由转发</p>
+</li>
+<li><p>断言判断</p>
+<ul>
+<li><p>内置断言</p>
+<p>请求头上加上 cookie、特定参数、指定时间起作用等</p>
+</li>
+<li><p>自定义断言</p>
+</li>
+</ul>
+</li>
+<li><p>执行过滤器链</p>
+<ul>
+<li><p>内置过滤器</p>
+<p>请求头上加上一些东西</p>
+</li>
+<li><p>自定义过滤器</p>
+<p>定义一个过滤器实现 GolabFiler</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>具体是：当一个请求首先得达到 gateway，先经过 gateway handlerMapping 处理，根据断言它符合哪个路由规则，然后在发送到 Web Handler ，Handler 再根据具体的过滤器链转发到具体的服务。</p>
+<h3 id="5：gateway-如何实现动态路由"><a href="#5：gateway-如何实现动态路由" class="headerlink" title="5：gateway 如何实现动态路由"></a>5：gateway 如何实现动态路由</h3><p>默认情况下，gateway 会从注册中心拉取服务列表，用服务名作为动态路由进行转发，从而实现动态路由功能。</p>
+<p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240603092715944.png" alt="image-20240603092715944"></p>
+<h2 id="2：服务间通信"><a href="#2：服务间通信" class="headerlink" title="2：服务间通信"></a>2：服务间通信</h2><ul>
+<li><p>同步</p>
+<p>http</p>
+</li>
+<li><p>异步</p>
+<p>MQ</p>
+</li>
+</ul>
+<h2 id="3：注册中心"><a href="#3：注册中心" class="headerlink" title="3：注册中心"></a>3：注册中心</h2><p>zk</p>
+<p>eureka</p>
+<h2 id="4：配置中心-nacos"><a href="#4：配置中心-nacos" class="headerlink" title="4：配置中心 nacos"></a>4：配置中心 nacos</h2><h2 id="5：负载均衡-容错机制"><a href="#5：负载均衡-容错机制" class="headerlink" title="5：负载均衡 + 容错机制"></a>5：负载均衡 + 容错机制</h2><h3 id="1：负载均衡包括："><a href="#1：负载均衡包括：" class="headerlink" title="1：负载均衡包括："></a>1：负载均衡包括：</h3><ul>
+<li><p>服务端负载均衡</p>
+<p>nginx</p>
+</li>
+<li><p>客户端负载均衡</p>
+<p>比如：dubbo、ribbon、springcloud loadblance，他们三个的原理一样</p>
+</li>
+</ul>
+<h3 id="2：客户端负载均衡原理"><a href="#2：客户端负载均衡原理" class="headerlink" title="2：客户端负载均衡原理"></a>2：客户端负载均衡原理</h3><ul>
+<li>从注册中心拉取服务配置列表，缓存到本地；</li>
+<li>然后通过负载均衡算法，选择服务实例</li>
+<li>之后，如果失败，走容错机制</li>
+</ul>
+<h3 id="3：负载均衡算法"><a href="#3：负载均衡算法" class="headerlink" title="3：负载均衡算法"></a>3：负载均衡算法</h3><ul>
+<li>加权随机</li>
+<li>加权轮询</li>
+<li>一致性哈希</li>
+<li>最小连接数</li>
+<li>最短响应时间</li>
+</ul>
+<h3 id="4：容错机制"><a href="#4：容错机制" class="headerlink" title="4：容错机制"></a>4：容错机制</h3><ul>
+<li>重试2次 + 切换到其他机器</li>
+<li>忽略异常</li>
+<li>并行访问，只要有一个成功就返回</li>
+</ul>
+<h2 id="6：熔断、限流、降级"><a href="#6：熔断、限流、降级" class="headerlink" title="6：熔断、限流、降级"></a>6：熔断、限流、降级</h2><h3 id="1：名词解释"><a href="#1：名词解释" class="headerlink" title="1：名词解释"></a>1：名词解释</h3><ul>
+<li><p>熔断</p>
+<p>当服务不可用时候，断开服务，防止重试导致服务雪崩；</p>
+<p>一般配置慢调用比例 RT、熔断时间</p>
+</li>
+<li><p>限流</p>
+<p>限制调用方的访问量;</p>
+<p>限流算法：固定时间窗口、滑动时间窗口、漏桶算法、令牌桶</p>
+<p>一般配置 QPS </p>
+</li>
+<li><p>降级</p>
+<p>关闭非核心功能，优先保证核心功能正常</p>
+</li>
+</ul>
+<h3 id="2：限流算法"><a href="#2：限流算法" class="headerlink" title="2：限流算法"></a>2：限流算法</h3><h4 id="1：固定时间窗口算法"><a href="#1：固定时间窗口算法" class="headerlink" title="1：固定时间窗口算法"></a>1：固定时间窗口算法</h4><p>这是最简单的一种方式；</p>
+<p>比如：它有一个全局的计数器，定义在 1 s 内请求次数不能超过 100次；在这 1s 内，每请求一次，次数都会加1；</p>
+<p>但是这种方式存在问题：可能会出现在前面都没有请求，在最后 1毫秒出现 100次请求。</p>
+<h4 id="2：滑动时间窗口算法-sentinel-限流就是利用这个"><a href="#2：滑动时间窗口算法-sentinel-限流就是利用这个" class="headerlink" title="2：滑动时间窗口算法 - sentinel 限流就是利用这个"></a>2：滑动时间窗口算法 - sentinel 限流就是利用这个</h4><p>为了解决固定时间窗口算法的临界值缺陷；</p>
+<ul>
+<li>将大时间窗口分为多个小时间窗口</li>
+<li>每一个小的时间窗口都有一个计数器</li>
+<li>请求过来时候，计算落在哪个窗口，更新计数器</li>
+<li>总的请求数 &#x3D; 所有时间窗口的计数器之和</li>
+</ul>
+<p>ZSET 实现</p>
+<h4 id="3：漏桶算法"><a href="#3：漏桶算法" class="headerlink" title="3：漏桶算法"></a>3：漏桶算法</h4><p>所有请求都进入一个漏桶，处理线程每次从桶中处理相同数量的请求；</p>
+<h4 id="4：令牌桶算法"><a href="#4：令牌桶算法" class="headerlink" title="4：令牌桶算法"></a>4：令牌桶算法</h4><p>由于漏桶只能匀速处理，于是推出令牌桶；</p>
+<p>令牌桶是往桶里放入一定数量的令牌，请求过来的时候，先从桶中拿令牌，能拿到就执行，拿不到就放弃请求。</p>
+<p>guave 实现</p>
+<h3 id="3：Sentinel-落地经验"><a href="#3：Sentinel-落地经验" class="headerlink" title="3：Sentinel 落地经验"></a>3：Sentinel 落地经验</h3><h4 id="1：使用"><a href="#1：使用" class="headerlink" title="1：使用"></a>1：使用</h4><p>sentinel 有两个重要的概念：</p>
+<ul>
+<li><p>资源</p>
+<p>要熔断的接口、方法、甚至还有代码</p>
+</li>
+<li><p>规则</p>
+<p>如何保护资源：是限流还是降级</p>
+</li>
+</ul>
+<h4 id="2：代码中"><a href="#2：代码中" class="headerlink" title="2：代码中"></a>2：代码中</h4><h5 id="1：在-controller上写"><a href="#1：在-controller上写" class="headerlink" title="1：在 controller上写"></a>1：在 controller上写</h5><p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240618152436103.png" alt="image-20240618152436103"></p>
+<h5 id="2：注册到了-sentinel-中"><a href="#2：注册到了-sentinel-中" class="headerlink" title="2：注册到了 sentinel 中"></a>2：注册到了 sentinel 中</h5><p>代码中加过之后，表示资源就被注册到 sentinel 上了</p>
+<p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240618152725269.png" alt="image-20240618152725269"></p>
+<h5 id="3：配置限流"><a href="#3：配置限流" class="headerlink" title="3：配置限流"></a>3：配置限流</h5><p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240618153038945.png" alt="image-20240618153038945"></p>
+<h5 id="4：配置降级"><a href="#4：配置降级" class="headerlink" title="4：配置降级"></a>4：配置降级</h5><p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240618152751674.png" alt="image-20240618152751674"></p>
+<h5 id="5：触发之后的异常应该怎么处理的策略"><a href="#5：触发之后的异常应该怎么处理的策略" class="headerlink" title="5：触发之后的异常应该怎么处理的策略"></a>5：触发之后的异常应该怎么处理的策略</h5><ul>
+<li><p>读降级</p>
+<ul>
+<li><p>正常走数据库；</p>
+<p>降级之后走 redis </p>
+</li>
+<li><p>非关键性的读操作，返回默认值或者给出提示。</p>
+</li>
+</ul>
+</li>
+<li><p>写降级（要考虑数据一致性）</p>
+<ul>
+<li><p>异步 MQ</p>
+</li>
+<li><p>本地日志</p>
+</li>
+<li><p>状态标记之后重试</p>
+<p>这种的有风险，因为本来就是熔断了的。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="6：降级之后恢复的策略"><a href="#6：降级之后恢复的策略" class="headerlink" title="6：降级之后恢复的策略"></a>6：降级之后恢复的策略</h5><ul>
+<li><p>当发生降级时候，与注册中心通信，调整当前服务实例的负载均衡权重；</p>
+</li>
+<li><p>当降级恢复之后，恢复负载均衡权重；</p>
+</li>
+</ul>
+<p>如何做呢?</p>
+<p>​	代码中自定义熔断状态的监听器，监听熔断状态</p>
+<p>第二步：熔断之后的降级：</p>
+<p>正常情况走 DB，，异常了走 Redis</p>
+<p><img src="C:\Users\Administrator\Nutstore\1\我的坚果云\笔记\面试准备\SpringCloud\image-20240618154329784.png" alt="image-20240618154329784"></p>
+<h5 id="7：配置熔断数据的经验值"><a href="#7：配置熔断数据的经验值" class="headerlink" title="7：配置熔断数据的经验值"></a>7：配置熔断数据的经验值</h5><p>基本上做不到一步到位，渐进式的调整；</p>
+<p>先设置一个基础值，再慢慢调整；</p>
+<p>要根据业务量的考量，因为业务有高峰期和低谷期；</p>
+<p>基础值：</p>
+<p>​	熔断类型：设置为 QPS 或者线程数；一般设置为 QPS ，线程数不好把控。</p>
+<p>​	熔断的最大 RT &#x3D; 根据压测 TP99  RT 基础上 * 120%</p>
+<p>​        触发比例：一般设置为 3% - 5%</p>
+<p>​	熔断时长：一般设置为 30 s</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/08/16/Springcloud/" data-id="clxs9nvts000tikuw084f7nua" data-title="服务治理" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-SpringBoot相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/07/16/SpringBoot%E7%9B%B8%E5%85%B3/" class="article-date">
+  <time class="dt-published" datetime="2023-07-15T16:00:00.000Z" itemprop="datePublished">2023-07-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/07/16/SpringBoot%E7%9B%B8%E5%85%B3/">SpringBoot</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：SpringBoot-自动装配原理"><a href="#1：SpringBoot-自动装配原理" class="headerlink" title="1：SpringBoot 自动装配原理"></a>1：SpringBoot 自动装配原理</h1><p>自动装配就是自动把第三方组件中的 bean 加载到 Spring 容器中，不需要开发人员再去写 bean 相关的配置。</p>
+<p>在 springboot 中，只需要在启动类上加上 @SpringbootApplication 注解，就可以实现自动装配。</p>
+<p>这个注解是一个复合注解，真正起作用的是 @EnableAutoConfiguration 注解；</p>
+<p>这个注解的底层又是 @Import 注解，它最终通过 importSelect 来工作；</p>
+<p>自动装配的实现主要涉及到 3 个核心的技术点：</p>
+<ul>
+<li><p>引入 starter</p>
+<p>启动依赖组件的事件，必须要有 @configuration 配置类，配合 @Bean 注解。</p>
+</li>
+<li><p>编写配置</p>
+<p>根据springboot 约定大于配置的原则</p>
+<p>这些类会放在 classpath - matINF - spring.factories 文件中；</p>
+</li>
+<li><p>springFactoryLoader 去加载</p>
+<p>spring 容器从这个文件中获取 key 为 enableAutoConfiguration 的类，然后根据 @ConditionXX 注解排除掉无效的类，</p>
+<p>然后通过 spring 中的 springFactoryLoader 加载，最终通过 importSelect 接口，来动态加载它们，从而实现自动装配。</p>
+</li>
+</ul>
+<h1 id="2：SpringBoot-启动流程"><a href="#2：SpringBoot-启动流程" class="headerlink" title="2：SpringBoot 启动流程"></a>2：SpringBoot 启动流程</h1><ul>
+<li><p>初始化阶段</p>
+<p>这一步确保，真正的启动前，各种设置都就绪。包括环境、初始化器、监听器、主启动类。</p>
+<p>new SpringApplication 的过程是初始化 SpringApplication , 从 spring.factories 中读取：初始化器、监听器。</p>
+<ul>
+<li><p>添加源：通常是添加一些配置类</p>
+</li>
+<li><p>设置web环境</p>
+</li>
+<li><p>加载初始化器</p>
+<p>从 spring.factories 文件中读取各种初始化器，加载到SpringApplication 中去；</p>
+<p>这一步是 springboot 自动装配的核心；</p>
+</li>
+<li><p>设置监听器</p>
+<p>为的是响应各种事件</p>
+</li>
+</ul>
+</li>
+<li><p>run方法</p>
+<ul>
+<li><p>记录开始启动时间</p>
+</li>
+<li><p>在启动前设置一个容器，用来缓存启动前的一些操作</p>
+</li>
+<li><p>触发监听器，发布开始启动事件，让监听者做一些额外的工作</p>
+</li>
+<li><p>将传入的参数封装起来</p>
+</li>
+<li><p>加载环境变量</p>
+<p>JVM 环境变量、yml 中的环境变量；</p>
+<p>触发监听器，发布加载环境变量完成的时间</p>
+</li>
+<li><p>打印 banner </p>
+</li>
+<li><p>创建 spring 容器</p>
+</li>
+<li><p>spring 容器启动之前的处理</p>
+</li>
+<li><p>启动 spring 容器</p>
+<p>在这一步就是 IOC 的过程；</p>
+<p>它会加载所有的自动配置类、创建bean、启动 tomcat</p>
+</li>
+<li><p>spring 容器启动后的处理</p>
+</li>
+<li><p>计算启动花费的时间</p>
+</li>
+<li><p>发布启动完成的事件。</p>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/16/SpringBoot%E7%9B%B8%E5%85%B3/" data-id="clxs9nvtp000nikuwe9shezpd" data-title="SpringBoot" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Spring IOC" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/06/16/Spring%20IOC/" class="article-date">
@@ -103,7 +836,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/06/16/Spring%20IOC/" data-id="clxs9cebq000k8guw00na81pf" data-title="Spring IOC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2023/06/16/Spring%20IOC/" data-id="clxs9nvtn000likuw11p2geu6" data-title="Spring IOC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -165,7 +898,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" data-id="clxs9cebp000i8guw5rved7mk" data-title="Spring bean 的生命周期" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" data-id="clxs9nvtm000iikuwbdj9a6d6" data-title="Spring bean 的生命周期" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -263,7 +996,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/04/16/Spring%20AOP/" data-id="clxs9cebn000f8guw0dy3g5vn" data-title="AOP" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2023/04/16/Spring%20AOP/" data-id="clxs9nvtl000gikuwft9mg019" data-title="AOP" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -353,636 +1086,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/16/RPC/" data-id="clxs9cebm000d8guwbxgn7jp0" data-title="RPC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2023/02/16/RPC/" data-id="clxs9nvti000bikuwa8ba1bdj" data-title="RPC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ZK总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/" class="article-date">
-  <time class="dt-published" datetime="2023-02-15T16:00:00.000Z" itemprop="datePublished">2023-02-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/">ZK</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：ZK-的应用场景引出-zk-的两个核心："><a href="#1：ZK-的应用场景引出-zk-的两个核心：" class="headerlink" title="1：ZK 的应用场景引出 zk 的两个核心："></a>1：ZK 的应用场景引出 zk 的两个核心：</h1><h2 id="1：全局唯一"><a href="#1：全局唯一" class="headerlink" title="1：全局唯一"></a>1：全局唯一</h2><p>引出选举</p>
-<h2 id="2：watch-机制"><a href="#2：watch-机制" class="headerlink" title="2：watch 机制"></a>2：watch 机制</h2><h1 id="3：选举机制"><a href="#3：选举机制" class="headerlink" title="3：选举机制"></a>3：选举机制</h1><h2 id="1：选举机制原理"><a href="#1：选举机制原理" class="headerlink" title="1：选举机制原理"></a>1：选举机制原理</h2><p>ZK 的选举发生在节点刚启动或者Leader崩溃时候；</p>
-<p>选举的目的是选出一个 Leader;</p>
-<p>节点状态有：</p>
-<ul>
-<li>Looking 竞选状态</li>
-<li>Leader </li>
-<li>Follower</li>
-<li>Observer 观察者</li>
-</ul>
-<p>选举的本质是进行 PK，PK 的依据是节点的能力，谁的能力越强就胜出。每个节点都有事务id, 节点编号 myid，事务id 越大代表数据最新，能力越强。先比较事务id, 相同的话再比较 myid。</p>
-<p>投票的过程中，每个节点内部维护一个投票结果，类似于一个投票箱，开始投票时，每个节点先投自己一票，然后互相交换选票，根据 PK 规则，更新自己维护的选票结果，之后再广播出去，统计每个节点的票数，超过节点总数一半的节点胜出。</p>
-<h2 id="2：选举机制引入脑裂问题"><a href="#2：选举机制引入脑裂问题" class="headerlink" title="2：选举机制引入脑裂问题"></a>2：选举机制引入脑裂问题</h2><ul>
-<li>啥是脑裂</li>
-</ul>
-<p>​	所谓脑裂就是，当集群中出现网络通信故障时候，各种原因导致 Leader 跟 Foller 节点通信异常，Foller 节点认为Ldear 挂掉，于是	重新选举Leader, 当网络恢复后，集群中出现两个 Leader, 客户端在连接的时候就会不知道连接哪个Leader。</p>
-<ul>
-<li>如何解决脑裂</li>
-</ul>
-<p>​	采用过半机制 + zxid 中的任期。</p>
-<h2 id="3：zk-为啥推荐奇数节点为防止脑裂和容错"><a href="#3：zk-为啥推荐奇数节点为防止脑裂和容错" class="headerlink" title="3：zk 为啥推荐奇数节点为防止脑裂和容错"></a>3：zk 为啥推荐奇数节点为防止脑裂和容错</h2><p>集群能正常，只要有半数以上存活就行。</p>
-<ul>
-<li>一共有 2 个节点，一半是 1，半数以上是 2 ，允许宕机是 0 ；</li>
-<li>一共有 3 个节点，一半是 1，半数以上是 2 ，允许宕机是 1 ；</li>
-<li>一共有 4 个节点，一半是 2，半数以上是 3 ，允许宕机是 1 ；</li>
-<li>一共有 5 个节点，一半是 2，半数以上是 3 ，允许宕机是 2 ；</li>
-<li>一共有 6 个节点，一半是 3，半数以上是 4 ，允许宕机是 2 ；</li>
-</ul>
-<p>总结就是：</p>
-<p>​	基数台和偶数台，允许宕机的数量是相同的。就不用浪费多部署一台了。</p>
-<p>为了两个方面的考虑：</p>
-<ul>
-<li><p>集群容错</p>
-</li>
-<li><p>防止脑裂</p>
-<p>对于双机房来说：</p>
-<p>​	如果是 6 台，每个机房都是3台，不考虑过半机制，他们都能选出主节点，考虑的话都选不出；</p>
-<p>​	如果是 5 台，一个机房是 3 台，一个是 2 台，考虑和不考虑，其中有一边都能选出。</p>
-<p>因此，最好是奇数。</p>
-</li>
-</ul>
-<h2 id="3：ZK-主从节点数据同步原理"><a href="#3：ZK-主从节点数据同步原理" class="headerlink" title="3：ZK 主从节点数据同步原理"></a>3：ZK 主从节点数据同步原理</h2><p>主从同步的原理采用 ZAB 2 阶段提交：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">第一步：</span><br><span class="line"></span><br><span class="line">先广播，lead 顺序将消息放入 FIFO 队列中，每次提交都会生成一个全局id, 保证顺序写入</span><br><span class="line"></span><br><span class="line">让从节点写数据，但是不提交事务，反馈给lead ack</span><br><span class="line"></span><br><span class="line">第二步：</span><br><span class="line"></span><br><span class="line">lead 通过半数机制，再2次广播，让从节点提交事务。保证最终一致性。</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="1：啥是-ZAB-ZK-独有"><a href="#1：啥是-ZAB-ZK-独有" class="headerlink" title="1：啥是 ZAB - ZK 独有"></a>1：啥是 ZAB - ZK 独有</h3><p>zab 协议是一个数据一致性协议，是 ZK 为了解决数据一致性提出的；</p>
-<p>它叫做：原子广播协议；</p>
-<p>它的核心是两阶段提交。</p>
-<h1 id="4：ZK-watch-机制"><a href="#4：ZK-watch-机制" class="headerlink" title="4：ZK watch  机制"></a>4：ZK watch  机制</h1><p>zk watch 机制，引出：</p>
-<ul>
-<li><p>zkWatchManager</p>
-<p>客户端watch 管理</p>
-</li>
-<li><p>watchManager</p>
-<p>服务端的watch 管理</p>
-</li>
-</ul>
-<p>流程是：</p>
-<p>​	客户端通过 zkWatchmanager 注册监听信息；</p>
-<p>​	发送到 watchManager；</p>
-<p>​	watchManager 找到对应的 Znode ，根据 watch 类型：childNode 还是 znode，注册监听事件。</p>
-<h1 id="5：ZK-基础-数据模型和节点类型"><a href="#5：ZK-基础-数据模型和节点类型" class="headerlink" title="5：ZK 基础 - 数据模型和节点类型"></a>5：ZK 基础 - 数据模型和节点类型</h1><p>数据模型是一种树形结构，每个节点叫做 Znode; 它是做服务协调的，不要存太多数据，每个节点最多存 1M 数据；</p>
-<p>每一个 ZNODE 中有：</p>
-<ul>
-<li><p>state</p>
-<p>包含了事务id，节点创建时间、子节点个数</p>
-</li>
-<li><p>date</p>
-</li>
-</ul>
-<p>节点类型包括：</p>
-<ul>
-<li><p>临时节点</p>
-<p>生命周期是客户端会话</p>
-</li>
-<li><p>持久节点</p>
-<p>创建后会一直存在服务端</p>
-</li>
-<li><p>有序</p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/16/ZK%E6%80%BB%E7%BB%93/" data-id="clxs9cebu000r8guwbk3d6jbs" data-title="ZK" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-Dubbo 相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" class="article-date">
-  <time class="dt-published" datetime="2023-01-15T16:00:00.000Z" itemprop="datePublished">2023-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/">Dubbo 基本知识</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：Dubbo-基本知识"><a href="#1：Dubbo-基本知识" class="headerlink" title="1：Dubbo 基本知识"></a>1：Dubbo 基本知识</h1><ul>
-<li><p>传输协议</p>
-<p>默认 Dubbo 协议，但是也支持 Http 协议和其他协议</p>
-</li>
-<li><p>通信框架</p>
-</li>
-</ul>
-<p>  netty nio 异步通信框架</p>
-<ul>
-<li>序列化协议</li>
-</ul>
-<p>  默认 hession 协议，还有 Fastjason2</p>
-<ul>
-<li><p>传输体积</p>
-<p>8M</p>
-</li>
-<li><p>长连接</p>
-</li>
-</ul>
-<h1 id="2：Dubbo-缓存机制"><a href="#2：Dubbo-缓存机制" class="headerlink" title="2：Dubbo 缓存机制"></a>2：Dubbo 缓存机制</h1><p>就是服务端和客户端分别缓存调用结果，是为了提高查询效率；</p>
-<p>客户端缓存起来是为了下次不再远程调用，服务端缓存起来是下次不再调用具体方法；</p>
-<p>缓存淘汰策略有：</p>
-<ul>
-<li>LRU</li>
-</ul>
-<p>缓存机制有可能造成数据不一致问题，分布式缓存没事。</p>
-<h1 id="3：Dubbo-如何实现像本地调用一样调用全程服务"><a href="#3：Dubbo-如何实现像本地调用一样调用全程服务" class="headerlink" title="3：Dubbo 如何实现像本地调用一样调用全程服务"></a>3：Dubbo 如何实现像本地调用一样调用全程服务</h1><p>Dubbo 能实现本地方法一样调用远程方法的是基于动态代理。</p>
-<p>Dubbo 根据动态代理生成一个代理类，这个代理实现了本地接口，在调用本地方法时候，会通过代理类的 invoke 方法转发到远程接口的方法</p>
-<h1 id="4：Dubbo-整体架构"><a href="#4：Dubbo-整体架构" class="headerlink" title="4：Dubbo 整体架构"></a>4：Dubbo 整体架构</h1><p>Dubbo 的架构主要有：</p>
-<ul>
-<li><p>service 层</p>
-<p>是一个扩展层</p>
-</li>
-<li><p>配置层</p>
-</li>
-<li><p>注册中心层</p>
-</li>
-<li><p>代理层</p>
-</li>
-<li><p>监控层</p>
-</li>
-<li><p>网络传输层</p>
-</li>
-<li><p>通信层</p>
-</li>
-<li><p>序列化层</p>
-</li>
-<li><p>集群层</p>
-<p>负载均衡、集群容错</p>
-</li>
-<li><p>远程调用层</p>
-</li>
-</ul>
-<h1 id="5：Dubbo-的工作原理"><a href="#5：Dubbo-的工作原理" class="headerlink" title="5：Dubbo 的工作原理"></a>5：Dubbo 的工作原理</h1><h2 id="也就是原理和实现过程"><a href="#也就是原理和实现过程" class="headerlink" title="也就是原理和实现过程"></a>也就是原理和实现过程</h2><p>具体的是：</p>
-<ul>
-<li><p>调用方</p>
-<ul>
-<li><p>配置层</p>
-<p>调用者在启动的时候读取配置层的配置；</p>
-</li>
-<li><p>注册中心层</p>
-<p>根据上一步配置要找的接口，从注册中心层拉取和订阅对应的服务列表，缓存到本地，这样即使注册中心挂了，也能继续工作；</p>
-</li>
-<li><p>代理层</p>
-<p>调用者在代理层生成调用者的代理对象 Invoker;</p>
-</li>
-<li><p>集群层</p>
-<p>经过集群层负载均衡找到提供者的 Invoker </p>
-</li>
-<li><p>通信层</p>
-<p>通过 Netty 框架通信</p>
-</li>
-<li><p>序列化层</p>
-<p>序列化参数</p>
-</li>
-</ul>
-</li>
-<li><p>提供者</p>
-<ul>
-<li><p>序列化层</p>
-<p>反序列化参数</p>
-</li>
-<li><p>然后交给线程池来执行</p>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="6：cluster-集群层"><a href="#6：cluster-集群层" class="headerlink" title="6：cluster 集群层"></a>6：cluster 集群层</h1><h2 id="1：Dubbo-的负载均衡策略"><a href="#1：Dubbo-的负载均衡策略" class="headerlink" title="1：Dubbo 的负载均衡策略"></a>1：Dubbo 的负载均衡策略</h2><p>它是在客户端设置的负载均衡。</p>
-<ul>
-<li><p>默认是加权随机；加权随机就是：通过区间的随机算法，去获取一个目标服务器。在这个区间中，我们可以对某一个服务器加权重。</p>
-</li>
-<li><p>加权轮询</p>
-</li>
-<li><p>最小活跃优先</p>
-<p>每一个服务者都记录一个调用的 active 数，完成调用之后，活跃数会减1。活跃数下降的越快，这台服务器的性能越高。</p>
-</li>
-<li><p>最短时间优先</p>
-<p>他会去计算服务器的响应时间，根据响应时间最短的服务器配置更高的权重。</p>
-</li>
-<li><p>一致性 Hash</p>
-<p>通过一致性哈希算法，会落到某一个目标服务器上。</p>
-</li>
-</ul>
-<h2 id="2：集群容错重试"><a href="#2：集群容错重试" class="headerlink" title="2：集群容错重试"></a>2：集群容错重试</h2><ul>
-<li><p>默认是：失败切换到其他机器</p>
-<p>可以配置重试次数，默认重试2次；</p>
-</li>
-<li><p>忽略异常</p>
-<p>对于不重要的业务，如：日志</p>
-</li>
-<li><p>并行调用</p>
-<p>并行调用多个提供者，只要有一个成功，就返回；</p>
-</li>
-</ul>
-<h1 id="7：Proxy-代理层"><a href="#7：Proxy-代理层" class="headerlink" title="7：Proxy 代理层"></a>7：Proxy 代理层</h1><p>默认使用字节码动态代理</p>
-<h1 id="8：Dubbo-的扩展点-SPI"><a href="#8：Dubbo-的扩展点-SPI" class="headerlink" title="8：Dubbo 的扩展点 SPI"></a>8：Dubbo 的扩展点 SPI</h1><h2 id="1：啥是-SPI"><a href="#1：啥是-SPI" class="headerlink" title="1：啥是 SPI"></a>1：啥是 SPI</h2><p>JDK 的 SPI 是一种对服务的可扩展的机制，它是基于接口的扩展。</p>
-<p>就是我有一个接口，现在这个接口有 3 个实现类，那么系统在运行的时候，到底要加载哪一个实现类；这时候就需要 SPI；</p>
-<p>根据指定的配置或者默认配置，去找到对应的实现类加载进来；</p>
-<p>具体使用步骤：</p>
-<p>第一步：在配置文件中写</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在 src/main/resources 下创建一个 meta-inf/services 这样写：</span><br><span class="line">接口A = 实现类B 的全路径</span><br></pre></td></tr></table></figure>
-
-<p>第二步：</p>
-<p>代码中使用 ServiceLoader.load 加载实现类，通过反射创建实例执行方法。</p>
-<h2 id="2：SPI-的使用场景"><a href="#2：SPI-的使用场景" class="headerlink" title="2：SPI 的使用场景"></a>2：SPI 的使用场景</h2><p>扩展某个功能</p>
-<ul>
-<li><p>JDBC 加载不同类型的数据库驱动</p>
-<p>java 定义了一套 jdbc 的接口，但是没有实现类；实际项目中，它加载的是你配置文件中指定的 jdbc 信息</p>
-<p>它是在类加载的时候就加载所有的扩展，不是延迟加载。</p>
-</li>
-</ul>
-<h2 id="3：Dubbo-的-SPI"><a href="#3：Dubbo-的-SPI" class="headerlink" title="3：Dubbo 的 SPI"></a>3：Dubbo 的 SPI</h2><p>Dubbo 的 SPI ，它是在 java spi 的基础上增加了新的功能：按需加载、懒加载；</p>
-<p>它是放在Mata-info&#x2F;dubbo 文件下；</p>
-<p>它是用扩展类加载器加载；</p>
-<p>他能扩展许多功能：</p>
-<ul>
-<li>传输协议</li>
-<li>序列化协议</li>
-<li>负载均衡</li>
-</ul>
-<p>主要作用就是对外提供可自定义的插件式的扩展 Dubbo 功能。</p>
-<h1 id="9：Dubbo-是如何动态感知服务下线的呢"><a href="#9：Dubbo-是如何动态感知服务下线的呢" class="headerlink" title="9：Dubbo 是如何动态感知服务下线的呢"></a>9：Dubbo 是如何动态感知服务下线的呢</h1><p>首先 Dubbo 默认采用 ZK 作为注册中心。</p>
-<p>多个服务之间的通信地址通过 ZK 类维护，zk 会采用树型结构存储协议地址；ZK 通过心跳机制，判断提供者是否健康，然后决定把哪个服务剔除。zk 是咋感知的呢</p>
-<p>简单来说就是 ZK 的 watch 监听机制，监听服务端节点的变化，一旦有变化，就发送时间通知消费者做出更新本地服务列表。后续就不会发送到有问题的节点上了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" data-id="clxs9cebe00018guwbfef2bi2" data-title="Dubbo 基本知识" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-泛型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/" class="article-date">
-  <time class="dt-published" datetime="2022-11-15T16:00:00.000Z" itemprop="datePublished">2022-11-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：对泛型的理解"><a href="#1：对泛型的理解" class="headerlink" title="1：对泛型的理解"></a>1：对泛型的理解</h1><p>泛型是 jdk 1.5 开始的，允许在定义类、接口、方法的时候使用类型参数；定义的类型参数在使用的时候会用具体的类型替换。泛型最主要是用在集合中或者封装的一些组件中；</p>
-<p>简单来说，Java 泛型就是在创建或者调用的时候才明确下具体的类型；</p>
-<h1 id="2：-泛型的好处"><a href="#2：-泛型的好处" class="headerlink" title="2： 泛型的好处"></a>2： 泛型的好处</h1><h2 id="1：方便"><a href="#1：方便" class="headerlink" title="1：方便"></a>1：方便</h2><p>提高代码的复用性；假如有一个 List，不用泛型，想存字符串得 new 一个，想存数字，又得 new 一个。此时，可以使用泛型List<T></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyList</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> T[] array;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyList</span><span class="params">()</span> &#123;</span><br><span class="line">        array = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">10</span>];</span><br><span class="line">        size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(T element)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (size == array.length) &#123;</span><br><span class="line">            <span class="comment">// 扩容数组</span></span><br><span class="line">            T[] newArray = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[array.length * <span class="number">2</span>];</span><br><span class="line">            System.arraycopy(array, <span class="number">0</span>, newArray, <span class="number">0</span>, array.length);</span><br><span class="line">            array = newArray;</span><br><span class="line">        &#125;</span><br><span class="line">        array[size++] = element;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= size) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IndexOutOfBoundsException</span>(<span class="string">&quot;Index out of range&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> array[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">size</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="2：安全"><a href="#2：安全" class="headerlink" title="2：安全"></a>2：安全</h2><p>没有泛型的时候，通过向上转型存入任何类型的元素；在获取的时候就麻烦了，向下转型可能会出现类型转换异常。</p>
-<p>泛型是在编译期间做检查，不用再等到运行期间报 classcastException 异常；</p>
-<p>泛型其实是一种代码模版，可以理解为广泛的类型。</p>
-<h1 id="3：泛型是如何实现的"><a href="#3：泛型是如何实现的" class="headerlink" title="3：泛型是如何实现的"></a>3：泛型是如何实现的</h1><p>通过类型擦除实现。说白了就是一种语法糖形式。在编译期将 List<String> 转化为 List</p>
-<h2 id="1-关于类型擦除"><a href="#1-关于类型擦除" class="headerlink" title="1 :  关于类型擦除"></a>1 :  关于类型擦除</h2><p>泛型的信息只存在于编译期，在编译阶段会将所有的 T 替换为 Object , 这个叫做类型擦除。</p>
-<p>可以理解为：在编译期间，会拿着&lt;&gt; 中的类型去检查类型是否匹配，检查通过，擦除并替换为 Object。</p>
-<h2 id="2-：-啥是类型擦除"><a href="#2-：-啥是类型擦除" class="headerlink" title="2 ： 啥是类型擦除"></a>2 ： 啥是类型擦除</h2><p>类型擦除是 Java 处理泛型的一种方式，写的代码是 List<String>、List<Integer>, 编译后的字节码文件都会变成 List，</p>
-<p>把泛型信息都擦除了，这个过程叫做类型擦除；</p>
-<p>虽然编译后的字节码文件中不会再有泛型的信息，但是运行期，程序还是可以通过：插入类型转换和桥方法保证类型安全；</p>
-<h2 id="3：泛型被擦除了，如何知道真实类型"><a href="#3：泛型被擦除了，如何知道真实类型" class="headerlink" title="3：泛型被擦除了，如何知道真实类型"></a>3：泛型被擦除了，如何知道真实类型</h2><p>泛型的信息只存在于编译期，生成的 class 文件中被擦除；</p>
-<p>但是泛型的擦除是有范围的，定义在类上的泛型信息不会被擦除；</p>
-<p>Java 编译器仍在 class 文件中以 singnature 属性的方式，保留泛型的信息；</p>
-<p>Type 作为顶级接口，下面有几种类型：</p>
-<p>​	TypeVariable;</p>
-<p>​	paramterTyep;</p>
-<p>​	wildcardType;</p>
-<p>​	GenericArrayType;</p>
-<p>通过这些接口，我们就可以在运行期获取泛型信息；</p>
-<h2 id="3：为啥要有类型擦除"><a href="#3：为啥要有类型擦除" class="headerlink" title="3：为啥要有类型擦除"></a>3：为啥要有类型擦除</h2><p>1：是为了保持与之前的没有泛型的类型的兼容，起到向前 jdk 版本兼容；</p>
-<p>2：在编译期就可以进行类型判断，而不用在运行期判断，提高性能；</p>
-<h1 id="4：泛型在集合中使用"><a href="#4：泛型在集合中使用" class="headerlink" title="4：泛型在集合中使用"></a>4：泛型在集合中使用</h1><p>泛型在集合中使用的好处是：限定了存入的元素类型，避免类型错误，存取都不会出现类型转换异常；</p>
-<p>如果你要在集合中使用 Object 类型，存入的时候，你可能会存入不同的类型，取的时候强转可能会转换异常。</p>
-<p>所以 Java 中引入泛型的概念，也是对集合中的使用更加标准化。</p>
-<h1 id="5-：泛型-extends、super"><a href="#5-：泛型-extends、super" class="headerlink" title="5 ：泛型 extends、super"></a>5 ：泛型 extends、super</h1><p>泛型的 extends、super （协变、逆变）</p>
-<p>其实解决的就是一个参数范围：向上或者向下</p>
-<h2 id="1：协变"><a href="#1：协变" class="headerlink" title="1：协变"></a>1：协变</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;? extends Numer&gt;</span><br><span class="line"></span><br><span class="line">其实跟那个泛型通配符一样，只是后面会多加一个 extends 父类，表示任何一个父类的子类都可以</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="2：逆变"><a href="#2：逆变" class="headerlink" title="2：逆变"></a>2：逆变</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;？ <span class="built_in">super</span> E&gt;</span><br><span class="line"></span><br><span class="line">表示任何一个 E 的父类都可以</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-：-extends-和-super-什么时候用？"><a href="#3-：-extends-和-super-什么时候用？" class="headerlink" title="3 ： extends 和 super 什么时候用？"></a>3 ： extends 和 super 什么时候用？</h2><p>啥时候用，其实这里要遵守一个 PECS 原则；</p>
-<p>就是说，泛型的所在的对象，它在未来使用的时候，它是生成者还是消费者，如果是生产者那就用 extends; </p>
-<p>如何集合是一个消费者，对外产生元素供读取，那么此时使用 extends;</p>
-<p>举个例子：</p>
-<p>​	如果你要从一个泛型集合中读取一个元素，那么使用 extends, extends 只能读取元素不能添加元素;</p>
-<p>​        如何是往泛型集合中添加元素，那么使用 super，super 只能添加元素，不能读取元素;</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clxs9cec9001n8guwedgs9t13" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-static" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/10/16/static/" class="article-date">
-  <time class="dt-published" datetime="2022-10-15T16:00:00.000Z" itemprop="datePublished">2022-10-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/10/16/static/">static</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：对-static-的理解"><a href="#1：对-static-的理解" class="headerlink" title="1：对 static 的理解"></a>1：对 static 的理解</h1><ul>
-<li><p>static 修饰的变量叫做类变量或者静态变量，在内存中只有一份；它跟 new 无关，所有的实例共享一份</p>
-<ul>
-<li><p>加载时机：</p>
-<p>随着类的加载而加载；因为类只加载一次，因此静态也只加载一次</p>
-</li>
-</ul>
-</li>
-<li><p>普通的变量叫做实例变量，存在堆中，每个对象有各自的；</p>
-<ul>
-<li><p>加载时机：</p>
-<p>随着对象的创建而创建</p>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="2：静态调用关系"><a href="#2：静态调用关系" class="headerlink" title="2：静态调用关系"></a>2：静态调用关系</h1><p>静态只能调用静态的</p>
-<p>静态下不能使用 this 或者 super;</p>
-<p>普通可以调任何；</p>
-<h1 id="3：类加载顺序"><a href="#3：类加载顺序" class="headerlink" title="3：类加载顺序"></a>3：类加载顺序</h1><ul>
-<li>父类静态属性、静态代码块</li>
-<li>子类静态属性、静态代码块</li>
-<li>父类普通代码块</li>
-<li>父类构造器（无参、有参）</li>
-<li>子类普通代码块</li>
-<li>子类构造器（无参、有参）</li>
-</ul>
-<h1 id="4：static-修饰的变量在内存中的位置"><a href="#4：static-修饰的变量在内存中的位置" class="headerlink" title="4：static 修饰的变量在内存中的位置"></a>4：static 修饰的变量在内存中的位置</h1><h2 id="1：-jdk-7-之前，不包含jdk7"><a href="#1：-jdk-7-之前，不包含jdk7" class="headerlink" title="1： jdk 7 之前，不包含jdk7"></a>1： jdk 7 之前，不包含jdk7</h2><p>方法区保存static 变量、字符串常量池、此时的方法区叫做永久代</p>
-<h2 id="2：jdk-7-开始"><a href="#2：jdk-7-开始" class="headerlink" title="2：jdk 7 开始"></a>2：jdk 7 开始</h2><p>static 变量和字符串常量池移到了堆中</p>
-<h2 id="3：-jdk-8-开始"><a href="#3：-jdk-8-开始" class="headerlink" title="3： jdk 8 开始"></a>3： jdk 8 开始</h2><p>方法区叫做元空间</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/16/static/" data-id="clxs9cebt000p8guwfgdg5f75" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-包装类" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" class="article-date">
-  <time class="dt-published" datetime="2022-01-15T16:00:00.000Z" itemprop="datePublished">2022-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1-为什么需要包装类"><a href="#1-为什么需要包装类" class="headerlink" title="1:  为什么需要包装类"></a>1:  为什么需要包装类</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">有些 jdk 方法需要的参数是 Object 类型，不让传入基本数据类型，比如：equals(Object obj); 还有：集合的 add(Object)</span><br><span class="line">包装类的父类是 Number;</span><br></pre></td></tr></table></figure>
-
-<h1 id="2：基本数据类型和包装类在堆内存和栈内存的位置"><a href="#2：基本数据类型和包装类在堆内存和栈内存的位置" class="headerlink" title="2：基本数据类型和包装类在堆内存和栈内存的位置"></a>2：基本数据类型和包装类在堆内存和栈内存的位置</h1><p>基本数据类型存在栈中；</p>
-<p>包装类：它有一个变量被声明在栈中，然后指向在堆中的分配的真正的值</p>
-<h1 id="3：包装类和基本数据类型比较大小时"><a href="#3：包装类和基本数据类型比较大小时" class="headerlink" title="3：包装类和基本数据类型比较大小时"></a>3：包装类和基本数据类型比较大小时</h1><p>包装类会自动拆箱，因为成本低。</p>
-<h1 id="4：包装类和基本数据类型的转换"><a href="#4：包装类和基本数据类型的转换" class="headerlink" title="4：包装类和基本数据类型的转换"></a>4：包装类和基本数据类型的转换</h1><ol>
-<li><p>数字转包装类：装箱</p>
-<p>调用包装类的 api 方法 valueOf(1);</p>
-</li>
-<li><p>包装类转数字：拆箱</p>
-<p>包装类变量的 intValue();</p>
-</li>
-<li><p>字符串转为包装类</p>
-<p>调用包装类的 api 方法 parseInt(“1”);</p>
-</li>
-</ol>
-<h1 id="5：包装类和基本数据类型谁占用的内存大？"><a href="#5：包装类和基本数据类型谁占用的内存大？" class="headerlink" title="5：包装类和基本数据类型谁占用的内存大？"></a>5：包装类和基本数据类型谁占用的内存大？</h1><p>包装类占用的内存大。包装类在内存中，除了数据本身外，还有对象头、对齐填充等信息</p>
-<h1 id="6：对-Integer-最小值取绝对值，结果不一定是正数"><a href="#6：对-Integer-最小值取绝对值，结果不一定是正数" class="headerlink" title="6：对 Integer 最小值取绝对值，结果不一定是正数"></a>6：对 Integer 最小值取绝对值，结果不一定是正数</h1><p>原因是：出现了越界。解决办法是，转化为 Long 类型</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clxs9cebz000z8guw9rdb195z" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-原子操作类" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" class="article-date">
-  <time class="dt-published" datetime="2021-08-15T16:00:00.000Z" itemprop="datePublished">2021-08-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：原子类相关"><a href="#1：原子类相关" class="headerlink" title="1：原子类相关"></a>1：原子类相关</h1><p>对于 i++操作，它其实是分为三步骤，无法使用 volatile 保证原子性。可以使用sync 锁。</p>
-<p>或者原子类，因此，引入原子类。</p>
-<p>原子类底层是：</p>
-<p>cas + volatile</p>
-<p>原子类内部调用 unsafe 类的 cas 方法。</p>
-<h1 id="2：unsafe"><a href="#2：unsafe" class="headerlink" title="2：unsafe"></a>2：unsafe</h1><p>它是CAS 的核心类；</p>
-<p>因为 Java 无法直接访问底层操作系统，而是通过本地native方法访问；</p>
-<p>但是 JVM 留了一个后门，那就是 java 中的 unsafe 类。</p>
-<p>它提供了硬件层面的原子操作。</p>
-<p>unsafe 类提供了需要基础方法：</p>
-<ul>
-<li><p>数组操作</p>
-</li>
-<li><p>对象操作</p>
-</li>
-<li><p>CAS</p>
-</li>
-<li><p>分配对象的内存空间，反射创建对象</p>
-</li>
-<li><p>线程的 park、unpark 方法</p>
-</li>
-</ul>
-<h1 id="3：CAS"><a href="#3：CAS" class="headerlink" title="3：CAS"></a>3：CAS</h1><h2 id="1：啥是-CAS"><a href="#1：啥是-CAS" class="headerlink" title="1：啥是 CAS"></a>1：啥是 CAS</h2><p>CAS 是乐观锁的一种实现。</p>
-<p>是 compare and swap 的简称；</p>
-<p>意思是，先比较再替换。</p>
-<p>它有三个参数值：</p>
-<ul>
-<li>V：内存地址</li>
-<li>E：期望这个内存地址当前值是啥</li>
-<li>B：想要更新成啥</li>
-</ul>
-<p>在并发修改时，先取出内存地址中的值，对比是不是期望的值，如果是的话，就更新成新值。如果不是，其他线程也不会阻塞和挂起，而是再次尝试。</p>
-<p>CAS 保证同一个时刻只能有一个线程更新成功。</p>
-<h2 id="2：CAS-为啥能保证只有一个线程可以成功呢"><a href="#2：CAS-为啥能保证只有一个线程可以成功呢" class="headerlink" title="2：CAS 为啥能保证只有一个线程可以成功呢"></a>2：CAS 为啥能保证只有一个线程可以成功呢</h2><p>CAS 是一种原子操作，在操作系统层面，它的原理是基于硬件提供的原子指令。</p>
-<p>在 X86 架构的CPU中，它底层依赖 cmpxchg 指令。</p>
-<h3 id="1：-cmpchg-指令的作用"><a href="#1：-cmpchg-指令的作用" class="headerlink" title="1： cmpchg 指令的作用"></a>1： cmpchg 指令的作用</h3><h4 id="1：保证原子性"><a href="#1：保证原子性" class="headerlink" title="1：保证原子性"></a>1：保证原子性</h4><p>它是一个原子指令，CPU 在运行这个指令的时候，它会锁总线，防止其他CPU访问；</p>
-<p>而且它在操作期间，防止CPU中断，保证一组操作肯定能执行完毕。</p>
-<h2 id="3：CAS-对比-Sync-锁"><a href="#3：CAS-对比-Sync-锁" class="headerlink" title="3：CAS 对比 Sync 锁"></a>3：CAS 对比 Sync 锁</h2><p>相对于 Sycn 锁的阻塞算法，CAS 是非阻塞算法；</p>
-<p>CAS 主要用于实现：</p>
-<ul>
-<li>乐观锁</li>
-<li>自旋锁</li>
-</ul>
-<h2 id="4：CAS-出现-ABA-问题"><a href="#4：CAS-出现-ABA-问题" class="headerlink" title="4：CAS 出现 ABA 问题"></a>4：CAS 出现 ABA 问题</h2><h3 id="1：ABA-问题是啥"><a href="#1：ABA-问题是啥" class="headerlink" title="1：ABA 问题是啥"></a>1：ABA 问题是啥</h3><p>CAS 的 ABA 问题是指在使用 CAS 时，由于CAS 算法实现的一个重要前提是：取出内存中某时刻的值，在下一个时刻比较并且交换，那么在这个时间差内，有可能数据被篡改。</p>
-<p>比如：有两个线程 t1,t2;</p>
-<p>都从相同内存位置取出值 A，线程1修改为B，此时线程2以为某种原因让出CPU时间挂起了，线程1再把B改为A，之后呢，线程2恢复执行，比较内存地址是A，认为没有被改过，就继续执行自己的操作。线程2 的操作过程违背了 CAS 的思想。这就是 ABA 问题。</p>
-<h3 id="2：如何解决-ABA-问题"><a href="#2：如何解决-ABA-问题" class="headerlink" title="2：如何解决 ABA 问题"></a>2：如何解决 ABA 问题</h3><p>有两种方案：</p>
-<ul>
-<li><p>加版本号</p>
-<p>对内存位置的值，没修改一次，就对版本号 +1；</p>
-<p>在比较内存位置的值时候，也要比较下版本号有没有变化过，如果两个都没变过，那就执行成功。</p>
-</li>
-<li><p>Java 中提供的 AtomicStampedReference </p>
-<p>它维护了一个引用和一个时间戳。</p>
-<p>它检查引用地址是否被改过的同时，也会检查时间戳有没有被改过。</p>
-</li>
-</ul>
-<h2 id="5：乐观锁和悲观锁"><a href="#5：乐观锁和悲观锁" class="headerlink" title="5：乐观锁和悲观锁"></a>5：乐观锁和悲观锁</h2><h3 id="1：乐观锁"><a href="#1：乐观锁" class="headerlink" title="1：乐观锁"></a>1：乐观锁</h3><p>乐观锁是一种思想。它假设数据一般情况下不会造成冲突，所以在数据提交更新的时候，才会检查数据是否冲突。</p>
-<p>乐观锁的实现细节：</p>
-<ul>
-<li>检查冲突</li>
-<li>数据更新</li>
-</ul>
-<p>最典型的就是 CAS </p>
-<h3 id="2：悲观锁"><a href="#2：悲观锁" class="headerlink" title="2：悲观锁"></a>2：悲观锁</h3><p>悲观锁认为：数据被并发修改的概率比较大。在修改之前先要加上锁。防止被篡改。</p>
-<p>Sync 锁就是一种悲观锁。</p>
-<p>​	</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" data-id="clxs9cec000118guwcd7fg6h0" data-title="原子类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
 
     </footer>
   </div>
@@ -1010,7 +1118,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nacos/" rel="tag">nacos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
     </div>
   </div>
 
@@ -1020,7 +1128,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a>
+      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 10px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/nacos/" style="font-size: 10px;">nacos</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 10px;">分布式</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
     </div>
   </div>
 
@@ -1029,7 +1137,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -1042,23 +1150,23 @@
       <ul>
         
           <li>
-            <a href="/2023/06/16/Spring%20IOC/">Spring IOC</a>
+            <a href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/">设计模式</a>
           </li>
         
           <li>
-            <a href="/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Spring bean 的生命周期</a>
+            <a href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/">微服务</a>
           </li>
         
           <li>
-            <a href="/2023/04/16/Spring%20AOP/">AOP</a>
+            <a href="/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">分布式</a>
           </li>
         
           <li>
-            <a href="/2023/02/16/RPC/">RPC</a>
+            <a href="/2023/09/16/Nacos/">nacos</a>
           </li>
         
           <li>
-            <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/">ZK</a>
+            <a href="/2023/08/16/Springcloud/">服务治理</a>
           </li>
         
       </ul>

@@ -69,6 +69,690 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-线程基础的东西" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" class="article-date">
+  <time class="dt-published" datetime="2021-03-15T16:00:00.000Z" itemprop="datePublished">2021-03-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/">线程的基础东西</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：并发、并行"><a href="#1：并发、并行" class="headerlink" title="1：并发、并行"></a>1：并发、并行</h1><p>并发（Concurrent）:</p>
+<p>​	两个进程，交替使用同一个 CPU。CPU的处理速度很快，用户觉察不出它的停顿，看来其就像同时干很多事情，这其实是cpu时间片技术，并发完成的；</p>
+<p>并行：</p>
+<p>​	是对一个操作系统有 1 个以上的 CPU 来说的；当一个cpu 执行一个进程，另一个CPU执行另一个进程，两个进程间互不干扰可以同时进行，成为并行。</p>
+<h1 id="2：进程、线程"><a href="#2：进程、线程" class="headerlink" title="2：进程、线程"></a>2：进程、线程</h1><p>进程：一个任务就是一个进程，比如：打开一个浏览器就是一个浏览器进程，打开一个记事本，就是一个记事本进程；</p>
+<p>​	进程是分配资源的基本单位；</p>
+<p>线程：在一个进程内部，要同时干很多事，就需要同时运行多个子任务，这些子任务叫做线程；</p>
+<p>​	线程是执行任务的基本单位；线程是比进程更轻量级的执行单元；</p>
+<p>同一个进程中的多个线程共享资源；</p>
+<h1 id="3：创建内核线程的4种方式"><a href="#3：创建内核线程的4种方式" class="headerlink" title="3：创建内核线程的4种方式"></a>3：创建内核线程的4种方式</h1><ul>
+<li><p>继承 Thread 类</p>
+<p>重写 run 方法；</p>
+</li>
+<li><p>实现 runnable 接口</p>
+<p>重写 run 方法, 需要将 runnable 提交到Trhread 中才能执行；</p>
+<p>将 Runnable 作为参数传入 Thread 构造方法；</p>
+</li>
+<li><p>实现有返回值的callable </p>
+<p>重写 call 方法，跟runnable 一样，它也是一个任务，需要提交到 Thread 中才能执行</p>
+</li>
+<li><p>futureTask 创建线程</p>
+</li>
+<li><p>线程池</p>
+<p>其实使用的是线程工厂创建；</p>
+<p>DefaultThreadFactory实现ThreadFactory接口，最终还是使用new thread当时创建线程</p>
+</li>
+</ul>
+<h1 id="4：Runnable-和-Callable-区别"><a href="#4：Runnable-和-Callable-区别" class="headerlink" title="4：Runnable 和 Callable 区别"></a>4：Runnable 和 Callable 区别</h1><p>都可以用来创建线程；</p>
+<p>实现Runnable 需要重写 run 方法；实现 callable 接口，需要重写 call 方法；</p>
+<p>runnable 的 run  方法没有返回值；callable 的 call 方法返回 Object 类型；</p>
+<h1 id="5：FutureTask-实现类"><a href="#5：FutureTask-实现类" class="headerlink" title="5：FutureTask 实现类"></a>5：FutureTask 实现类</h1><h2 id="1：Future-接口"><a href="#1：Future-接口" class="headerlink" title="1：Future 接口"></a>1：Future 接口</h2><p>代表一个异步执行的结果；执行完成通过 get 获取执行结果；get 方法会阻塞；如果想取消，调用 cancel 方法；</p>
+<p>FutureTask 是 Future 接口的实现类；</p>
+<h1 id="6：线程的状态相关"><a href="#6：线程的状态相关" class="headerlink" title="6：线程的状态相关"></a>6：线程的状态相关</h1><h2 id="1：线程的6种状态"><a href="#1：线程的6种状态" class="headerlink" title="1：线程的6种状态"></a>1：线程的6种状态</h2><ul>
+<li><p>初始 new 状态</p>
+<p>新建后还没有调用 start 方法之前</p>
+</li>
+<li><p>runnable 运行状态</p>
+<p>​	Java 线程中将 ready 就绪和运行 running 统称为运行状态；</p>
+<ul>
+<li><p>就绪</p>
+<p>线程被调用了 start 方法，并不是马上就执行，需要等待获取 cpu 时间片；</p>
+</li>
+<li><p>运行</p>
+<p>就绪状态的线程获取到了 cpu 时间片，开始执行代码</p>
+</li>
+</ul>
+</li>
+<li><p>blocked 阻塞</p>
+<p>线程阻塞于锁</p>
+<p>被 sync 修饰的同步代码，所有因为获取不到锁的线程，会进入 EntryList 队列；</p>
+<p>被 Lock 修饰的同步代码，所有因为获取不到锁的线程，会进入 WaitingSet 队列(没有获取reentrantLock 锁的线程，当被唤醒时，正序唤醒 -&gt; 拿到队头节点的下一个节点 ）：	</p>
+<p>Thread 线程封装为 Node 对象 &#x3D;》AQS 维护 Waitingset队列  </p>
+</li>
+<li><p>waiting 等待</p>
+</li>
+<li><p>time-waiting 超时等待</p>
+</li>
+<li><p>线程执行完毕</p>
+</li>
+</ul>
+<h2 id="3：为啥线程没有-running-状态"><a href="#3：为啥线程没有-running-状态" class="headerlink" title="3：为啥线程没有 running 状态"></a>3：为啥线程没有 running 状态</h2><p>cpu 的时间片很短，大概在 10-20 毫秒左右；</p>
+<p>也就是说 1s 之内，同一个线程有可能处于就绪状态或者运行状态，如果明确的定义下来，其实状态时不准的；</p>
+<p>当我们看到线程时 running 状态，它有可能已经失去cpu时间；</p>
+<p>因此，对于线程，我们只需要直到它当前有没有获取时间片就行，这其实就是 runnable 状态；</p>
+<h1 id="7：线程中的关键字及区别"><a href="#7：线程中的关键字及区别" class="headerlink" title="7：线程中的关键字及区别"></a>7：线程中的关键字及区别</h1><h2 id="1：run-和-start-的区别"><a href="#1：run-和-start-的区别" class="headerlink" title="1：run 和 start 的区别"></a>1：run 和 start 的区别</h2><p>创建好线程后，想要启动线程需要调用 start 方法。因此，start 方法是启动一个线程的入口；</p>
+<p>start 方法底层加了sync 锁，底层通过 jvm 配合操作系统，调用的是操作系统的 start0 方法来启动线程；</p>
+<h2 id="2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别"><a href="#2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别" class="headerlink" title="2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别"></a>2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别</h2><ul>
+<li><p>作用的地方不同</p>
+<p>sleep方法 可以在任何地方使用；</p>
+<p>wait 方法只能在（sync）同步方法和同步代码块中使用；</p>
+</li>
+</ul>
+<p>​       为啥要在同步代码中执行：因为，wait 方法执行前必须先持有锁，调用对象的wait方法；</p>
+<ul>
+<li><p>是否释放锁</p>
+<p>wait 方法会释放锁</p>
+<p>sleep 方法不会释放锁；</p>
+</li>
+<li><p>调用 wait 方法之后</p>
+<p>JVM 会把该线程放入等待队列 waitSet 队列 </p>
+<p>会释放锁</p>
+</li>
+</ul>
+<h2 id="3：notify-和-notifyAll-的区别"><a href="#3：notify-和-notifyAll-的区别" class="headerlink" title="3：notify 和 notifyAll 的区别"></a>3：notify 和 notifyAll 的区别</h2><p>当一个线程wait 之后，必须等待其他线程调用 notify 或者 notify all 方法，才会从等待队列中移出‘；</p>
+<p>使用 notify all，会使所有线程从wait 状态唤醒，进入锁的争夺队列中，notify 只能唤醒一个线程；</p>
+<p>被唤醒的这些线程只是进入争夺队列，并不表示立即获得CPU执行权，只是表示它们可以竞争锁，只有当竞争到锁之后才能有机会</p>
+<p>被CPU调度；</p>
+<h1 id="8：用户线程和守护线程"><a href="#8：用户线程和守护线程" class="headerlink" title="8：用户线程和守护线程"></a>8：用户线程和守护线程</h1><p>用户线程执行的是用户级别的线程；</p>
+<p>守护线程执行的是后台任务；</p>
+<p>​	最典型的是 GC；</p>
+<p>这俩区别是：</p>
+<p>​	JVM在所有的用户线程执行完毕之后退出，不等守护线程是否执行完毕；</p>
+<h2 id="7-1：创建守护线程"><a href="#7-1：创建守护线程" class="headerlink" title="7.1：创建守护线程"></a>7.1：创建守护线程</h2><p>setDemo(true);</p>
+<p>isDemo 判断是否是守护线程；</p>
+<p>我们必须在线程启动之前调用 setDemo ,否则会抛出异常；</p>
+<h1 id="9：虚拟线程"><a href="#9：虚拟线程" class="headerlink" title="9：虚拟线程"></a>9：虚拟线程</h1><p>虚拟线程是jdk 21 新特性之一；它也叫做协程；它是用户态线程；</p>
+<p>虚拟线程不同于普通的线程，它不在对应操作系统中的一个轻量级进程，而是将多个虚拟线程映射到少量的操作系统线程中，通过有效的调度减少上下文切换；因为它的切换不需要操作系统的参数；那么它的切换时怎么实现的呢？它是在 jvm 层面做的一些保持和恢复线程的信息，这些成本也是很低的。</p>
+<p>创建虚拟线程：</p>
+<p>​	Thread.startVitureThread()</p>
+<h1 id="10：对线程安全的理解"><a href="#10：对线程安全的理解" class="headerlink" title="10：对线程安全的理解"></a>10：对线程安全的理解</h1><p>线程安全就是解决多线程之间共享变量的问题；这个很重要。</p>
+<p>在处理这个问题的时候要满足三个原则：</p>
+<ul>
+<li>原子性</li>
+<li>可见性 </li>
+<li>有序性</li>
+</ul>
+<h2 id="1：Java-中的变量"><a href="#1：Java-中的变量" class="headerlink" title="1：Java 中的变量"></a>1：Java 中的变量</h2><ul>
+<li><p>类变量</p>
+<p>主要是指 static 修饰的，它在方法区</p>
+</li>
+<li><p>成员变量</p>
+<p>它在栈中</p>
+</li>
+<li><p>局部变量</p>
+<p>它在堆中</p>
+</li>
+</ul>
+<h2 id="2：Java-中的共享变量有哪些"><a href="#2：Java-中的共享变量有哪些" class="headerlink" title="2：Java 中的共享变量有哪些"></a>2：Java 中的共享变量有哪些</h2><p>共享变量有：类变量、成员变量；</p>
+<p>主要集中在方法区和栈中；</p>
+<p>这些地方的共享变量需要考虑线程安全问题。</p>
+<h2 id="3：如何保证线程安全"><a href="#3：如何保证线程安全" class="headerlink" title="3：如何保证线程安全"></a>3：如何保证线程安全</h2><p>或者说线程同步的方式有哪些？</p>
+<ul>
+<li><p>互斥锁</p>
+<p>sync 锁、Lock 锁</p>
+</li>
+<li><p>并发集合类</p>
+<p>CopyOnWritexxx</p>
+<p>ConcurrentHashMap</p>
+</li>
+<li><p>原子操作类</p>
+</li>
+<li><p>ThreadLocal</p>
+</li>
+<li><p>不可变的类</p>
+</li>
+<li><p>线程同步工具</p>
+</li>
+</ul>
+<h1 id="11：关于线程上下文切换"><a href="#11：关于线程上下文切换" class="headerlink" title="11：关于线程上下文切换"></a>11：关于线程上下文切换</h1><p>线程上下切换发生在一个 CPU在多个线程之间的操作；</p>
+<p>上下文切换是指：CPU从一个线程切换到另一个线程时，需要保存当前线程的状态，以便于下次恢复这个线程的时候能正常执行；</p>
+<p>上下文信息包括：</p>
+<p>​	当前这个线程的状态、程序计数器、寄存器、栈指针等；</p>
+<p>上下文切换这个动作会降低CPU的执行效率，这个动作是操作系统级别的切换；</p>
+<p>底层需要操作系统在用户态和内核态之间切换，为啥这样呢？因为，一个Java线程它是对应操作系统中的一个轻量级进程，线程的创建和启动等动作，都需要操作系统参与；</p>
+<h1 id="12：线程中断机制"><a href="#12：线程中断机制" class="headerlink" title="12：线程中断机制"></a>12：线程中断机制</h1><p>调用了 inturrupt 中断方法的线程，并不会立马中断；</p>
+<p>中断只是一个协商机制</p>
+<h1 id="13：线程顺序执行"><a href="#13：线程顺序执行" class="headerlink" title="13：线程顺序执行"></a>13：线程顺序执行</h1><p>让线程能够顺序执行，主要就是想办法让多个线程之间能通信或者排队；</p>
+<ul>
+<li><p>通信</p>
+<ul>
+<li><p>join方法</p>
+<p>join 的原理是：将当前子线程加入主线程，主线程阻塞，等到加入的子线程执行完后再执行</p>
+</li>
+<li><p>线程同步工具</p>
+</li>
+</ul>
+</li>
+<li><p>排队</p>
+<ul>
+<li><p>线程池</p>
+<p>线程池内部使用的是队列来存任务，所以线程的执行顺序会按照加入队列的顺序执行，但这不是绝对的，有可能后面加入的先执行；但是我们可以定义一下只有一个线程的线程池，加入一些任务。</p>
+</li>
+<li><p>java 8 的 compalteFuture</p>
+<p>它是一个异步编程工具，提供任务的创建组合及转换管理功能</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="14：创建线程有哪些方式"><a href="#14：创建线程有哪些方式" class="headerlink" title="14：创建线程有哪些方式"></a>14：创建线程有哪些方式</h1><h2 id="1：内核方式创建线程"><a href="#1：内核方式创建线程" class="headerlink" title="1：内核方式创建线程"></a>1：内核方式创建线程</h2><p>Java 中的线程都是采用内核方式创建的线程，你初始化一个线程，他会经过应用程序调用操作系统然后，操作系统调用内核中的C++库，包含有启动线程的 start0 方法，之后再交由硬件的 cpu 来调度线程；</p>
+<p>操作系统支持创建的线程个数是有上限的， 无限制的创建，会出现 OOM，Linux 中线程上限是 1W多；</p>
+<h2 id="2：用户线程"><a href="#2：用户线程" class="headerlink" title="2：用户线程"></a>2：用户线程</h2><h2 id="3：内核和用户的混合方式创建线程"><a href="#3：内核和用户的混合方式创建线程" class="headerlink" title="3：内核和用户的混合方式创建线程"></a>3：内核和用户的混合方式创建线程</h2><h1 id="15：为啥需要多线程"><a href="#15：为啥需要多线程" class="headerlink" title="15：为啥需要多线程"></a>15：为啥需要多线程</h1><p>是为了充分利用多核CPU</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clxs9nvuh0021ikuwaai913w1" data-title="线程的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-基本数据类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-02-15T16:00:00.000Z" itemprop="datePublished">2021-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Java 基本数据类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：基本数据类型的分类"><a href="#1：基本数据类型的分类" class="headerlink" title="1：基本数据类型的分类"></a>1：基本数据类型的分类</h1><ul>
+<li><p>byte</p>
+<p>-128 - 127 ，占1字节;</p>
+<p>1 个 byte 等于 8 个 bit </p>
+</li>
+<li><p>short</p>
+<p>占 2 字节</p>
+</li>
+<li><p>char</p>
+<p>占 2 字节，unicode 字符集</p>
+</li>
+<li><p>int</p>
+<p>-2  ^ 31 - 2 ^ 31-1, 大约 21 亿，占 4 字节</p>
+</li>
+<li><p>float</p>
+<p>4 字节；单精度，小数点之后可以精确到7 位；</p>
+<p>定义 float 时，结尾要加 f , 啥也不加就是 double 类型了</p>
+</li>
+<li><p>double</p>
+<p>8 字节；双精度，它的精度是 float 的 2 倍；</p>
+<p>写一个小数，后面啥也不加，默认数据类型是 double 类型, 当然，也可以加一个 d, 表示是 double 类型；</p>
+<p>浮点数都有舍入误差，例如：0.1 + 0.2 ≠ 0.3</p>
+</li>
+<li><p>long</p>
+<p>8 字节；定义 long 类型，后面需要加上 L</p>
+</li>
+<li><p>boolean </p>
+<p>4 字节；默认是 false</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">关于浮点类型：</span><br><span class="line"></span><br><span class="line">java 中的浮点类型都只是一个近似值，为什么说它是一个近似值呢？可能是因为：一个10 进制的负次幂，转化为计算机底层的</span><br><span class="line"></span><br><span class="line">二进制之后，并不能精确。也就是说二进制不能精确表示 10 的负次幂这样。</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2：基本数据类型之间的运算"><a href="#2：基本数据类型之间的运算" class="headerlink" title="2：基本数据类型之间的运算"></a>2：基本数据类型之间的运算</h1><ol>
+<li><p>byte、short、char 三个之间或者自己和自己做运算时，会首先把各自的类型提升为 int</p>
+</li>
+<li><p>long l &#x3D; 123;</p>
+</li>
+</ol>
+<p>   123 默认是 int 类型，它自动提升为 long 类型</p>
+<ol start="3">
+<li>long l  &#x3D; 123d;</li>
+</ol>
+<p>   123d 是 double 类型，double 类型赋值给 long 类型，double 会自动转为 long 类型</p>
+<ol start="4">
+<li>long l &#x3D; 23 亿；</li>
+</ol>
+<p>   编译报错，23 亿超出 int 的最大值范围</p>
+<ol start="5">
+<li>int i &#x3D; (int)0.5；</li>
+</ol>
+<p>   编译不报错，这里做了一个强制类型转换，将 double 类型强转为 int 类型，会丢失精度</p>
+<h1 id="3：十进制浮点型转化为二进制"><a href="#3：十进制浮点型转化为二进制" class="headerlink" title="3：十进制浮点型转化为二进制"></a>3：十进制浮点型转化为二进制</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用浮点小数 * 2 = 积</span><br><span class="line"></span><br><span class="line">将上一步的积取整，剩下的小数部分 * 2 = 积</span><br><span class="line"></span><br><span class="line">。。。。</span><br><span class="line"></span><br><span class="line">如此进行，直到积中的小数部分为 0 </span><br></pre></td></tr></table></figure>
+
+<h1 id="4：金融计算使用-BigDecimal-代替浮点"><a href="#4：金融计算使用-BigDecimal-代替浮点" class="headerlink" title="4：金融计算使用 BigDecimal 代替浮点"></a>4：金融计算使用 BigDecimal 代替浮点</h1><ol>
+<li>比较两个 Bigdecimal 的大小时候，不能使用 BigDecimal 的 equals 方法，要使用它的 CompareTo 方法，这是阿里巴巴开发手册上写的。更不能使用 &#x3D;&#x3D; 比较，因为 Big 是对象。</li>
+</ol>
+<p>   原因是：equals 方法比较的是两个数字的整数部分和小数部分，不会忽略精度。假如 0.1 和 0.10 的两个 BigDecimal 作 equals 比较，结果是fasle </p>
+<ol start="2">
+<li><p>减法：sub</p>
+<p>乘法：mu</p>
+<p>除法：div</p>
+<p>​	需要指定保留几位</p>
+</li>
+<li><p>Bigdecimal(0.1) 和 BigDecimal(“0.1”) 的区别</p>
+<p>它们的舍入误差不一样；0.1转化为 BigDecimal 时，得先转化为二进制之后是 0.1111111……；</p>
+<p>阿里巴巴开发手册中说：进制把浮点转化为 BigDecimal</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" data-id="clxs9nvu2001aikuwb5a2aer4" data-title="Java 基本数据类型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ConcurrentHashMap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/01/ConcurrentHashMap/" class="article-date">
+  <time class="dt-published" datetime="2021-02-01T09:23:59.000Z" itemprop="datePublished">2021-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/01/ConcurrentHashMap/">ConcurrentHashMap</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：ConcurrentHashMap-的数据结构"><a href="#1：ConcurrentHashMap-的数据结构" class="headerlink" title="1：ConcurrentHashMap 的数据结构"></a>1：ConcurrentHashMap 的数据结构</h1><h2 id="1：JDK-1-8-之前"><a href="#1：JDK-1-8-之前" class="headerlink" title="1：JDK 1.8 之前"></a>1：JDK 1.8 之前</h2><p>使用分段锁保证线程安全；它将哈希表默认分为 16 个桶，在加锁的时候，针对某一个桶加锁。其他桶不受影响；这样锁的粒度很小；虽然锁力度小，但是高并发下仍然会出现锁竞争；</p>
+<h2 id="2：JDK-1-8-开始"><a href="#2：JDK-1-8-开始" class="headerlink" title="2：JDK 1.8 开始"></a>2：JDK 1.8 开始</h2><p>采用 cas + synchronized 加锁，也叫锁分离，节点锁的思想；</p>
+<p>在添加元素时，该位置上为空，采用 cas 加入元素；</p>
+<p>如果该位置上不是空，第一个节点的哈希值是 move，表示当前这个哈希槽正在进行扩容，那么就调用 helpTransFer 方法协助扩容；</p>
+<p>​	如果没有在扩容，那么使用 sync 锁，锁住当前节点后添加元素；</p>
+<h1 id="2：为啥-JDK-8-中要采用新的加锁方式"><a href="#2：为啥-JDK-8-中要采用新的加锁方式" class="headerlink" title="2：为啥 JDK 8 中要采用新的加锁方式"></a>2：为啥 JDK 8 中要采用新的加锁方式</h1><p>jdk 7 中的分段锁，虽然提高的并发度，但是当段数固定时，并发很高的时候，任然可能导致热点段，出现性能瓶颈；另外，每个段都是独立结构，这可能导致较高的内存占用；</p>
+<p>因此，jdk 8 不再使用分段锁，采用的是以桶为维度的节点锁；内部采用大量的 CAS 操作。为的是提高并发减少锁竞争；</p>
+<h1 id="3：它为啥使用-Sync-锁而不是-ReentrantLock-锁"><a href="#3：它为啥使用-Sync-锁而不是-ReentrantLock-锁" class="headerlink" title="3：它为啥使用 Sync 锁而不是 ReentrantLock 锁"></a>3：它为啥使用 Sync 锁而不是 ReentrantLock 锁</h1><p>我们都知道，大多数情况下，ReentrantLock 锁都比 Sync 锁更好；</p>
+<p>在 JDK 1.7 中，ConcurrHas 把哈希表分为多个 Segment， Segment 继承 ReentrantLock，也就是说 Segmrnt 本身就是一个锁。</p>
+<p>JDK 8 中是对每个桶加锁，并发冲突小很多，毕竟对同一个桶去同时既要读又要写的概率很低，在并发度不高的场景，Sync 锁不会频繁升级为重量级锁，大多数情况下是在轻量级锁和偏向锁就搞定。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/01/ConcurrentHashMap/" data-id="clxs9nvt60001ikuwdpf9erlf" data-title="ConcurrentHashMap" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-HashMap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/01/HashMap/" class="article-date">
+  <time class="dt-published" datetime="2021-01-01T09:23:59.000Z" itemprop="datePublished">2021-01-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/01/HashMap/">HashMap</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：HashMap-的数据结构"><a href="#1：HashMap-的数据结构" class="headerlink" title="1：HashMap 的数据结构"></a>1：HashMap 的数据结构</h1><ul>
+<li><p>jdk 1.8 之前，是 Entry 数组 + 链表；</p>
+</li>
+<li><p>jdk 1.8 开始，是 Node 数组 + 链表+ TreeNode 红黑树</p>
+<p>为了解决链表过长，引入红黑树，红黑树是一个双向链表；</p>
+</li>
+</ul>
+<p>​	Entry 数组是内部类，每一个 Entry 包含一个 K、V；数组是主体；</p>
+<h1 id="2：遍历-HashMap"><a href="#2：遍历-HashMap" class="headerlink" title="2：遍历 HashMap"></a>2：遍历 HashMap</h1><h2 id="1：使用-Entry-遍历"><a href="#1：使用-Entry-遍历" class="headerlink" title="1：使用 Entry 遍历"></a>1：使用 Entry 遍历</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Map.Entry&lt;String, Integer&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> entry.getKey();</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> entry.getValue();</span><br><span class="line">    <span class="comment">// 对 key 和 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2：通过-keySet-遍历所有的-k"><a href="#2：通过-keySet-遍历所有的-k" class="headerlink" title="2：通过 keySet 遍历所有的 k"></a>2：通过 keySet 遍历所有的 k</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> map.get(key);</span><br><span class="line">    <span class="comment">// 对 key 和 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3：通过-values-遍历所有的v"><a href="#3：通过-values-遍历所有的v" class="headerlink" title="3：通过 values 遍历所有的v"></a>3：通过 values 遍历所有的v</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 添加键值对到 map</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Integer value : map.values()) &#123;</span><br><span class="line">    <span class="comment">// 对 value 进行操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3：HashMap-的-put方法、get-方法分析"><a href="#3：HashMap-的-put方法、get-方法分析" class="headerlink" title="3：HashMap 的 put方法、get 方法分析"></a>3：HashMap 的 put方法、get 方法分析</h1><h2 id="1：put-流程"><a href="#1：put-流程" class="headerlink" title="1：put 流程"></a>1：put 流程</h2><ul>
+<li><p>首先根据 k 计算哈希值，为了使 k 分配的均匀，增加了扰动函数；并经过哈希值与数组长度取模，计算 k 在数组中的位置；</p>
+</li>
+<li><p>如果该位置上为空，直接就存了；</p>
+</li>
+<li><p>如果该位置上有元素，那么遍历该位置上的元素，使用 equas 比较 k 是否相等:</p>
+<ul>
+<li><p>如果相等，那么新的 v 覆盖旧的 v;</p>
+</li>
+<li><p>如果不相等：</p>
+<ul>
+<li><p>jdk 8 之前：</p>
+<p>头插法，新元素存数组位置，来的元素挂在它的后面，形成一个链表；</p>
+</li>
+<li><p>jdk 8 开始：</p>
+<p>判断当前位置的数据结构：</p>
+<p>1：如果是链表，那么就尾插法，新元素跟在老元素后面；</p>
+<p>​	尾插法之后，要判断是否需要树化：</p>
+<p>​	当链表长度 &gt;8 开始树化，如果此时数组长度 &lt; 64 ,不树化，只扩容；</p>
+<p>​	否则，树化。</p>
+<p>​	当链表长度 &#x3D; 6 ，把树变成链表。</p>
+<p>2：如果是红黑树结构，封装当前新元素为 TreeNode，加入红黑树中；</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>一切结束，在判断一次是否需要扩容。</p>
+</li>
+</ul>
+<h2 id="2：get-流程"><a href="#2：get-流程" class="headerlink" title="2：get 流程"></a>2：get 流程</h2><ul>
+<li><p>首先根据 k 计算出所在数组中的位置；</p>
+</li>
+<li><p>如果该位置上没元素，直接返回 null;</p>
+</li>
+<li><p>如果有元素：遍历元素：</p>
+<ul>
+<li><p>比较 equals 是否相等，相等的话就直接返回；</p>
+</li>
+<li><p>equals 不相等，判断该结构数据结构：</p>
+<ul>
+<li><p>链表结构</p>
+<p>也是 equals 遍历链表元素</p>
+</li>
+<li><p>树形结构</p>
+<p>也是</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-1：HashMap-如何确定-k-在数组位置"><a href="#3-1：HashMap-如何确定-k-在数组位置" class="headerlink" title="3-1：HashMap 如何确定 k 在数组位置"></a>3-1：HashMap 如何确定 k 在数组位置</h1><p>通过 k 的哈希值取模数组长度；</p>
+<p>通过源码发现, HashMap 并不是这种方式，采用了一些骚操作；</p>
+<p>它是通过 k 的哈希值右移 16 位，之后跟数组长度 -1 ，做 &amp; 计算；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(table.length - <span class="number">1</span>) &amp; (key.hashCode ^ (key.hashCode &gt;&gt; <span class="number">16</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="1：-为啥要用这种骚操作呢"><a href="#1：-为啥要用这种骚操作呢" class="headerlink" title="1： 为啥要用这种骚操作呢"></a>1： 为啥要用这种骚操作呢</h2><h3 id="1：为啥要用-不用"><a href="#1：为啥要用-不用" class="headerlink" title="1：为啥要用&amp;不用%"></a>1：为啥要用&amp;不用%</h3><p>是基于内存的二进制直接计算；比 % 十进制取模更高效；</p>
+<p>这也就是为啥它要每次扩容是 2的N次方的原因，它是想用位运算呀</p>
+<h3 id="2：为啥要保持数组容量为-2-的N次方"><a href="#2：为啥要保持数组容量为-2-的N次方" class="headerlink" title="2：为啥要保持数组容量为 2 的N次方"></a>2：为啥要保持数组容量为 2 的N次方</h3><p>在高效计算 k 在数组中的位置的时候使用；</p>
+<h4 id="1：初始化保证"><a href="#1：初始化保证" class="headerlink" title="1：初始化保证"></a>1：初始化保证</h4><h4 id="2：扩容保证"><a href="#2：扩容保证" class="headerlink" title="2：扩容保证"></a>2：扩容保证</h4><h3 id="3：为啥哈希值要右移-16-位呢"><a href="#3：为啥哈希值要右移-16-位呢" class="headerlink" title="3：为啥哈希值要右移 16 位呢"></a>3：为啥哈希值要右移 16 位呢</h3><p>它是为了增加哈希值的扰动，使得哈希分布的尽可能均匀。说白了，就是将hashCode的高16和低16位，进行异或，使得hashCode的值更加分散一点。</p>
+<h1 id="3-2：HashMap-如何找-k"><a href="#3-2：HashMap-如何找-k" class="headerlink" title="3-2：HashMap 如何找 k"></a>3-2：HashMap 如何找 k</h1><p>先计算出 k 的哈希值，进一步计算出在数组中的位置，然后使用 equals 比较找到 k；</p>
+<p>因此，在使用 HashMap 的时候，k 都要重写 hashcode 和 equasl 方法</p>
+<h1 id="3-3：关于扩容相关的"><a href="#3-3：关于扩容相关的" class="headerlink" title="3-3：关于扩容相关的"></a>3-3：关于扩容相关的</h1><h2 id="1：加载因子"><a href="#1：加载因子" class="headerlink" title="1：加载因子"></a>1：加载因子</h2><p>加载因子是为扩容服务，决定了每次扩容多少；</p>
+<h2 id="2：为啥加载因子是-0-75f"><a href="#2：为啥加载因子是-0-75f" class="headerlink" title="2：为啥加载因子是 0.75f"></a>2：为啥加载因子是 0.75f</h2><p>为啥选 0.75，为啥不是1，为啥不是 0.5、0.8 等呢</p>
+<p>在 jdk 官方文档中是这样说明的：</p>
+<p>0.75 是时间和空间成本的权衡；它是经过大量的数学计算得来的；太小会浪费空间，动不动就要扩容，太大会造成更多的哈希冲突；</p>
+<h2 id="3：咋扩容的"><a href="#3：咋扩容的" class="headerlink" title="3：咋扩容的"></a>3：咋扩容的</h2><p>首先说为啥需要扩容？</p>
+<p>扩容是为了降低哈希冲突的概率；</p>
+<p>扩容发生在 put 方法中，当当前元素个数 &gt; 当前容量的 3&#x2F;4 时，就扩容 2 倍；</p>
+<p>扩容会涉及3点：</p>
+<ul>
+<li>如果某位置没有形成链表，那么就 rehash ，将元素放到新位置</li>
+<li>如果某位置是链表，也将链表重新链接</li>
+<li>如果某位置是树，但是链表长度 &lt; 6 ,取消树化，当然 remove 的时候也会判断是否取消树化</li>
+</ul>
+<h1 id="3-4：关于初始化相关的"><a href="#3-4：关于初始化相关的" class="headerlink" title="3-4：关于初始化相关的"></a>3-4：关于初始化相关的</h1><h2 id="1：初始化容量应该设置多少合适"><a href="#1：初始化容量应该设置多少合适" class="headerlink" title="1：初始化容量应该设置多少合适"></a>1：初始化容量应该设置多少合适</h2><p>阿里巴巴开发手册建议初始化的时候设置一个默认容量，</p>
+<p>提高性能；</p>
+<p>大小 &#x3D; 默认是 16 </p>
+<p>或者：大小 &#x3D; 你需要存几个元素 &#x2F; 0.75 + 1 </p>
+<h1 id="4：为啥-jdk-8-开始链表转红黑树"><a href="#4：为啥-jdk-8-开始链表转红黑树" class="headerlink" title="4：为啥 jdk 8 开始链表转红黑树"></a>4：为啥 jdk 8 开始链表转红黑树</h1><p>HashMap 解决哈希冲突采用的是链地址法，新元素会增加到链表上，这样就会产生一个问题，当冲突很多，链表有可能会很长，这样，在插入删除和查询的时候，实践复杂度是 On。尽管 JDK 1.8 之后，为了减少哈希冲突， 优化了扰动函数，使不同的 key 尽量分散开，但是效果不是太好；</p>
+<p>我们可以想一个问题：当元素过多，应该用那种数据结构来替代链表呢。我们很自然的想到使用二叉树，所谓二叉查找树，一定是 left &lt; root &lt; right，这样我们遍历的时间复杂度从 On 下降到了 O logn。但是极端情况下，二叉查找树会退化成链表。因此我们就需需要二叉平衡树 （AVL树），它在每次插入的时候，会检查左子树和右子树的高度差 &lt;&#x3D;1，如果 &gt; 1:  就需要左旋或者右旋，使时间复杂度维持在 logn。但是这也不是绝对万无一失的，我们不仅要保证增删的时间复杂度，也要保证查询的时间复杂度。二叉平衡树为了维持高度差 &lt;&#x3D;1，非常严格，追求绝对的平衡，在每次插入和查找的时候都要左旋或者右旋，消耗时间；因此，对于那些频繁插入和删除的场景，二叉平衡树显然不合适；为了维持插入删除和查询的时间复杂度维持在一个均衡的状态，引入了红黑树。</p>
+<p>红黑树的查找、删除、新增的时间复杂度都是 Ologn;</p>
+<p>在红黑树中，所有的叶子节点都是黑色的 null, 不存数据。相邻节点不能同时是红色，两个红色之间用黑色间隔。红黑树不会像二叉平衡树那样追求绝对的平衡，它的插入最多旋转 2 次，删除最多旋转 3次；在频繁的插入删除场景中，红黑树效率优于二叉查找树。</p>
+<h1 id="5：为啥链表长度-8-时，才转红黑树？"><a href="#5：为啥链表长度-8-时，才转红黑树？" class="headerlink" title="5：为啥链表长度&#x3D; 8 时，才转红黑树？"></a>5：为啥链表长度&#x3D; 8 时，才转红黑树？</h1><p>这个问题引入两个子问题：</p>
+<h2 id="1：为啥不在冲突开始的时候就转呢"><a href="#1：为啥不在冲突开始的时候就转呢" class="headerlink" title="1：为啥不在冲突开始的时候就转呢"></a>1：为啥不在冲突开始的时候就转呢</h2><p>不立刻转的原因是：从空间维度来说，红黑树的空间占用是链表的2倍，立刻转的话，太浪费空间了，从时间维度上来说，红黑树虽然查找效率高于链表，但是插入没有链表快。每次插入都要旋转和变色，如果 &lt; 8 就立马转，时间和空间没有做到平衡；</p>
+<h2 id="2：为啥一定要在-8-的时候才转？"><a href="#2：为啥一定要在-8-的时候才转？" class="headerlink" title="2：为啥一定要在 8 的时候才转？"></a>2：为啥一定要在 8 的时候才转？</h2><p>源码中有做解释：</p>
+<p>基于泊松分布，官方在做了大量的数学实验后，得出结论，链表长度 &#x3D; 8 的概率是 0.00000006，这是一个极小的概率；而且红黑树的 TreeNode 节点的内存占用是链表 Node 节点的 2 倍；</p>
+<h2 id="3：为啥又在-6-的时候转回来？"><a href="#3：为啥又在-6-的时候转回来？" class="headerlink" title="3：为啥又在 6 的时候转回来？"></a>3：为啥又在 6 的时候转回来？</h2><p>这个设计的主要原因是：基于性能和空间的考虑；8 的时候转红黑树，如何小于8就立马转回去，那就导致转换频繁，所以要选择一个 &lt;8 的值，根据官方做的实验，在 6 的时候，红黑树的优势已经不那么明显了。</p>
+<h1 id="6：HashMap、HashTable-、ConcurrentHashMap-比较"><a href="#6：HashMap、HashTable-、ConcurrentHashMap-比较" class="headerlink" title="6：HashMap、HashTable 、ConcurrentHashMap 比较"></a>6：HashMap、HashTable 、ConcurrentHashMap 比较</h1><h2 id="1：线程安全角度"><a href="#1：线程安全角度" class="headerlink" title="1：线程安全角度"></a>1：线程安全角度</h2><p>HashMap 不是线程安全的；</p>
+<p>HashTable 方法加锁，是线程安全；</p>
+<p>ConcurrentHs, 也是线程安全的。</p>
+<h2 id="2：继承关系角度"><a href="#2：继承关系角度" class="headerlink" title="2：继承关系角度"></a>2：继承关系角度</h2><p>HashMap 继承 AsbstractMap 实现 Map 接口；</p>
+<p>HashTable 继承古老的 Dictory 接口；</p>
+<p>ConcurrentHs 继承 AbstractMap 继承 ConcurrentMap 接口；</p>
+<h2 id="3：是否为-null-角度"><a href="#3：是否为-null-角度" class="headerlink" title="3：是否为 null 角度"></a>3：是否为 null 角度</h2><p> HashMap 允许 null;</p>
+<p>HashTable 和 ConcurrentHs 不允许有 null；</p>
+<h1 id="7-：-HashMap-在并发场景会有啥问题"><a href="#7-：-HashMap-在并发场景会有啥问题" class="headerlink" title="7 ： HashMap 在并发场景会有啥问题"></a>7 ： HashMap 在并发场景会有啥问题</h1><p>这个问题只是会出现在 JDK 7 之前，JDK 8 开始久修复了</p>
+<p>发生在扩容的时候，jdk 7 中，采用头插法，之所以采用头插法，是因为 JDK 作者认为后插入的元素使用频率较高，更大概率成为热点数据；采用头插法把他们放在头部，就可以提高查询效率。</p>
+<p>但是，正是因为把当前元素作为链表得到头节点，在并发扩容时，产生循环引用，造成链表死循环。导致 CPU 飙升。</p>
+<p>jdk 8 开始的版本，已经解决了这个问题：</p>
+<p>jdk 8 开始采用尾插法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/01/HashMap/" data-id="clxs9nvta0003ikuwdk60gher" data-title="HashMap" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Set 接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time class="dt-published" datetime="2020-12-15T16:00:00.000Z" itemprop="datePublished">2020-12-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/">Set 接口</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：-Set-接口总述"><a href="#1：-Set-接口总述" class="headerlink" title="1： Set 接口总述"></a>1： Set 接口总述</h1><p>元素不重复</p>
+<ul>
+<li><p>TreeSet 底层是TreeMap, 是红黑树实现；</p>
+<p>自动排好序；</p>
+<p>不能存 null，要不然没法比较大小；</p>
+<p>添加的元素都要实现排序</p>
+</li>
+<li><p>HashSet 是 HashMap 实现；</p>
+<p>无序，可以有一个null</p>
+</li>
+</ul>
+<h1 id="2：Set-如何保证不重复元素"><a href="#2：Set-如何保证不重复元素" class="headerlink" title="2：Set 如何保证不重复元素"></a>2：Set 如何保证不重复元素</h1><h2 id="1：HashSet-如何保证元素不重复"><a href="#1：HashSet-如何保证元素不重复" class="headerlink" title="1：HashSet 如何保证元素不重复"></a>1：HashSet 如何保证元素不重复</h2><p>其实也就是 HashMap 咋存元素的过程</p>
+<h2 id="2：TreeSet-如何保证元素不重复"><a href="#2：TreeSet-如何保证元素不重复" class="headerlink" title="2：TreeSet 如何保证元素不重复"></a>2：TreeSet 如何保证元素不重复</h2><p>TreeSet 底层是 TreeMap 的 keySet方法，TreeMap 底层是红黑树，红黑树是一种平衡二叉树；</p>
+<p>它能保证任何一个左右子树的高度差不会超过较矮的那颗的一倍。</p>
+<p>TreeMap 的排序是按照 key 来排序，元素在插入时候，根据 comparTo 方法比较大小，所以 TreeMap</p>
+<p>中的元素要实现 Coparable 接口；</p>
+<p>TreeSet 是根据 ComparTo 方法判断是否重复元素。</p>
+<h1 id="3：-LinkedHashSet"><a href="#3：-LinkedHashSet" class="headerlink" title="3： LinkedHashSet"></a>3： LinkedHashSet</h1><p>不仅元素不重复，还能记录插入和查询顺序；</p>
+<p>基于 LinkedHashMap; 哈希表+双链表</p>
+<p>通过双向链表记录插入顺序；</p>
+<h1 id="4：啥是-BitSet"><a href="#4：啥是-BitSet" class="headerlink" title="4：啥是 BitSet"></a>4：啥是 BitSet</h1><p>BitSet 是位集合；</p>
+<p>位集合的底层结构是一个 bit 数组，如果第 n 位是1，则表示数组 n 在这个集合中；</p>
+<p>比如：当调用 BitSet 的 set(10) ，业务的意思是把 10 放到这个集合中，内部的操作是把二进制的第 10 位置为 1，</p>
+<p>表示 10 在这个集合中；</p>
+<p>在Java 中，它的底层是一个 long 数组，它最大的好处是对于多个数字来说，降低了内存空间，正常情况下，要把所有的 int</p>
+<p>类型的正整数，存起来，需要 8G内存，但是使用 bitSet 的话，只需要原来内存的 1&#x2F;32;</p>
+<h2 id="BitSet-常用在哪"><a href="#BitSet-常用在哪" class="headerlink" title="BitSet 常用在哪"></a>BitSet 常用在哪</h2><ul>
+<li><p>现在有一千万个随机数，随机数的范围在 1 - 1亿之间，求出 1-1亿之间的数字，哪些没有在这批随机数中？</p>
+</li>
+<li><p>将 N 个数字排序</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/12/16/Set%20%E6%8E%A5%E5%8F%A3/" data-id="clxs9nvtj000dikuw1fbla53q" data-title="Set 接口" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-List 接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time class="dt-published" datetime="2020-11-15T16:00:00.000Z" itemprop="datePublished">2020-11-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/">List 接口</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：List-接口总述"><a href="#1：List-接口总述" class="headerlink" title="1：List 接口总述"></a>1：List 接口总述</h1><p>有序</p>
+<p>可重复</p>
+<p>它有索引</p>
+<p>这里的有序是指: 存入的元素的顺序和取出时的顺序是否一致。</p>
+<h1 id="2：ArrayList"><a href="#2：ArrayList" class="headerlink" title="2：ArrayList"></a>2：ArrayList</h1><p>它是一个可变长度的数组；也就是动态数组；</p>
+<p>因为元素有下标，因此根据下标查找速度很快；</p>
+<p>但是增加或者删除元素，需要移动后面的元素，所以效率低；</p>
+<p>它扩容是 1.6 倍；</p>
+<p>线程不安全；</p>
+<h2 id="1：ArrayList-如何扩容？"><a href="#1：ArrayList-如何扩容？" class="headerlink" title="1：ArrayList 如何扩容？"></a>1：ArrayList 如何扩容？</h2><p>先申请一个容量为 10 的数组，当存入第 11 个元素时候，就扩容为之前的 1.5 倍；并将老数组复制到新数组中完成扩容；</p>
+<h2 id="2：ArrayList-的序列化时如何实现的？"><a href="#2：ArrayList-的序列化时如何实现的？" class="headerlink" title="2：ArrayList 的序列化时如何实现的？"></a>2：ArrayList 的序列化时如何实现的？</h2><p>ArrayList 中重写了序列化和反序列化的两个方法：writeObject 和 readObject </p>
+<h1 id="3：LinkedList"><a href="#3：LinkedList" class="headerlink" title="3：LinkedList"></a>3：LinkedList</h1><p>它是一个双向的链表；</p>
+<p>在 jdk 8 中每个元素是一个 Node;</p>
+<p>因为每个元素都记录前后元素的地址，所以它增删元素的时候，只用修改前后的地址就行，增删的效率高；</p>
+<p>查找某个元素，得遍历，所以它查找效率有点低；</p>
+<p>这些比较都是基于数据量大的时候，数据量小没啥意义。</p>
+<p>这家伙还实现了 Queue 和 Dequeue 接口；</p>
+<h1 id="4：Vector"><a href="#4：Vector" class="headerlink" title="4：Vector"></a>4：Vector</h1><p>初始大小是10，它扩容是 2 倍；</p>
+<p>它的所有操作都加了锁，是一个读写互斥的集合</p>
+<h1 id="5：如何使用-List-实现-LRU-？"><a href="#5：如何使用-List-实现-LRU-？" class="headerlink" title="5：如何使用 List 实现 LRU ？"></a>5：如何使用 List 实现 LRU ？</h1><h2 id="1：-啥是-LRU-呀？"><a href="#1：-啥是-LRU-呀？" class="headerlink" title="1： 啥是 LRU 呀？"></a>1： 啥是 LRU 呀？</h2><p>LRU 是一种缓存淘汰策略；</p>
+<p>就是最近最少使用策略；</p>
+<p>它的思想是：</p>
+<p>​	如果一个数据在最近一段时间内，访问的频率很低，就认为在将来访问的次数也很少，因此当空间满的时候，就优先淘汰     这批数据；</p>
+<p>缓存淘汰策略有：</p>
+<ul>
+<li>LRU</li>
+</ul>
+<p> Redis 的 GuavaMap 就是使用这个策略淘汰缓存</p>
+<ul>
+<li><p>LFU</p>
+</li>
+<li><p>TTL</p>
+</li>
+</ul>
+<p> 淘汰过期的</p>
+<ul>
+<li>随机算法</li>
+</ul>
+<h2 id="2：使用-LinkedList-实现-LRU"><a href="#2：使用-LinkedList-实现-LRU" class="headerlink" title="2：使用 LinkedList 实现 LRU"></a>2：使用 LinkedList 实现 LRU</h2><p>因为 LinkedList 基于双向链表，记录了前后前后元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LruListCache</span>&lt;E&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> maxSize;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LinkedList&lt;E&gt; list = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">LruListCache</span><span class="params">(<span class="type">int</span> maxSize)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.maxSize = maxSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(E e)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (list.size() &lt; maxSize) &#123;</span><br><span class="line">            list.addFirst(e);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            list.removeLast();</span><br><span class="line">            list.addFirst(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="type">E</span> <span class="variable">e</span> <span class="operator">=</span> list.get(index);</span><br><span class="line">        list.remove(e);</span><br><span class="line">        add(e);</span><br><span class="line">        <span class="keyword">return</span> e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> list.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/16/List%20%E6%8E%A5%E5%8F%A3/" data-id="clxs9nvtc0005ikuwe7fj3llb" data-title="List 接口" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-哈希冲突如何解决" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" class="article-date">
@@ -115,7 +799,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" data-id="clxs9cec100148guwcafa9tjs" data-title="哈希冲突如何解决" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" data-id="clxs9nvtz0015ikuw4dxkfsn6" data-title="哈希冲突如何解决" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -242,7 +926,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" data-id="clxs9cecf001x8guw6r943vw2" data-title="算是集合归类吧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" data-id="clxs9nvul002bikuw7wft9iom" data-title="算是集合归类吧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -348,7 +1032,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" data-id="clxs9cecg001z8guw2iu57p90" data-title="零碎的点" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" data-id="clxs9nvun002eikuwg26af9c0" data-title="零碎的点" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -455,606 +1139,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/08/16/%E6%9E%9A%E4%B8%BE/" data-id="clxs9cec8001l8guwh94me1i6" data-title="枚举" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-集合体系" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" class="article-date">
-  <time class="dt-published" datetime="2020-08-15T16:00:00.000Z" itemprop="datePublished">2020-08-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/">集合体系</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="集合体系"><a href="#集合体系" class="headerlink" title="集合体系"></a>集合体系</h1><p>集合体系包含 Collection 接口个 Map 接口</p>
-<h1 id="1：Collection-接口"><a href="#1：Collection-接口" class="headerlink" title="1：Collection 接口"></a>1：Collection 接口</h1><p>Collection 接口实现了 Iterable 接口，说明子类都是可以遍历的</p>
-<h2 id="1：-List-接口"><a href="#1：-List-接口" class="headerlink" title="1： List 接口"></a>1： List 接口</h2><ul>
-<li>ArrayList 实现类</li>
-<li>LinkedList 实现类</li>
-<li>vector 实现类<ul>
-<li>Stack 实现类</li>
-</ul>
-</li>
-</ul>
-<h2 id="2：Set-接口"><a href="#2：Set-接口" class="headerlink" title="2：Set 接口"></a>2：Set 接口</h2><ul>
-<li>HashSet 实现类<ul>
-<li>LinkedHashSet 实现类</li>
-</ul>
-</li>
-<li>TreeSet 实现类</li>
-</ul>
-<h2 id="3：Queue-接口"><a href="#3：Queue-接口" class="headerlink" title="3：Queue 接口"></a>3：Queue 接口</h2><ul>
-<li><p>BlockingQueue 实现类</p>
-</li>
-<li><p>Dequeue 实现类</p>
-<ul>
-<li>LinkedList</li>
-</ul>
-</li>
-<li><p>PriorityQueue 实现类</p>
-</li>
-</ul>
-<h1 id="2：Map-接口"><a href="#2：Map-接口" class="headerlink" title="2：Map 接口"></a>2：Map 接口</h1><ul>
-<li>HashMap 实现类<ul>
-<li>LinkedHashMap 实现类</li>
-</ul>
-</li>
-<li>TreeMap 实现类</li>
-<li>HashTable 实现类</li>
-<li>CurrentHashMap 实现类</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" data-id="clxs9cecc001v8guw9g71dsdj" data-title="集合体系" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-数组" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/07/16/%E6%95%B0%E7%BB%84/" class="article-date">
-  <time class="dt-published" datetime="2020-07-15T16:00:00.000Z" itemprop="datePublished">2020-07-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/07/16/%E6%95%B0%E7%BB%84/">数组</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：-数组的特点"><a href="#1：-数组的特点" class="headerlink" title="1： 数组的特点"></a>1： 数组的特点</h1><p>1:   数组存的是相同类型的元素</p>
-<p>2：数组一旦初始化后，长度就固定。</p>
-<p>3：数组中的元素可以重复</p>
-<p>4：数组中元素是有序的，有序的意思是遍历的顺序跟加入的顺序一样</p>
-<p>5：查询的复杂度是 O(1)</p>
-<p>6：数组的长度是 length(),  指的是元素的个数，它没有 size() </p>
-<p>7 ： 数组下标从 0  开始，是因为下标表示元素距离首地址的偏移量</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/07/16/%E6%95%B0%E7%BB%84/" data-id="clxs9cec6001j8guw6t4zhotc" data-title="数组" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-序列化" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/06/16/%E5%BA%8F%E5%88%97%E5%8C%96/" class="article-date">
-  <time class="dt-published" datetime="2020-06-15T16:00:00.000Z" itemprop="datePublished">2020-06-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/06/16/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1-：啥是序列化和反序列化"><a href="#1-：啥是序列化和反序列化" class="headerlink" title="1 ：啥是序列化和反序列化"></a>1 ：啥是序列化和反序列化</h1><p>序列化和反序列化是为了解决网络通信中对象的传输问题；</p>
-<p>也就是说怎么把当前 jvm 中进程中的一个对象，传输到另一个 jvm 进程中；</p>
-<p>序列化的最终目的是：跨平台存储和网络传输，跨平台存储和网络传输的方式就是 IO ;</p>
-<p>而 IO 支持的数据格式就是字节数组；</p>
-<p>序列化就是将对象转化为二进制字节流；方便存储和传输；</p>
-<p>反序列化就是将字节流恢复成对象；</p>
-<h1 id="2-：序列化反序列化原理"><a href="#2-：序列化反序列化原理" class="headerlink" title="2 ：序列化反序列化原理"></a>2 ：序列化反序列化原理</h1><p>序列化的时候 JVM 会调用 ObjectOutPutStream 的 defaultWriteObject 方法，</p>
-<p>反序列化的时候，JVM 会调用 InputStream 的 defaultReadObject 方法；</p>
-<p>如果类中自己定义了 writeObject 和 readObject 方法，那么 jvm 就不使用默认的方法；</p>
-<h1 id="3-多种序列化的方式"><a href="#3-多种序列化的方式" class="headerlink" title="3:  多种序列化的方式"></a>3:  多种序列化的方式</h1><p>序列化只是定义了拆解对象的方式，那这种方式可以是多种多样的；</p>
-<p>常见的序列化方式有：</p>
-<ul>
-<li><p>JDK 原生</p>
-<p>只需要实现 Seriable 接口，就可以通过 OutPutStream 将对象转化为二进制的 byte 字节数组</p>
-</li>
-<li><p>ProtBuf</p>
-<p>谷歌推出</p>
-</li>
-<li><p>Hession</p>
-<p>它是一个轻量级的序列化工具，体积更小</p>
-</li>
-<li><p>Kyro</p>
-<p>号称Java对快的</p>
-</li>
-<li><p>JSON</p>
-<p>JSON 序列化工具会生成一串有规则的字符串；</p>
-<p>常见的 JSON 序列化工具有：</p>
-<ul>
-<li>fastjson</li>
-<li>jaskon</li>
-<li>Gson</li>
-</ul>
-</li>
-</ul>
-<h1 id="4：-序列化的技术选型"><a href="#4：-序列化的技术选型" class="headerlink" title="4： 序列化的技术选型"></a>4： 序列化的技术选型</h1><ul>
-<li>协议是否支持跨平台</li>
-<li>序列化生成的体积</li>
-<li>速度</li>
-</ul>
-<h1 id="5：-实现序列化和反序列化为啥要实现-SeriableId-接口？"><a href="#5：-实现序列化和反序列化为啥要实现-SeriableId-接口？" class="headerlink" title="5： 实现序列化和反序列化为啥要实现 SeriableId 接口？"></a>5： 实现序列化和反序列化为啥要实现 SeriableId 接口？</h1><p>实现那个接口是为了支持序列化和反序列化操作；</p>
-<p>ser 接口并没有任何实现方法，只是一个标记接口，这其实是一个规范；</p>
-<p>序列化id 的作用：</p>
-<p>​	是为了表示该类可以被序列化，也是为了反序列化的时候做校验</p>
-<p>​	JVM 会对比传入的序列化id 是否与本地文件中的id 一致，如果一致才能反序列化；</p>
-<p>如果某个字段不想被序列化，使用 transent 修饰</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/06/16/%E5%BA%8F%E5%88%97%E5%8C%96/" data-id="clxs9cec5001f8guw5efx1vq9" data-title="序列化" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-异常" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/05/16/%E5%BC%82%E5%B8%B8/" class="article-date">
-  <time class="dt-published" datetime="2020-05-15T16:00:00.000Z" itemprop="datePublished">2020-05-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/05/16/%E5%BC%82%E5%B8%B8/">异常</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：异常体系"><a href="#1：异常体系" class="headerlink" title="1：异常体系"></a>1：异常体系</h1><h2 id="1：-Throwable-是所有异常类的父类；"><a href="#1：-Throwable-是所有异常类的父类；" class="headerlink" title="1： Throwable 是所有异常类的父类；"></a>1： Throwable 是所有异常类的父类；</h2><ul>
-<li><p>Error 子类</p>
-<p>它是系统级别的错误；jvm 抛出的异常，程序处理不了。</p>
-<p>常见异常有：内存溢出、堆栈异常</p>
-</li>
-<li><p>Exception 子类</p>
-<ul>
-<li><p>运行时的异常。runtimeException 及其子类，只在运行期间，不受检查异常</p>
-<ul>
-<li><p>空指针</p>
-</li>
-<li><p>类型转换异常</p>
-<p>Treeset 中，添加元素，必须是相同的元素类型</p>
-</li>
-<li><p>运算异常</p>
-</li>
-<li><p>数组下标越界</p>
-</li>
-<li><p>格式化异常</p>
-</li>
-<li><p>并发修改异常（迭代器中迭代的同时删除元素）</p>
-</li>
-<li><p>nosuchelementexception(使用 iterator 遍历集合时，调用 next() , 如果没有元素</p>
-</li>
-<li><p>rejectedExecutionException，线程池中的拒绝策略</p>
-</li>
-</ul>
-</li>
-<li><p>编译期异常，，也叫不受检查异常。也叫受检查异常。编译期间抛出这个异常需要处理。使用 try catch 或者 throws 处理。 </p>
-<ul>
-<li><p>IoException</p>
-<p>对于输入流，要求 File 类的对象对应的物理磁盘必须存在，否则报 FileNotFoundException</p>
-</li>
-<li><p>SQLException</p>
-</li>
-<li><p>ClassNotFoundException</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="2：如何在代码中打印异常"><a href="#2：如何在代码中打印异常" class="headerlink" title="2：如何在代码中打印异常"></a>2：如何在代码中打印异常</h1><ul>
-<li><p>e.printStackTrace() </p>
-<p>能打印完整的堆栈信息、异常的类型和原因</p>
-</li>
-<li><p>e.toString </p>
-<p>只有异常的类型和原因</p>
-</li>
-<li><p>e.getMessage</p>
-<p>只有原因</p>
-</li>
-<li><p>e.getStackTrace()</p>
-<p>只有堆栈信息</p>
-</li>
-</ul>
-<p>一般是使用 guava 的 Throwables.getStackAsString(e)</p>
-<h1 id="3：如何做一个自定义异常"><a href="#3：如何做一个自定义异常" class="headerlink" title="3：如何做一个自定义异常"></a>3：如何做一个自定义异常</h1><p>分为两步：</p>
-<ul>
-<li>写一个异常类继承运行时异常 RuntimeException 或者 Exception ;</li>
-<li>重写构造方法</li>
-<li>在方法内部 throw new 刚才自定义的异常</li>
-</ul>
-<h1 id="4-：关于-finally"><a href="#4-：关于-finally" class="headerlink" title="4 ：关于 finally"></a>4 ：关于 finally</h1><p>finally 通常是跟 try 语句块使用；</p>
-<p>通常情况下，不管有没有出发异常，finally 一定会执行；</p>
-<p>所以一般把资源的释放和业务日志的打印放在 finally 中，</p>
-<h2 id="1：-什么时候-finally-不会执行"><a href="#1：-什么时候-finally-不会执行" class="headerlink" title="1： 什么时候 finally 不会执行"></a>1： 什么时候 finally 不会执行</h2><ul>
-<li><p>程序还没有进入 try 中，程序已经中断；</p>
-</li>
-<li><p>try 或者 catch 中使 jvm 退出的</p>
-</li>
-<li><p>try 中出现死循环</p>
-</li>
-</ul>
-<h2 id="2：-finally-执行顺序"><a href="#2：-finally-执行顺序" class="headerlink" title="2： finally 执行顺序"></a>2： finally 执行顺序</h2><p>如果 finally 中有 return , 那么最终返回的是 finally 中的结果</p>
-<p>如果 finally 中没有return, try 或者 catch 中，谁有，就返回谁的结果；</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/05/16/%E5%BC%82%E5%B8%B8/" data-id="clxs9cec4001d8guwdat3cvid" data-title="异常" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-注解和反射" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/04/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/" class="article-date">
-  <time class="dt-published" datetime="2020-04-15T16:00:00.000Z" itemprop="datePublished">2020-04-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/04/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/">注解和反射</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：反射篇"><a href="#1：反射篇" class="headerlink" title="1：反射篇"></a>1：反射篇</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Reflection;</span><br><span class="line"></span><br><span class="line">因为有了反射，它让我们的 java 有了动态性；</span><br><span class="line"></span><br><span class="line">反射是指：</span><br><span class="line"></span><br><span class="line">​	程序在运行期间，动态的获取类的各种内部信息；比较容易的在运行期间干很多事情；</span><br><span class="line"></span><br><span class="line">​	但是它带来的问题也挺多：</span><br><span class="line"></span><br><span class="line">​		可读性及维护性；</span><br><span class="line"></span><br><span class="line">​		 反射代码的执行性能低；</span><br><span class="line"></span><br><span class="line">​		 反射破坏了封装。</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">反射最关键的获取一个类的 Class 对象。</span><br><span class="line"></span><br><span class="line">当一个类的被加载完毕，在堆内存的方法区就会产生这个类的 Class 类型的对象；一个类只有一个 Class 对象；</span><br><span class="line"></span><br><span class="line">这个 Class 对象很重要，它包含类的所有完整的信息，通过这个 Class 对象看到类的结构，我们形象的称之为反射；</span><br><span class="line"></span><br><span class="line">反射的第一步就是获取 Class 对象；</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="1：反射与正常方式获取类的差异性"><a href="#1：反射与正常方式获取类的差异性" class="headerlink" title="1：反射与正常方式获取类的差异性"></a>1：反射与正常方式获取类的差异性</h2><h3 id="1：-正常的方式是"><a href="#1：-正常的方式是" class="headerlink" title="1： 正常的方式是"></a>1： 正常的方式是</h3><p>引入包名、类名 -》通过 new -》获取对象信息</p>
-<h3 id="2：反射的方式"><a href="#2：反射的方式" class="headerlink" title="2：反射的方式"></a>2：反射的方式</h3><p>通过反射机制创建出来这个对象 -》getClass 方法，得到类的 Class 信息</p>
-<h2 id="2：反射第一步获取-Class-对象"><a href="#2：反射第一步获取-Class-对象" class="headerlink" title="2：反射第一步获取 Class 对象"></a>2：反射第一步获取 Class 对象</h2><p>获取类的 Class 对象</p>
-<h2 id="3：反射有两个作用"><a href="#3：反射有两个作用" class="headerlink" title="3：反射有两个作用"></a>3：反射有两个作用</h2><ul>
-<li>在运行时，获取对象它的类的注解、构造方法、方法、属性。还可以在运行时执行某个方法</li>
-<li>结合注解使用</li>
-</ul>
-<h2 id="4-使用反射的时候必须要注意"><a href="#4-使用反射的时候必须要注意" class="headerlink" title="4: 使用反射的时候必须要注意"></a>4: 使用反射的时候必须要注意</h2><p>调用 newInstance方法获取默认的构造方法时候，改类必须要有无参构造方法，否则会抛出异常</p>
-<h2 id="5：-反射为啥这么慢"><a href="#5：-反射为啥这么慢" class="headerlink" title="5： 反射为啥这么慢"></a>5： 反射为啥这么慢</h2><ul>
-<li>反射是动态解析，不能执行 jvm 的某些优化，例如：JIT 优化</li>
-<li>反射在调用方法时，会从方法数组中遍历查找，并且会检查可见性，这些都是耗时间的。</li>
-</ul>
-<h2 id="6：-不用管，只是代码"><a href="#6：-不用管，只是代码" class="headerlink" title="6： 不用管，只是代码"></a>6： 不用管，只是代码</h2><h3 id="1：-通过反射实现-MapToBean"><a href="#1：-通过反射实现-MapToBean" class="headerlink" title="1： 通过反射实现 MapToBean"></a>1： 通过反射实现 MapToBean</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T <span class="title function_">mapToBean</span><span class="params">(Map&lt;String, Object&gt; map, Class&lt;T&gt; clazz)</span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">T</span> <span class="variable">t</span> <span class="operator">=</span> clazz.getDeclaredConstructor().newInstance();</span><br><span class="line">        Field[] declaredFields = clazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span>(Field field : declaredFields)&#123;</span><br><span class="line">            <span class="type">Object</span> <span class="variable">o</span> <span class="operator">=</span> map.get(field.getName());</span><br><span class="line">            <span class="keyword">if</span>(o == <span class="literal">null</span>)&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            field.set(t, o);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    map.put(<span class="string">&quot;id&quot;</span>, <span class="number">1L</span>);</span><br><span class="line">    map.put(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;zs&quot;</span>);</span><br><span class="line">    <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> mapToBean(map, Student.class);</span><br><span class="line">    System.out.println(student);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2：通过反射-clone-对象"><a href="#2：通过反射-clone-对象" class="headerlink" title="2：通过反射 clone 对象"></a>2：通过反射 clone 对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T <span class="title function_">clone</span><span class="params">(T source, Class&lt;T&gt; targetClazz)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 创建对象实例</span></span><br><span class="line">        <span class="type">T</span> <span class="variable">target</span> <span class="operator">=</span> targetClazz.getDeclaredConstructor().newInstance();</span><br><span class="line">        <span class="comment">// 获取源对象的所有方法</span></span><br><span class="line">        Field[] allFields = targetClazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span>(Field field : allFields)&#123;</span><br><span class="line">            field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            <span class="comment">// 获取当前字段的值</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">fieldValue</span> <span class="operator">=</span> field.get(source);</span><br><span class="line">            field.set(target, fieldValue);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> target;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">Student</span> <span class="variable">student1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">    student1.setId(<span class="number">1l</span>);</span><br><span class="line">    student1.setName(<span class="string">&quot;zs&quot;</span>);</span><br><span class="line">    <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> clone(student1, Student.class);</span><br><span class="line">    System.out.println(student);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="7：反射常用方法"><a href="#7：反射常用方法" class="headerlink" title="7：反射常用方法"></a>7：反射常用方法</h2><h3 id="1：反射第一步获取-Class-对象"><a href="#1：反射第一步获取-Class-对象" class="headerlink" title="1：反射第一步获取 Class 对象"></a>1：反射第一步获取 Class 对象</h3><h4 id="1：第一种方式"><a href="#1：第一种方式" class="headerlink" title="1：第一种方式"></a>1：第一种方式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;包名&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-第二种方式"><a href="#3-第二种方式" class="headerlink" title="3: 第二种方式"></a>3: 第二种方式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> User.class();</span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> user.getClass();</span><br></pre></td></tr></table></figure>
-
-<h3 id="2：-获取类名字篇"><a href="#2：-获取类名字篇" class="headerlink" title="2： 获取类名字篇"></a>2： 获取类名字篇</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取类名字篇</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// 1： 获取包名+ 类名</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> userClass.getName();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2：只获取类名</span></span><br><span class="line"><span class="type">String</span> <span class="variable">simpleName</span> <span class="operator">=</span> userClass.getSimpleName();</span><br></pre></td></tr></table></figure>
-
-<h3 id="3：获取方法篇"><a href="#3：获取方法篇" class="headerlink" title="3：获取方法篇"></a>3：获取方法篇</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取方法篇</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// 1：只能获取 public 类型的方法</span></span><br><span class="line">Field[] fields = userClass.getFields();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2：获取所有的方法</span></span><br><span class="line">Field[] declaredFields = userClass.getDeclaredFields();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3：获取指定的属性</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">age</span> <span class="operator">=</span> userClass.getDeclaredField(<span class="string">&quot;age&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4：获取指定的方法</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">setName</span> <span class="operator">=</span> userClass.getDeclaredField(<span class="string">&quot;setName&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="3：-获取构造器篇"><a href="#3：-获取构造器篇" class="headerlink" title="3： 获取构造器篇"></a>3： 获取构造器篇</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取构造器篇</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// 1：获取 public 的构造器</span></span><br><span class="line">Constructor&lt;?&gt;[] constructors = userClass.getConstructors();</span><br><span class="line"></span><br><span class="line"><span class="comment">//2: 获取所有构造器</span></span><br><span class="line">Constructor&lt;?&gt;[] declaredConstructors = userClass.getDeclaredConstructors();</span><br><span class="line"></span><br><span class="line"><span class="comment">//3: 获取指定构造器</span></span><br><span class="line">Constructor&lt;User&gt; declaredConstructor = userClass.getDeclaredConstructor(String.class, <span class="type">int</span>.class);</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-利用反射创建对象"><a href="#4-利用反射创建对象" class="headerlink" title="4:  利用反射创建对象"></a>4:  利用反射创建对象</h3><h4 id="1：newInstance"><a href="#1：newInstance" class="headerlink" title="1：newInstance()"></a>1：newInstance()</h4><p>这个方法调用的是无参构造器, 没有无参构造器会报错</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;User&gt; userClass = User.class;</span><br><span class="line"></span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) userClass.newInstance();</span><br></pre></td></tr></table></figure>
-
-<h4 id="2：通过构造方法创建对象"><a href="#2：通过构造方法创建对象" class="headerlink" title="2：通过构造方法创建对象"></a>2：通过构造方法创建对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;User&gt; userClass = User.class;</span><br><span class="line"></span><br><span class="line">Constructor&lt;User&gt; declaredConstructor = userClass.getDeclaredConstructor(String.class, <span class="type">int</span>.class);</span><br><span class="line"><span class="type">User</span> <span class="variable">user1</span> <span class="operator">=</span> declaredConstructor.newInstance();</span><br></pre></td></tr></table></figure>
-
-<h3 id="5：执行、激活方法-invoke"><a href="#5：执行、激活方法-invoke" class="headerlink" title="5：执行、激活方法 invoke"></a>5：执行、激活方法 invoke</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) userClass.newInstance();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取这个方法</span></span><br><span class="line"><span class="type">Method</span> <span class="variable">setName</span> <span class="operator">=</span> userClass.getDeclaredMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"><span class="comment">// 激活这个方法</span></span><br><span class="line">setName.invoke(user, <span class="string">&quot;zs&quot;</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(user.getName());</span><br></pre></td></tr></table></figure>
-
-<h3 id="6-利用反射获取注解"><a href="#6-利用反射获取注解" class="headerlink" title="6:  利用反射获取注解"></a>6:  利用反射获取注解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;User&gt; userClass = User.class;</span><br><span class="line"></span><br><span class="line">Annotation[] annotations = userClass.getAnnotations();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="8-反射面试篇"><a href="#8-反射面试篇" class="headerlink" title="8: 反射面试篇"></a>8: 反射面试篇</h2><h3 id="1-聊一下Java反射机制"><a href="#1-聊一下Java反射机制" class="headerlink" title="1: 聊一下Java反射机制"></a>1: 聊一下Java反射机制</h3><p>java  的反射机制是指：</p>
-<p>​	程序在运行过程当中，可以创建任意一个类的实例、获取类的内部信息；包括：字段、方法、构造器、注解等；</p>
-<p>​	这种动态的获取类的信息的机制叫做反射机制；</p>
-<p>​	反射被视为Java能够实现动态语言的关键，他让Java有了动态性；</p>
-<h3 id="2-反射机制的原理"><a href="#2-反射机制的原理" class="headerlink" title="2: 反射机制的原理"></a>2: 反射机制的原理</h3><p>反射的原理：</p>
-<p>​	Java 的程序是这样运行的：java 文件通过编译期编译成 class文件，之后加载到内存，jvm 生成每个类的 java.lang.class 对象；</p>
-<p>​	通过 class 对象，可以获取类的内部信息，并做后续操作；因此，Java 的反射关键是这个 class 对象。</p>
-<p>​	反射是在运行的时候才知道类的信息；</p>
-<p>​	反射是约定大于配置，配置大于硬编码；</p>
-<h3 id="3：-反射机制的优缺点"><a href="#3：-反射机制的优缺点" class="headerlink" title="3： 反射机制的优缺点"></a>3： 反射机制的优缺点</h3><p>优点：</p>
-<ul>
-<li><p>增加灵活性</p>
-<p>例如：spring 中利用配置解析 bean 的过程，就是利用反射的典型应用场景；</p>
-<p>Sping MVC 的请求调用对应的方法；</p>
-<p>JDBC 的 class.forName() ；</p>
-</li>
-<li><p>增加复用及拓展性</p>
-<p>动态代理中，使用动态生成的代理类来提升代码的复用性</p>
-</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li><p>容易出现运行时异常</p>
-<p>相比于显式的接口和方法，编译器能帮助我们进行类型检查；而反射是在运行时才知道类的信息</p>
-</li>
-<li><p>性能不高</p>
-<p>在运行方法或者获取字段前，需要遍历才能找到</p>
-</li>
-<li><p>安全问题</p>
-<p>反射可以随意更改字段及方法的访问权限</p>
-</li>
-</ul>
-<h1 id="2-注解篇"><a href="#2-注解篇" class="headerlink" title="2: 注解篇"></a>2: 注解篇</h1><h2 id="1：-注解的理解"><a href="#1：-注解的理解" class="headerlink" title="1： 注解的理解"></a>1： 注解的理解</h2><p>Annotation;</p>
-<p>简单来说，就是对你想要扩展的点打上标记；当真正扩展的时候就处理这些标记所在类的属性、方法。</p>
-<p>常常跟反射、AOP 结合使用。</p>
-<h2 id="2：注解包含"><a href="#2：注解包含" class="headerlink" title="2：注解包含"></a>2：注解包含</h2><h3 id="1：内置注解"><a href="#1：内置注解" class="headerlink" title="1：内置注解"></a>1：内置注解</h3><h3 id="2：元注解"><a href="#2：元注解" class="headerlink" title="2：元注解"></a>2：元注解</h3><p>负责解释其他注解</p>
-<ul>
-<li><p>@Target ：作用的地方, 作用在类、方法、字段上；</p>
-</li>
-<li><p>@Rentition：生命周期，是在源代码、编译期、还是运行期；</p>
-<p>一般自定义注解都设置为运行时</p>
-</li>
-</ul>
-<h3 id="3：自定义注解"><a href="#3：自定义注解" class="headerlink" title="3：自定义注解"></a>3：自定义注解</h3><p>@interface 这个东西自动继承 Java的Annotation 接口</p>
-<h4 id="1-作用在方法上"><a href="#1-作用在方法上" class="headerlink" title="1:   作用在方法上"></a>1:   作用在方法上</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(value = ElementType.Method)</span></span><br><span class="line"><span class="meta">@Rentition(value = RentitionPolicy.Runntime)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyAnnotation&#123;</span><br><span class="line">	<span class="comment">// 注解的参数</span></span><br><span class="line">    String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2：作用在多个地方，用数组形式"><a href="#2：作用在多个地方，用数组形式" class="headerlink" title="2：作用在多个地方，用数组形式"></a>2：作用在多个地方，用数组形式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 数组形式</span></span><br><span class="line"><span class="meta">@Target(value = &#123;ElmentType.Method, ElementType.Type&#125;)</span></span><br><span class="line"><span class="meta">@Rentition(value = RentitionPolicy.Runntime)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyAnnotation&#123;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="2：-注解使用场景"><a href="#2：-注解使用场景" class="headerlink" title="2： 注解使用场景"></a>2： 注解使用场景</h2><ul>
-<li><p>编译期检查</p>
-<ul>
-<li>override </li>
-<li>@FunctionalInterface 这是 jdk 8 的新特性</li>
-</ul>
-</li>
-<li><p>注解 + 切面 （AOP）</p>
-<p>通过自定义注解来标注需要被切面处理的类或者方法，然后在切面中对方法的执行过程进行干预，比如在执行前后做一些操作；</p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/04/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/" data-id="clxs9ceca001p8guw48ttae2r" data-title="注解和反射" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-字符串" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/03/16/%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="article-date">
-  <time class="dt-published" datetime="2020-03-15T16:00:00.000Z" itemprop="datePublished">2020-03-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/03/16/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：-字符串概述"><a href="#1：-字符串概述" class="headerlink" title="1： 字符串概述"></a>1： 字符串概述</h1><h2 id="1：-字符串的特点"><a href="#1：-字符串的特点" class="headerlink" title="1： 字符串的特点"></a>1： 字符串的特点</h2><ul>
-<li><p>不可变</p>
-<p>字符串其实是一个只读的，一旦初始化后，再去更新时，就是创建一个新的字符串了，然后把新字符串在堆中的地址指向字符串变量；它的 subString 方法、concat 方法、+&#x3D; 、replace方法都是 new 一个新的字符串；</p>
-<p>它没有提供追加、删除等修改字符的方法；</p>
-<p>intern方法返回常量池中的地址，如果常量池中没有，就在那里创建一个；</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> s1;</span><br><span class="line"></span><br><span class="line">System.out.println(s1 == s2); <span class="comment">// true</span></span><br><span class="line">s1 += <span class="string">&quot;world&quot;</span>;</span><br><span class="line">System.out.println(s1 == s2); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>不可变的好处是：多线程访问时候，保证数据的唯一性。</p>
-</li>
-<li><p>final 修饰</p>
-<p>意味着它的方法不能被覆盖</p>
-</li>
-<li><p>常量池优化</p>
-<p>字符串创建后，会在常量池中分配一个内存空间缓存起来，下次再创建同一个字符串时，直接返回这个缓存的对象。</p>
-</li>
-<li><p>jdk 8 底层是 char[]，从 jdk 9 开始底层是 byte[]。</p>
-<p>这样改的原因是：大多数情况下，字符串存的都是拉丁字符， 拉丁码也就是 IOS-8859-1， 它一个字符占只需要 1 个字节就够了，但是 1 个 char 占 2 个字节，白白浪费了 1 个字节的空间，因此使用 byte 数组节省。如果要是存汉字还是 2 字节，使用 2 byte</p>
-</li>
-</ul>
-<h2 id="2：-字符串为啥要设计成不可变的"><a href="#2：-字符串为啥要设计成不可变的" class="headerlink" title="2： 字符串为啥要设计成不可变的"></a>2： 字符串为啥要设计成不可变的</h2><p>字符串是被广泛使用的一种数据结构，设计成不可变是基于多方考虑：</p>
-<ul>
-<li>节省堆空间内存</li>
-<li>高效</li>
-<li>安全，线程安全</li>
-</ul>
-<h1 id="2：-字符串常量池"><a href="#2：-字符串常量池" class="headerlink" title="2： 字符串常量池"></a>2： 字符串常量池</h1><p>字符串常量池用于存储字符串；</p>
-<p>常量池也就是缓存池；</p>
-<p>设计思想是为了提高性能和内存开销</p>
-<h1 id="3：字符串的-操作"><a href="#3：字符串的-操作" class="headerlink" title="3：字符串的 + 操作"></a>3：字符串的 + 操作</h1><p>其实是一个语法糖；底层是 StringBuilder 的 append 方法</p>
-<h2 id="1：-常量-常量-（final-变量-常量-）"><a href="#1：-常量-常量-（final-变量-常量-）" class="headerlink" title="1： 常量 + 常量 （final 变量 + 常量 ）"></a>1： 常量 + 常量 （final 变量 + 常量 ）</h2><p>​	返回的还是常量池中的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;a&quot;</span> + <span class="string">&quot;b&quot;</span>;</span><br><span class="line">s1 == s2 ;<span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">以下是关于 <span class="keyword">final</span> 变量 + 常量</span><br><span class="line">-----------------------</span><br><span class="line"><span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>;</span><br><span class="line"><span class="keyword">final</span> <span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;a&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s4</span> <span class="operator">=</span> s2 + <span class="string">&quot;b&quot;</span>;</span><br><span class="line"></span><br><span class="line">System.out.println(s == s4);<span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="2：-只要有变量-、final-new-常量"><a href="#2：-只要有变量-、final-new-常量" class="headerlink" title="2： 只要有变量 +、final new + 常量"></a>2： 只要有变量 +、final new + 常量</h2><p>​	底层调用的是 StringBuild 的 append 的 toString 方法，会 new 一个新的字符串。返回在堆中的地址。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;a&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s3</span> <span class="operator">=</span> s1 + <span class="string">&quot;b&quot;</span>;</span><br><span class="line">s2 == s3;<span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">以下是 <span class="keyword">final</span> <span class="keyword">new</span> + 常量:</span><br><span class="line">-----------------</span><br><span class="line"><span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>;</span><br><span class="line"><span class="keyword">final</span> <span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;a&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">s3</span> <span class="operator">=</span> s1 + <span class="string">&quot;b&quot;</span>;</span><br><span class="line"></span><br><span class="line">System.out.println(s == s3); <span class="comment">// false</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="4-：-纯粹是碎知识点"><a href="#4-：-纯粹是碎知识点" class="headerlink" title="4 ： 纯粹是碎知识点"></a>4 ： 纯粹是碎知识点</h1><h2 id="1：字符串有长度限制吗"><a href="#1：字符串有长度限制吗" class="headerlink" title="1：字符串有长度限制吗"></a>1：字符串有长度限制吗</h2><p>编译期间和运行期间上限不一样，编译期是 65535，运行期间是 int 最大值</p>
-<h2 id="2：字符串与基本数据类新的相互转换"><a href="#2：字符串与基本数据类新的相互转换" class="headerlink" title="2：字符串与基本数据类新的相互转换"></a>2：字符串与基本数据类新的相互转换</h2><ul>
-<li><p>字符串转数字</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;1&quot;</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">i1</span> <span class="operator">=</span> Integer.parsenInt(s1);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>int 转字符串</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i1</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> String.valueOf(i1);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>字符串转 char[]</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;1&quot;</span>;</span><br><span class="line"><span class="type">char</span>[] char1 = s1.toCharArray();</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>字符串转 byte[]</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;1&quot;</span>;</span><br><span class="line"><span class="type">byte</span>[] b1 = s1.getBytes();</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="3：字符串实例化的两种方式"><a href="#3：字符串实例化的两种方式" class="headerlink" title="3：字符串实例化的两种方式"></a>3：字符串实例化的两种方式</h2><ul>
-<li>字面量直接赋值</li>
-<li>new 的方式，会创建2 个对象</li>
-</ul>
-<h1 id="5：-字符串间内存比较"><a href="#5：-字符串间内存比较" class="headerlink" title="5： 字符串间内存比较"></a>5： 字符串间内存比较</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">String s2= <span class="string">&quot;hello&quot;</span>;<span class="comment">// 常量池中的地址</span></span><br><span class="line"><span class="type">String</span> <span class="variable">s3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">s4</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;hello&quot;</span>); <span class="comment">// 堆中的地址</span></span><br><span class="line"><span class="type">String</span> <span class="variable">s5</span> <span class="operator">=</span> s4; </span><br><span class="line">s1 == s2 ;<span class="comment">// true</span></span><br><span class="line">s1 == s3;<span class="comment">// false</span></span><br><span class="line">s3 == s4;<span class="comment">// false</span></span><br><span class="line">s4 == s5 ;<span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">s1.equals(s2);<span class="comment">// true 。String 重写了equals 方法</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="6：StringBuilder-和-StringBuffer"><a href="#6：StringBuilder-和-StringBuffer" class="headerlink" title="6：StringBuilder 和 StringBuffer"></a>6：StringBuilder 和 StringBuffer</h1><h2 id="1：-区别"><a href="#1：-区别" class="headerlink" title="1： 区别"></a>1： 区别</h2><ul>
-<li><p>首先，StingBuffer 和 StringBuilder 都是可变的，没有被 final 修饰；</p>
-</li>
-<li><p>StrtingBuffer 线程安全，要记住，它方法加了锁，效率低</p>
-<p>它是可变的</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">验证可变：</span><br><span class="line">    <span class="type">StringBuffer</span> <span class="variable">stringBuffer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="type">StringBuffer</span> <span class="variable">stringBuffer1</span> <span class="operator">=</span> stringBuffer;</span><br><span class="line">	System.out.println(stringBuffer1 == stringBuffer); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 修改后其中一个值</span></span><br><span class="line">	stringBuffer.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">	System.out.println(stringBuffer1 == stringBuffer); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>StringBuilder 从 jdk 1.5 才开始有，线程不安全，效率高</p>
-<p>它的 toString 方法，底层是 new 的方式</p>
-</li>
-<li><p>它们底层数组的初始化长度是 16，不够了就调用 Arrays.copyOf() 扩容为之前的 2 倍 + 2 ；</p>
-</li>
-</ul>
-<p>相同情况下，使用 stringbuilder 只比 stringbuffer 效率提升 10%-15% ，但却要冒多线程不安全的风险；</p>
-<h1 id="7：intern方法"><a href="#7：intern方法" class="headerlink" title="7：intern方法"></a>7：intern方法</h1><p>运行期，intern 方法可以向运行时常量池中增加字符串常量；</p>
-<p>当一个string 调用 intern 方法时，会先在运行时常量池中查找是否存在，如果存在就返回这个地址；</p>
-<p>如果不存在，就创建一个字面量加入运行时常量池并返回地址；</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/03/16/%E5%AD%97%E7%AC%A6%E4%B8%B2/" data-id="clxs9cec300198guw2fz677dm" data-title="字符串" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/08/16/%E6%9E%9A%E4%B8%BE/" data-id="clxs9nvuc001uikuwh8vn52ci" data-title="枚举" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -1086,7 +1171,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nacos/" rel="tag">nacos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
     </div>
   </div>
 
@@ -1096,7 +1181,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a>
+      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 10px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/nacos/" style="font-size: 10px;">nacos</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 10px;">分布式</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
     </div>
   </div>
 
@@ -1105,7 +1190,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -1118,23 +1203,23 @@
       <ul>
         
           <li>
-            <a href="/2023/06/16/Spring%20IOC/">Spring IOC</a>
+            <a href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/">设计模式</a>
           </li>
         
           <li>
-            <a href="/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Spring bean 的生命周期</a>
+            <a href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/">微服务</a>
           </li>
         
           <li>
-            <a href="/2023/04/16/Spring%20AOP/">AOP</a>
+            <a href="/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">分布式</a>
           </li>
         
           <li>
-            <a href="/2023/02/16/RPC/">RPC</a>
+            <a href="/2023/09/16/Nacos/">nacos</a>
           </li>
         
           <li>
-            <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/">ZK</a>
+            <a href="/2023/08/16/Springcloud/">服务治理</a>
           </li>
         
       </ul>

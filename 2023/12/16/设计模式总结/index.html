@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>设计模式 | 张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1：策略 + 模版 + 工厂当我们有多个分支的时候，我们可以把这些分支作为一个个的策略，公共的东西放到模板中，多个策略交给工厂去管理； 具体的： ​	比如，有一个支付流程包括三个逻辑：  支付前置处理 支付处理 支付后置处理  其中，支付前置和后置都是公共的，可以把他们放在抽象类中，直接实现； 然后支付处理，根据不同的支付类型实现不同的实现类，作为策略； 策略交给工厂去管理，在工厂中创建一个 Ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式">
+<meta property="og:url" content="http://example.com/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:description" content="1：策略 + 模版 + 工厂当我们有多个分支的时候，我们可以把这些分支作为一个个的策略，公共的东西放到模板中，多个策略交给工厂去管理； 具体的： ​	比如，有一个支付流程包括三个逻辑：  支付前置处理 支付处理 支付后置处理  其中，支付前置和后置都是公共的，可以把他们放在抽象类中，直接实现； 然后支付处理，根据不同的支付类型实现不同的实现类，作为策略； 策略交给工厂去管理，在工厂中创建一个 Ma">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-12-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-06-24T00:54:25.653Z">
+<meta property="article:author" content="张帅">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-设计模式总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" class="article-date">
+  <time class="dt-published" datetime="2023-12-15T16:00:00.000Z" itemprop="datePublished">2023-12-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      设计模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="1：策略-模版-工厂"><a href="#1：策略-模版-工厂" class="headerlink" title="1：策略 + 模版 + 工厂"></a>1：策略 + 模版 + 工厂</h2><p>当我们有多个分支的时候，我们可以把这些分支作为一个个的策略，公共的东西放到模板中，多个策略交给工厂去管理；</p>
+<p>具体的：</p>
+<p>​	比如，有一个支付流程包括三个逻辑：</p>
+<ul>
+<li>支付前置处理</li>
+<li>支付处理</li>
+<li>支付后置处理</li>
+</ul>
+<p>其中，支付前置和后置都是公共的，可以把他们放在抽象类中，直接实现；</p>
+<p>然后支付处理，根据不同的支付类型实现不同的实现类，作为策略；</p>
+<p>策略交给工厂去管理，在工厂中创建一个 Map，所有策略注入进去，然后提供一个通过支付类型获取对应支付策略的get 方法；</p>
+<h3 id="2：具体代码"><a href="#2：具体代码" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><ul>
+<li>模版：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractPayService</span> <span class="keyword">implements</span> <span class="title class_">PayService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">      	<span class="comment">//前置检查</span></span><br><span class="line">        validateRequest(payRequest);</span><br><span class="line">      	<span class="comment">//支付核心逻辑</span></span><br><span class="line">        doPay(payRequest);</span><br><span class="line">      	<span class="comment">//后置处理</span></span><br><span class="line">        postPay(payRequest);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">postPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//支付成功的后置处理</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">validateRequest</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//参数检查</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多个策略</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AlipayPayService</span> <span class="keyword">extends</span> <span class="title class_">AbstractPayService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//支付宝支付逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WechatPayService</span> <span class="keyword">extends</span> <span class="title class_">AbstractPayService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doPay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="comment">//微信支付逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>工厂</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ConcurrentHashMap;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PayServiceFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, PayService&gt; payServiceMap = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PayService <span class="title function_">getPayService</span><span class="params">(String payChannel)</span> &#123;</span><br><span class="line">        <span class="comment">// alipay -&gt; alipayPayService</span></span><br><span class="line">        <span class="comment">// wechat -&gt; wechatPayService</span></span><br><span class="line">        <span class="keyword">return</span> payServiceMap.get(payChannel + <span class="string">&quot;PayService&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>使用的时候</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PayDomainService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    PayServiceFactory payServiceFactory;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(PayRequest payRequest)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">payChannel</span> <span class="operator">=</span> payRequest.getPayChannel();</span><br><span class="line">        payServiceFactory.getPayService(payChannel).pay(payRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2：享元模式-工厂模式"><a href="#2：享元模式-工厂模式" class="headerlink" title="2：享元模式 + 工厂模式"></a>2：享元模式 + 工厂模式</h2><p>当我们需要用不同的司机账户参数创建对象时，可以在工厂类中定义一个 Map 作为缓存。每次从 Map 中根据不同的参数获取对应的对象，如果对象不存在，就先创建这个对象并放入 Map 中，然后下次再遇到相同参数时，直接从 Map 中获取已创建的对象。</p>
+<h3 id="2：具体代码-1"><a href="#2：具体代码-1" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 具体的汽车类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Car</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String brand;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String color;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ConcreteCar</span><span class="params">(String brand, String color)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.brand = brand;</span><br><span class="line">        <span class="built_in">this</span>.color = color;</span><br><span class="line">        System.out.println(<span class="string">&quot;Creating a new &quot;</span> + color + <span class="string">&quot; &quot;</span> + brand + <span class="string">&quot; car.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 汽车工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CarFactory</span> &#123;</span><br><span class="line">    <span class="comment">// 缓存汽车实例的 Map</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String, Car&gt; carMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Car <span class="title function_">getCar</span><span class="params">(String brand, String color)</span> &#123;</span><br><span class="line">        <span class="comment">// 根据品牌和颜色生成唯一的 key</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> brand + <span class="string">&quot;-&quot;</span> + color;</span><br><span class="line">        <span class="comment">// 从缓存中获取汽车实例</span></span><br><span class="line">        <span class="type">Car</span> <span class="variable">car</span> <span class="operator">=</span> carMap.get(key);</span><br><span class="line">        <span class="comment">// 如果不存在，则创建新的汽车实例并放入缓存</span></span><br><span class="line">        <span class="keyword">if</span> (car == <span class="literal">null</span>) &#123;</span><br><span class="line">            car = <span class="keyword">new</span> <span class="title class_">ConcreteCar</span>(brand, color);</span><br><span class="line">            carMap.put(key, car);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> car;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FlyweightPatternExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Car</span> <span class="variable">car1</span> <span class="operator">=</span> CarFactory.getCar(<span class="string">&quot;Toyota&quot;</span>, <span class="string">&quot;Red&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">Car</span> <span class="variable">car2</span> <span class="operator">=</span> CarFactory.getCar(<span class="string">&quot;Toyota&quot;</span>, <span class="string">&quot;Red&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3：责任链模式"><a href="#3：责任链模式" class="headerlink" title="3：责任链模式"></a>3：责任链模式</h2><p>类似于审批流这样的场景中，每一步通过后才能流转到下一步；</p>
+<p>那么，我们先定义一个 handler 接口，提供两个抽象方法：处理具体逻辑的方法、传递到下一个handler 的方法 setNextHandler 方法；</p>
+<p>每一步都是一个handler 实现handler 接口，用的时候，定义好责任链顺序，通过不断的 setNext ，流转到下一个handler。如果检验不通过，流转终止。</p>
+<p>在责任链模式下，要新增和删除一个分支流程也是很方便的。</p>
+<h3 id="2：具体代码-2"><a href="#2：具体代码-2" class="headerlink" title="2：具体代码"></a>2：具体代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 抽象处理器接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 参数校验处理器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ParameterValidationHandler</span> <span class="keyword">implements</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> OrderHandler nextHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException &#123;</span><br><span class="line">        <span class="comment">// 假设检查订单参数是否为空</span></span><br><span class="line">        <span class="keyword">if</span> (order == <span class="literal">null</span> || order.getParameter() == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OrderProcessingException</span>(<span class="string">&quot;参数校验失败: 订单参数不能为空&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;参数校验通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nextHandler != <span class="literal">null</span>) &#123;</span><br><span class="line">            nextHandler.handleOrder(order);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.nextHandler = nextHandler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 库存校验处理器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">StockValidationHandler</span> <span class="keyword">implements</span> <span class="title class_">OrderHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> OrderHandler nextHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrder</span><span class="params">(Order order)</span> <span class="keyword">throws</span> OrderProcessingException &#123;</span><br><span class="line">        <span class="comment">// 假设检查库存是否充足</span></span><br><span class="line">        <span class="keyword">if</span> (!order.isStockAvailable()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OrderProcessingException</span>(<span class="string">&quot;库存校验失败: 库存不足&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;库存校验通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nextHandler != <span class="literal">null</span>) &#123;</span><br><span class="line">            nextHandler.handleOrder(order);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setNextHandler</span><span class="params">(OrderHandler nextHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.nextHandler = nextHandler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义头节点</span></span><br><span class="line"><span class="type">OrderHandler</span> <span class="variable">parameterValidationHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ParameterValidationHandler</span>();</span><br><span class="line">      <span class="type">OrderHandler</span> <span class="variable">stockValidationHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StockValidationHandler</span>();</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 设置责任链顺序</span></span><br><span class="line">      parameterValidationHandler.setNextHandler(stockValidationHandler);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 创建订单</span></span><br><span class="line">      <span class="type">Order</span> <span class="variable">order</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Order</span>(<span class="string">&quot;Product123&quot;</span>, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">          parameterValidationHandler.handleOrder(order);</span><br><span class="line">          System.out.println(<span class="string">&quot;订单处理成功&quot;</span>);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (OrderProcessingException e) &#123;</span><br><span class="line">          System.err.println(e.getMessage());</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4：代理模式"><a href="#4：代理模式" class="headerlink" title="4：代理模式"></a>4：代理模式</h2><p>一般用到静态代理和 JDK 的动态代理；</p>
+<ul>
+<li><p>静态代理是定义一个代理类，实现接口，然后在里面注入目标实现类，这样在重写的方法可以增强；</p>
+</li>
+<li><p>JDK 动态代理是使用反射。定义一个 handler 实现 InvocationHandler 接口，重写 invoke 方法，然后使用 Proxy.newProxyInstance 创建代理，然后在执行方法的时候，会走到代理类的 invoke 方法。</p>
+</li>
+</ul>
+<h1 id="1：设计模式-7-大原则"><a href="#1：设计模式-7-大原则" class="headerlink" title="1：设计模式 7 大原则"></a>1：设计模式 7 大原则</h1><ul>
+<li>单一职责</li>
+</ul>
+<p>​	一个类只做一件事</p>
+<ul>
+<li><p>接口隔离原则</p>
+<p>强调的是应该使用多个小的接口，而不是一个大的接口啥都包含</p>
+</li>
+<li><p>开放闭合原则</p>
+<p>开放性的对外扩展，而不是通过修改代码来实现</p>
+</li>
+<li><p>里氏替换原则</p>
+<p>强调的是继承关系的正确性</p>
+</li>
+<li><p>依赖倒置原则</p>
+<p>高层模块和底层模块的解耦，应该是通过抽象接口或者抽象类</p>
+</li>
+<li><p>迪米特法则</p>
+<p>强调的是将负责的模块，拆分成小的模块，模块之间通过最少的接口交互</p>
+</li>
+<li><p>聚合和复用原则</p>
+<p>构建对象的时候，应该用复用和聚合，而不是继承关系。</p>
+</li>
+</ul>
+<h1 id="2：工厂模式"><a href="#2：工厂模式" class="headerlink" title="2：工厂模式"></a>2：工厂模式</h1><p>它是将对象的创建和使用分离开；</p>
+<p>通过工厂创建对象代替 new ；避免重复写创建对象的代码；</p>
+<p>工厂模式分为：</p>
+<ul>
+<li><p>简单工厂</p>
+<p>它也叫静态工厂；</p>
+</li>
+<li><p>工厂方法</p>
+</li>
+<li><p>抽象工厂</p>
+</li>
+</ul>
+<h1 id="3：观察者模式"><a href="#3：观察者模式" class="headerlink" title="3：观察者模式"></a>3：观察者模式</h1><p>就是一个对象发生改变的时候，跟他相关的对象都能感知，并自动更新。</p>
+<p>这种模式减少对象之间的耦合度；</p>
+<ul>
+<li>举例子</li>
+</ul>
+<h1 id="4：装饰器模式"><a href="#4：装饰器模式" class="headerlink" title="4：装饰器模式"></a>4：装饰器模式</h1><p>给一个对象增加更多的功能的时候，不是直接在这个对象上修改代码，而是动态的去增加；</p>
+<p>这种可以使对象的功能扩张更加可控和灵活；</p>
+<h1 id="5：单例模式"><a href="#5：单例模式" class="headerlink" title="5：单例模式"></a>5：单例模式</h1><p>就是提供全局的唯一的访问点，不管多少次，访问的都是同一个实例；</p>
+<h1 id="6：模板方法模式"><a href="#6：模板方法模式" class="headerlink" title="6：模板方法模式"></a>6：模板方法模式</h1><p>它的主要作用就是复用代码；</p>
+<p>我们把公共的业务逻辑定义在父类中，然后在子类中定制化自己的业务逻辑；</p>
+<p>我们通常会把策略模式、工厂模式和模版方法模式结合使用；</p>
+<h1 id="7：享元模式"><a href="#7：享元模式" class="headerlink" title="7：享元模式"></a>7：享元模式</h1><p>享元模式是对一些共享对象的复用思想；这样做的好处是：减少了创建重复对象的开销，节省系统资源和内存；</p>
+<p>很多地方都使用到了享元模式的思想：池化技术、包装类的缓存、字符串常量池；</p>
+<p>它一般和工厂模式结合使用。工厂模式负责管理创建出来的对象，获取它的一个享元抽象或者实现类，从而实现复用思想。</p>
+<h2 id="1：哪些地方使用了享元模式"><a href="#1：哪些地方使用了享元模式" class="headerlink" title="1：哪些地方使用了享元模式"></a>1：哪些地方使用了享元模式</h2><ul>
+<li><p>包装类中的缓存</p>
+</li>
+<li><p>string 的字符串常量池</p>
+</li>
+</ul>
+<h1 id="8：责任链模式"><a href="#8：责任链模式" class="headerlink" title="8：责任链模式"></a>8：责任链模式</h1><p>就是将请求发送者和多个接收者组成一条链，沿着这条链传递请求，直到有一个处理者处理它为止。</p>
+<ul>
+<li><p>例子：</p>
+<p>过滤器链；</p>
+<p>异常处理链</p>
+<p>认证授权</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" data-id="clxs9nvuj0026ikuwf3g1fd61" data-title="设计模式" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">微服务</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nacos/" rel="tag">nacos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 10px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/nacos/" style="font-size: 10px;">nacos</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" style="font-size: 10px;">分布式</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/12/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/">设计模式</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/16/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3/">微服务</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/16/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">分布式</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/16/Nacos/">nacos</a>
+          </li>
+        
+          <li>
+            <a href="/2023/08/16/Springcloud/">服务治理</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
