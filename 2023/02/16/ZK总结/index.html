@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ZK | 张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1：ZK 的应用场景引出 zk 的两个核心：1：全局唯一引出选举 2：watch 机制3：选举机制1：选举机制原理ZK 的选举发生在节点刚启动或者Leader崩溃时候； 选举的目的是选出一个 Leader; 节点状态有：  Looking 竞选状态 Leader  Follower Observer 观察者  选举的本质是进行 PK，PK 的依据是节点的能力，谁的能力越强就胜出。每个节点都有事务i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZK">
+<meta property="og:url" content="http://example.com/2023/02/16/ZK%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:description" content="1：ZK 的应用场景引出 zk 的两个核心：1：全局唯一引出选举 2：watch 机制3：选举机制1：选举机制原理ZK 的选举发生在节点刚启动或者Leader崩溃时候； 选举的目的是选出一个 Leader; 节点状态有：  Looking 竞选状态 Leader  Follower Observer 观察者  选举的本质是进行 PK，PK 的依据是节点的能力，谁的能力越强就胜出。每个节点都有事务i">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-02-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-06-24T00:43:40.458Z">
+<meta property="article:author" content="张帅">
+<meta property="article:tag" content="ZK">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ZK总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/" class="article-date">
+  <time class="dt-published" datetime="2023-02-15T16:00:00.000Z" itemprop="datePublished">2023-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ZK
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：ZK-的应用场景引出-zk-的两个核心："><a href="#1：ZK-的应用场景引出-zk-的两个核心：" class="headerlink" title="1：ZK 的应用场景引出 zk 的两个核心："></a>1：ZK 的应用场景引出 zk 的两个核心：</h1><h2 id="1：全局唯一"><a href="#1：全局唯一" class="headerlink" title="1：全局唯一"></a>1：全局唯一</h2><p>引出选举</p>
+<h2 id="2：watch-机制"><a href="#2：watch-机制" class="headerlink" title="2：watch 机制"></a>2：watch 机制</h2><h1 id="3：选举机制"><a href="#3：选举机制" class="headerlink" title="3：选举机制"></a>3：选举机制</h1><h2 id="1：选举机制原理"><a href="#1：选举机制原理" class="headerlink" title="1：选举机制原理"></a>1：选举机制原理</h2><p>ZK 的选举发生在节点刚启动或者Leader崩溃时候；</p>
+<p>选举的目的是选出一个 Leader;</p>
+<p>节点状态有：</p>
+<ul>
+<li>Looking 竞选状态</li>
+<li>Leader </li>
+<li>Follower</li>
+<li>Observer 观察者</li>
+</ul>
+<p>选举的本质是进行 PK，PK 的依据是节点的能力，谁的能力越强就胜出。每个节点都有事务id, 节点编号 myid，事务id 越大代表数据最新，能力越强。先比较事务id, 相同的话再比较 myid。</p>
+<p>投票的过程中，每个节点内部维护一个投票结果，类似于一个投票箱，开始投票时，每个节点先投自己一票，然后互相交换选票，根据 PK 规则，更新自己维护的选票结果，之后再广播出去，统计每个节点的票数，超过节点总数一半的节点胜出。</p>
+<h2 id="2：选举机制引入脑裂问题"><a href="#2：选举机制引入脑裂问题" class="headerlink" title="2：选举机制引入脑裂问题"></a>2：选举机制引入脑裂问题</h2><ul>
+<li>啥是脑裂</li>
+</ul>
+<p>​	所谓脑裂就是，当集群中出现网络通信故障时候，各种原因导致 Leader 跟 Foller 节点通信异常，Foller 节点认为Ldear 挂掉，于是	重新选举Leader, 当网络恢复后，集群中出现两个 Leader, 客户端在连接的时候就会不知道连接哪个Leader。</p>
+<ul>
+<li>如何解决脑裂</li>
+</ul>
+<p>​	采用过半机制 + zxid 中的任期。</p>
+<h2 id="3：zk-为啥推荐奇数节点为防止脑裂和容错"><a href="#3：zk-为啥推荐奇数节点为防止脑裂和容错" class="headerlink" title="3：zk 为啥推荐奇数节点为防止脑裂和容错"></a>3：zk 为啥推荐奇数节点为防止脑裂和容错</h2><p>集群能正常，只要有半数以上存活就行。</p>
+<ul>
+<li>一共有 2 个节点，一半是 1，半数以上是 2 ，允许宕机是 0 ；</li>
+<li>一共有 3 个节点，一半是 1，半数以上是 2 ，允许宕机是 1 ；</li>
+<li>一共有 4 个节点，一半是 2，半数以上是 3 ，允许宕机是 1 ；</li>
+<li>一共有 5 个节点，一半是 2，半数以上是 3 ，允许宕机是 2 ；</li>
+<li>一共有 6 个节点，一半是 3，半数以上是 4 ，允许宕机是 2 ；</li>
+</ul>
+<p>总结就是：</p>
+<p>​	基数台和偶数台，允许宕机的数量是相同的。就不用浪费多部署一台了。</p>
+<p>为了两个方面的考虑：</p>
+<ul>
+<li><p>集群容错</p>
+</li>
+<li><p>防止脑裂</p>
+<p>对于双机房来说：</p>
+<p>​	如果是 6 台，每个机房都是3台，不考虑过半机制，他们都能选出主节点，考虑的话都选不出；</p>
+<p>​	如果是 5 台，一个机房是 3 台，一个是 2 台，考虑和不考虑，其中有一边都能选出。</p>
+<p>因此，最好是奇数。</p>
+</li>
+</ul>
+<h2 id="3：ZK-主从节点数据同步原理"><a href="#3：ZK-主从节点数据同步原理" class="headerlink" title="3：ZK 主从节点数据同步原理"></a>3：ZK 主从节点数据同步原理</h2><p>主从同步的原理采用 ZAB 2 阶段提交：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">第一步：</span><br><span class="line"></span><br><span class="line">先广播，lead 顺序将消息放入 FIFO 队列中，每次提交都会生成一个全局id, 保证顺序写入</span><br><span class="line"></span><br><span class="line">让从节点写数据，但是不提交事务，反馈给lead ack</span><br><span class="line"></span><br><span class="line">第二步：</span><br><span class="line"></span><br><span class="line">lead 通过半数机制，再2次广播，让从节点提交事务。保证最终一致性。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1：啥是-ZAB-ZK-独有"><a href="#1：啥是-ZAB-ZK-独有" class="headerlink" title="1：啥是 ZAB - ZK 独有"></a>1：啥是 ZAB - ZK 独有</h3><p>zab 协议是一个数据一致性协议，是 ZK 为了解决数据一致性提出的；</p>
+<p>它叫做：原子广播协议；</p>
+<p>它的核心是两阶段提交。</p>
+<h1 id="4：ZK-watch-机制"><a href="#4：ZK-watch-机制" class="headerlink" title="4：ZK watch  机制"></a>4：ZK watch  机制</h1><p>zk watch 机制，引出：</p>
+<ul>
+<li><p>zkWatchManager</p>
+<p>客户端watch 管理</p>
+</li>
+<li><p>watchManager</p>
+<p>服务端的watch 管理</p>
+</li>
+</ul>
+<p>流程是：</p>
+<p>​	客户端通过 zkWatchmanager 注册监听信息；</p>
+<p>​	发送到 watchManager；</p>
+<p>​	watchManager 找到对应的 Znode ，根据 watch 类型：childNode 还是 znode，注册监听事件。</p>
+<h1 id="5：ZK-基础-数据模型和节点类型"><a href="#5：ZK-基础-数据模型和节点类型" class="headerlink" title="5：ZK 基础 - 数据模型和节点类型"></a>5：ZK 基础 - 数据模型和节点类型</h1><p>数据模型是一种树形结构，每个节点叫做 Znode; 它是做服务协调的，不要存太多数据，每个节点最多存 1M 数据；</p>
+<p>每一个 ZNODE 中有：</p>
+<ul>
+<li><p>state</p>
+<p>包含了事务id，节点创建时间、子节点个数</p>
+</li>
+<li><p>date</p>
+</li>
+</ul>
+<p>节点类型包括：</p>
+<ul>
+<li><p>临时节点</p>
+<p>生命周期是客户端会话</p>
+</li>
+<li><p>持久节点</p>
+<p>创建后会一直存在服务端</p>
+</li>
+<li><p>有序</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/16/ZK%E6%80%BB%E7%BB%93/" data-id="clxs9cebu000r8guwbk3d6jbs" data-title="ZK" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/02/16/RPC/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          RPC
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Dubbo 基本知识</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/06/16/Spring%20IOC/">Spring IOC</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Spring bean 的生命周期</a>
+          </li>
+        
+          <li>
+            <a href="/2023/04/16/Spring%20AOP/">AOP</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/16/RPC/">RPC</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/">ZK</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

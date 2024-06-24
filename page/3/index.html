@@ -69,6 +69,406 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-哈希冲突如何解决" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" class="article-date">
+  <time class="dt-published" datetime="2020-10-15T16:00:00.000Z" itemprop="datePublished">2020-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/">哈希冲突如何解决</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：哈希冲突如何解决"><a href="#1：哈希冲突如何解决" class="headerlink" title="1：哈希冲突如何解决"></a>1：哈希冲突如何解决</h1><p>有五种方式解决：</p>
+<ul>
+<li><p>开放地址法</p>
+<p>就是一旦发生冲突，就去寻找下一个空地址，这种方式的缺点是导致元素聚集</p>
+</li>
+<li><p>链地址法</p>
+<p>这也是 HashMap 在处理哈希冲突时的解决办法；</p>
+<p>其实就是将数组和链表结合起来，发挥两者优势；</p>
+</li>
+<li><p>再哈希法</p>
+<p>当发生冲突后，使用另外一个哈希函数获取地址，直到找到合适的地址</p>
+</li>
+<li><p>建立公共溢出区</p>
+<p>将哈希表分为基本表和溢出区，冲突的元素放溢出区</p>
+</li>
+<li><p>一致性哈希</p>
+<p>主要用于分布式系统中，如：分布式缓存，是将数据均分到不同的节点上以减少冲突</p>
+<p>分库分表？？</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/16/%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" data-id="clxs9cec100148guwcafa9tjs" data-title="哈希冲突如何解决" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-集合算是归类吧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" class="article-date">
+  <time class="dt-published" datetime="2020-09-15T16:00:00.000Z" itemprop="datePublished">2020-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/">算是集合归类吧</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：-Collection-接口和-Collections-工具类的区别"><a href="#1：-Collection-接口和-Collections-工具类的区别" class="headerlink" title="1： Collection 接口和 Collections 工具类的区别"></a>1： Collection 接口和 Collections 工具类的区别</h1><p>Collections 是一个工具类；</p>
+<p>提供了静态方法，服务于 Collection 接口；</p>
+<h1 id="2：Collection-接口的类如何遍历"><a href="#2：Collection-接口的类如何遍历" class="headerlink" title="2：Collection 接口的类如何遍历"></a>2：Collection 接口的类如何遍历</h1><ul>
+<li><p>传统的 for 循环</p>
+</li>
+<li><p>增强for 循环</p>
+<p>内部使用 Itterator 方式</p>
+</li>
+<li><p>迭代器 Iterator </p>
+</li>
+<li><p>stream 方式</p>
+<p>jdk 1.8 开始</p>
+</li>
+</ul>
+<h1 id="3：Iterable-接口和-Iterator-方式"><a href="#3：Iterable-接口和-Iterator-方式" class="headerlink" title="3：Iterable 接口和 Iterator 方式"></a>3：Iterable 接口和 Iterator 方式</h1><p>这俩都是接口；</p>
+<p>Iterator 是 Collection 接口的父接口，代表可以被遍历，提供了 Iterator 接口的遍历方法</p>
+<p>这俩不是同时出现的，Iterator 接口出现的早，Iterable 接口后出现；</p>
+<p>Iteraable 是代表是否具有迭代功能，Iterator 代表迭代方式，将是否具有迭代功能抽出来，符合单一职责原则。</p>
+<h2 id="1：迭代器的原理"><a href="#1：迭代器的原理" class="headerlink" title="1：迭代器的原理"></a>1：迭代器的原理</h2><p>迭代器在遍历元素时，内部用指针跟踪元素，首先指针会指向第一个元素的上方；当调用 hashNext 方法时，如果返回 true，</p>
+<p>此时调用 next 方法，指针会下移，将当前指针指向谁就返回谁。</p>
+<h1 id="4：集合的排序"><a href="#4：集合的排序" class="headerlink" title="4：集合的排序"></a>4：集合的排序</h1><h2 id="1：Comparable-接口"><a href="#1：Comparable-接口" class="headerlink" title="1：Comparable 接口"></a>1：Comparable 接口</h2><p>让类实现 Comparable 接口，重写 compareTo 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> <span class="keyword">implements</span> <span class="title class_">Comparable</span>&lt;Student&gt;&#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compareTo</span><span class="params">(Student o)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="built_in">this</span>.name.compareTo(o.name); </span><br><span class="line">        <span class="keyword">if</span>(flag == <span class="number">0</span>) &#123; </span><br><span class="line">        	flag = <span class="built_in">this</span>.age - o.age; </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">return</span> flag; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line">Collections.sort(students);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2：Compartor-接口比较器"><a href="#2：Compartor-接口比较器" class="headerlink" title="2：Compartor 接口比较器"></a>2：Compartor 接口比较器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">	<span class="keyword">private</span> <span class="type">int</span> age; </span><br><span class="line">&#125;</span><br><span class="line">Collections.sort(students, (o1, o2) -&gt; &#123;</span><br><span class="line">	<span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> o1.getName().compareTo(o2.getName()); </span><br><span class="line">    <span class="keyword">if</span>(flag == <span class="number">0</span>) &#123; </span><br><span class="line">        flag = o1.getAge() - o2.getAge(); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> flag; </span><br><span class="line">&#125;); </span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-Comparable-接口和-Compartor-接口"><a href="#5-Comparable-接口和-Compartor-接口" class="headerlink" title="5: Comparable 接口和 Compartor 接口"></a>5: Comparable 接口和 Compartor 接口</h1><p>这俩都是接口，able 代表它有这个能力，conpartor 代表自定义比较；</p>
+<p>对于一些第三方的没有实现 able接口的，可以使用 comaprtor 接口比较器；</p>
+<h1 id="6：-快速失败机制"><a href="#6：-快速失败机制" class="headerlink" title="6： 快速失败机制"></a>6： 快速失败机制</h1><p>集合中有使用到快速失败机制；</p>
+<p>在集合中为了避免并发修改异常，会维护一个 expectedModCount 期望修改次数的字段，表示集合被迭代器预期修改的次数。</p>
+<p>还有一个 modeCount 字段，表示实际被修改的次数。在集合被修改的过程中，会去比较这俩值，如果不一致，就会触发快速失败机制。抛出 ConcurrentModifyException，并发修改异常。</p>
+<p>当多个线程对结合进行修改时候，会抛出这个异常。</p>
+<p>在 增强 for 循环中，对集合中元素增加删除操作，会抛出这个异常；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; userNames = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;() &#123;&#123;</span><br><span class="line">    add(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;c&quot;</span>);</span><br><span class="line">    add(<span class="string">&quot;d&quot;</span>);</span><br><span class="line">&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String userName : userNames) &#123;</span><br><span class="line">    <span class="keyword">if</span> (userName.equals(<span class="string">&quot;a&quot;</span>)) &#123;</span><br><span class="line">        userNames.remove(userName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">System.out.println(userNames);</span><br><span class="line"></span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.util.ConcurrentModificationException</span><br><span class="line">at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:<span class="number">909</span>)</span><br><span class="line">at java.util.ArrayList$Itr.next(ArrayList.java:<span class="number">859</span>)</span><br><span class="line">at com.hollis.ForEach.main(ForEach.java:<span class="number">22</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="1：报错原因解析"><a href="#1：报错原因解析" class="headerlink" title="1：报错原因解析"></a>1：报错原因解析</h2><p>modeCount 是集合的成员变量，而 expextedModeCount 是Iterator 迭代器内部定义的变量；</p>
+<p>在遍历过程中，对结合的增加和删除，只会修改 modeCount 的值，而不会修改 expectedModeCount的值，导致这俩值</p>
+<p>不相等。</p>
+<h2 id="2：如何避免快速失败异常"><a href="#2：如何避免快速失败异常" class="headerlink" title="2：如何避免快速失败异常"></a>2：如何避免快速失败异常</h2><ul>
+<li><p>因此为了避免快速失败的异常，应该使用迭代器自己的增加和删除方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">iteratorRemove</span><span class="params">()</span> &#123; </span><br><span class="line">    List&lt;Student&gt; students = <span class="built_in">this</span>.getStudents(); </span><br><span class="line">    Iterator&lt;Student&gt; stuIter = students.iterator(); </span><br><span class="line">    <span class="keyword">while</span> (stuIter.hasNext()) &#123; </span><br><span class="line">        <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> stuIter.next(); </span><br><span class="line">        <span class="keyword">if</span> (student.getId() % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//这里要使用Iterator的remove方法移除当前对象，如果使用List的remove方法，则同样会出现ConcurrentModificationException </span></span><br><span class="line">        	stuIter.remove();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>使用 CopyOnWriteArrayList </p>
+<p>它是先把集合拷贝一份，在副本上做修改，add 和 remove 方法都是加锁控制并发。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cowRemove</span><span class="params">()</span> &#123; </span><br><span class="line">      List&lt;String&gt; students = <span class="keyword">new</span> <span class="title class_">CopyOnWriteArrayList</span>&lt;&gt;(<span class="built_in">this</span>.getStudents());</span><br><span class="line">      <span class="keyword">for</span>(Student stu : students) &#123;</span><br><span class="line">          <span class="keyword">if</span>(needDel(stu)) &#123;</span><br><span class="line">              students.remove(stu);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">- 普通 <span class="keyword">for</span> 循环</span><br><span class="line"></span><br><span class="line">- 通过 stream 的方式</span><br><span class="line"></span><br><span class="line">  因为每次 stream 之后，都会产生一个新的 stream，不存在并发问题</span><br><span class="line"></span><br><span class="line">  ```java</span><br><span class="line">  <span class="keyword">public</span> List&lt;String&gt; <span class="title function_">streamRemove</span><span class="params">()</span> &#123; </span><br><span class="line">      List&lt;String&gt; students = <span class="built_in">this</span>.getStudents();</span><br><span class="line">      <span class="keyword">return</span> students.stream()</span><br><span class="line">          .filter(<span class="built_in">this</span>::notNeedDel)</span><br><span class="line">          .collect(Collectors.toList());</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 List集合的 removeIf 方法</p>
+<p>从 jdk 8 开始 List 才有</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arraylist.removeIf(<span class="built_in">this</span>::needDel);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="3：快速失败引出-CopyOnWrite"><a href="#3：快速失败引出-CopyOnWrite" class="headerlink" title="3：快速失败引出 CopyOnWrite"></a>3：快速失败引出 CopyOnWrite</h2><h3 id="1：ConpyOnWrite-的-add-remove-方法都加了锁，为啥还要copy-一份"><a href="#1：ConpyOnWrite-的-add-remove-方法都加了锁，为啥还要copy-一份" class="headerlink" title="1：ConpyOnWrite 的 add&#x2F;remove 方法都加了锁，为啥还要copy 一份"></a>1：ConpyOnWrite 的 add&#x2F;remove 方法都加了锁，为啥还要copy 一份</h3><p>CopyOnWrite 当只有要 add 或者 remove 的时候，才 Copy 一份去修改，这是一种延时懒惰策略；</p>
+<p>它是一种写时复制的容器；</p>
+<p>修改完毕，再将原来容器指向 Copy 的容器地址；</p>
+<p>它的 add 和 remove 方法加锁，是为了防止在 Copy 的时候，Copy 出来多个副本，导致并发写；</p>
+<p>但是它的读操作没有加锁；</p>
+<p>这样做的好处是，我们可以并发读，当然这里读取到的数据有可能不是最新的，</p>
+<p>因为写时复制的思想是通过延时懒惰更新的策略，来实现数据最终一致性，并非强一致性。</p>
+<p>因此，CopyOnWrite 是一种读写分离的思想，读和写不同的容器, 使用于都多写少的场景；</p>
+<p>常用于：白名单黑名单，商品类目的访问或者更新场景。</p>
+<h3 id="2：-它和线程安全的vector-有啥区别"><a href="#2：-它和线程安全的vector-有啥区别" class="headerlink" title="2： 它和线程安全的vector 有啥区别"></a>2： 它和线程安全的vector 有啥区别</h3><p>Vector 始终都是对一个容器操作，读写互斥，同时只能做一件事；</p>
+<h3 id="3：CopyOnWrite-如何保证线程安全"><a href="#3：CopyOnWrite-如何保证线程安全" class="headerlink" title="3：CopyOnWrite 如何保证线程安全"></a>3：CopyOnWrite 如何保证线程安全</h3><p>jdk 1.5 开始在并法包中出现，CopyOnWriteArrayList 和 CopyOnWriteArraySet;</p>
+<p>它们是线程安全的 ArrayList 和 Set; </p>
+<h3 id="4：弱一致性"><a href="#4：弱一致性" class="headerlink" title="4：弱一致性"></a>4：弱一致性</h3><p>并发高和一致性是矛盾的，需要权衡</p>
+<ol>
+<li>ConcurrentHashMap 的 get</li>
+<li>CopyOnWriteArrayList 的 get </li>
+<li>数据库的 MVCC 是弱一致性的表现</li>
+</ol>
+<h1 id="7：集合中有哪些线程安全的集合"><a href="#7：集合中有哪些线程安全的集合" class="headerlink" title="7：集合中有哪些线程安全的集合"></a>7：集合中有哪些线程安全的集合</h1><ul>
+<li><p>Concurrentxxx</p>
+</li>
+<li><p>CopyOnWritexxx</p>
+<p>它们允许在遍历的时候删除元素</p>
+</li>
+</ul>
+<h1 id="7：如何将集合变成线程安全的集合"><a href="#7：如何将集合变成线程安全的集合" class="headerlink" title="7：如何将集合变成线程安全的集合"></a>7：如何将集合变成线程安全的集合</h1><h2 id="1：对集合的增删改方法加锁"><a href="#1：对集合的增删改方法加锁" class="headerlink" title="1：对集合的增删改方法加锁"></a>1：对集合的增删改方法加锁</h2><h2 id="2：使用-ThreadLocal"><a href="#2：使用-ThreadLocal" class="headerlink" title="2：使用 ThreadLocal"></a>2：使用 ThreadLocal</h2><p>将集合放到线程内部使用，这样集合就不能被其他线程访问</p>
+<h2 id="3：Collections-synchronizedXX"><a href="#3：Collections-synchronizedXX" class="headerlink" title="3：Collections.synchronizedXX()"></a>3：Collections.synchronizedXX()</h2><h2 id="4：使用不可变的集合封装"><a href="#4：使用不可变的集合封装" class="headerlink" title="4：使用不可变的集合封装"></a>4：使用不可变的集合封装</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.google.common.collect.ImmutableList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ImmutableCollectionExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ImmutableList&lt;Integer&gt; immutableList = ImmutableList.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> immutableList.get(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/09/16/%E9%9B%86%E5%90%88%E7%AE%97%E6%98%AF%E5%BD%92%E7%B1%BB%E5%90%A7/" data-id="clxs9cecf001x8guw6r943vw2" data-title="算是集合归类吧" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-零碎的点" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" class="article-date">
+  <time class="dt-published" datetime="2020-09-15T16:00:00.000Z" itemprop="datePublished">2020-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/">零碎的点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：值传递和引用传递"><a href="#1：值传递和引用传递" class="headerlink" title="1：值传递和引用传递"></a>1：值传递和引用传递</h1><p>除了集合、数组、对象会改变最终的值，因为三者是引用传递，其余都不会改变，因为其余的都是值传递，你传的是值过去，里面</p>
+<p>做啥操作，跟外面没关系；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">    <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    setXXX(list, a);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// list 的值会改变</span></span><br><span class="line">    System.out.println(list);</span><br><span class="line">    <span class="comment">// int 的值不会改变</span></span><br><span class="line">    System.out.println(a);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setXXX</span><span class="params">(List&lt;String&gt; list, <span class="type">int</span> a)</span>&#123;</span><br><span class="line">    a = <span class="number">2</span>;</span><br><span class="line">    list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2：-和"><a href="#2：-和" class="headerlink" title="2：&amp; 和 &amp;&amp;"></a>2：&amp; 和 &amp;&amp;</h1><p>&amp;&amp; 有短路功能；</p>
+<p>&amp;&amp; 的左边是fasle,  右边就不再执行了；</p>
+<h1 id="3：抽象类和接口的区别"><a href="#3：抽象类和接口的区别" class="headerlink" title="3：抽象类和接口的区别"></a>3：抽象类和接口的区别</h1><h2 id="1：接口"><a href="#1：接口" class="headerlink" title="1：接口"></a>1：接口</h2><ul>
+<li>接口的方法默认是 public 修饰；</li>
+<li>接口不能有构造方法；</li>
+<li>从设计层面来说：接口相当于一种规范；</li>
+</ul>
+<h2 id="2：抽象类"><a href="#2：抽象类" class="headerlink" title="2：抽象类"></a>2：抽象类</h2><ul>
+<li><p>一个类只能有一个父类；</p>
+</li>
+<li><p>从设计层面来说：抽象类相当于一种模板设计；</p>
+</li>
+<li><p>抽象类可以有构造方法；</p>
+</li>
+<li><p>抽象类主要是为了复用；我们经常说的模板方法模式；</p>
+</li>
+</ul>
+<h1 id="4-：成员变量和局部变量的区别"><a href="#4-：成员变量和局部变量的区别" class="headerlink" title="4 ：成员变量和局部变量的区别"></a>4 ：成员变量和局部变量的区别</h1><p>成员变量</p>
+<p>​	属于类变量或者实例；</p>
+<p>​	如果是 sttaic 修饰就是类变量，如果没有static 修饰就是实例变量；</p>
+<p>​	成员变量随着类的创建而存在；</p>
+<p>​	成员变量会自动赋值默认值；</p>
+<p>局部变量</p>
+<p>​	属于方法中定义的变量或者方法参数；对象存在堆内存，局部变量也存在栈内存</p>
+<pre><code>局部变量随着方法的调用结束而结束；
+</code></pre>
+<p>​	局部变量不会自动赋值；</p>
+<h1 id="5-：-静态方法和实例方法"><a href="#5-：-静态方法和实例方法" class="headerlink" title="5 ： 静态方法和实例方法"></a>5 ： 静态方法和实例方法</h1><p>静态只能访问静态的，不能访问实例方法；</p>
+<p>实例方法没有这方面的限制；</p>
+<h1 id="6：final-关键字"><a href="#6：final-关键字" class="headerlink" title="6：final 关键字"></a>6：final 关键字</h1><p>能作用的地方</p>
+<ul>
+<li>类</li>
+<li>方法</li>
+<li>变量</li>
+</ul>
+<h1 id="7-：深拷贝和浅拷贝"><a href="#7-：深拷贝和浅拷贝" class="headerlink" title="7 ：深拷贝和浅拷贝"></a>7 ：深拷贝和浅拷贝</h1><p>深拷贝是创建一个一模一样的新对象，新旧对象之间不共享任何内存，新对象的修改不会影响老对象；</p>
+<p>浅拷贝，拷贝的是地址；</p>
+<p>无论是深拷贝还是浅拷贝，都需要实现 cloneable 接口；并在 clone 方法中重写拷贝的逻辑</p>
+<h1 id="8：如何理解多态"><a href="#8：如何理解多态" class="headerlink" title="8：如何理解多态"></a>8：如何理解多态</h1><p>多态的概念比较简单：简单来说就是同一个操作作用于不同的对象，可以有不同的解释，产生不同的结果；</p>
+<p>如果按照这个理解，多态是运行期的一种状态， Java 的重写是多态的体现，不过也有人提出重写是静态多态的提现，这个问题在 StackOverflow 上有很多讨论，但我更倾向于动态多态；</p>
+<p>要实现这个运行期的动态绑定，就要满足 3 个条件：</p>
+<p>​	1：有类的继承或者实现</p>
+<p>​	2：要有重写</p>
+<p>​	3：父类引用指向子类对象</p>
+<h1 id="9：重载和重写的区别"><a href="#9：重载和重写的区别" class="headerlink" title="9：重载和重写的区别"></a>9：重载和重写的区别</h1><p>1：重写是运行期的概念，只是参数列表不同；重载是编译期的概念，发生在父子类之间</p>
+<p>2：运行期绑定，就是说在运行的时候，根据变量的引用指向子类对象，来调用具体的方法；</p>
+<p>​	编译期绑定，就是说在编译期根据参数的不同来决定调用哪个方法；	 </p>
+<h1 id="10-：零拷贝（待补充）"><a href="#10-：零拷贝（待补充）" class="headerlink" title="10 ：零拷贝（待补充）"></a>10 ：零拷贝（待补充）</h1><p>磁盘的读写速度跟内存相差 10 倍以上；</p>
+<p>所以针对磁盘的优化技术有很多：</p>
+<ul>
+<li>零拷贝</li>
+<li>直接 IO</li>
+<li>异步 IO</li>
+</ul>
+<p>这些优化的目的是为了提高磁盘的吞吐量；</p>
+<p>另外 OS 内核的高偶素缓冲区，也可以有效减少磁盘的访问次数；</p>
+<p>零拷贝是为了提高 I&#x2F;O 的吞吐效率；</p>
+<p>kafka 利用零拷贝；</p>
+<p>Nginx 也利用零拷贝；</p>
+<p>所以 kafuka 之所以这么快的原因之一；</p>
+<h1 id="11：如何创建一个对象"><a href="#11：如何创建一个对象" class="headerlink" title="11：如何创建一个对象"></a>11：如何创建一个对象</h1><h2 id="1：new"><a href="#1：new" class="headerlink" title="1：new"></a>1：new</h2><h2 id="2：反射"><a href="#2：反射" class="headerlink" title="2：反射"></a>2：反射</h2><h2 id="3：序列化和反序列化"><a href="#3：序列化和反序列化" class="headerlink" title="3：序列化和反序列化"></a>3：序列化和反序列化</h2><h2 id="4：拷贝（深浅）"><a href="#4：拷贝（深浅）" class="headerlink" title="4：拷贝（深浅）"></a>4：拷贝（深浅）</h2><p>实现 Cloneable 接口</p>
+<h2 id="5：Unsafe"><a href="#5：Unsafe" class="headerlink" title="5：Unsafe"></a>5：Unsafe</h2><p>它是 JVM 提供的底层的不安全的操作：包括创建对象；是在内存中直接分配对象的实例，并返回对象的引用；</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/09/16/%E9%9B%B6%E7%A2%8E%E7%9A%84%E7%82%B9/" data-id="clxs9cecg001z8guw2iu57p90" data-title="零碎的点" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-枚举" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/16/%E6%9E%9A%E4%B8%BE/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T16:00:00.000Z" itemprop="datePublished">2020-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/16/%E6%9E%9A%E4%B8%BE/">枚举</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：枚举的特点"><a href="#1：枚举的特点" class="headerlink" title="1：枚举的特点"></a>1：枚举的特点</h1><p>枚举其实就是一个语法糖，定义的 Enum 类型，反映到字节码文件中就是 final class XXX extends java.lang.Enum</p>
+<p>定义的属性反映到字节码上是：public static final aa</p>
+<ul>
+<li>构造方法私有，保证了只读不写，针对只读不写，我们只提供 get 方法，不提供 set 方法；</li>
+<li>该类是 final 修饰、hashCode 方法也是 final 修饰、属性是 static final 修饰</li>
+<li>枚举其实继承了 Enum 类</li>
+</ul>
+<h1 id="2：枚举中的方法"><a href="#2：枚举中的方法" class="headerlink" title="2：枚举中的方法"></a>2：枚举中的方法</h1><ul>
+<li><p>toString 方法</p>
+</li>
+<li><p>hashcode 方法</p>
+<p>不能被重写，因为是 final 修饰</p>
+</li>
+<li><p>values 方法</p>
+<p>返回枚举中的所有对象，下一步可以遍历</p>
+</li>
+<li><p>valueOf 方法</p>
+<p>通过常量名字获取枚举对象</p>
+</li>
+<li><p>ordinal</p>
+<p>属性的索引</p>
+</li>
+<li><p>compareTo 方法</p>
+<p>调用 ordinal 对两个属性相减</p>
+</li>
+</ul>
+<h2 id="1-封装通用枚举"><a href="#1-封装通用枚举" class="headerlink" title="1:  封装通用枚举"></a>1:  封装通用枚举</h2><p>各个枚举类中的 valueOf 方法其实可以抽离出来</p>
+<p>以下是代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通用枚举</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BaseEnum</span> &#123;</span><br><span class="line"></span><br><span class="line">    Integer <span class="title function_">getCode</span><span class="params">()</span>;</span><br><span class="line">    String <span class="title function_">getDesc</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> BaseEnum <span class="title function_">valueOf</span><span class="params">(Class&lt;? extends BaseEnum&gt; enumClass, Integer value)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(value == <span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        BaseEnum[] enumConstants = enumClass.getEnumConstants();</span><br><span class="line">        <span class="keyword">if</span>(enumConstants != <span class="literal">null</span> &amp;&amp; enumConstants.length &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(BaseEnum baseEnum : enumConstants)&#123;</span><br><span class="line">                <span class="keyword">if</span>(value.equals(baseEnum.getCode()))&#123;</span><br><span class="line">                    <span class="keyword">return</span> baseEnum;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---------------------- 枚举类如下：</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">OrderAuditingStatus</span> <span class="keyword">implements</span> <span class="title class_">BaseEnum</span>&#123;</span><br><span class="line"></span><br><span class="line">    NO_AUDITING(<span class="number">0</span>, <span class="string">&quot;未审核&quot;</span>),</span><br><span class="line">    PASS(<span class="number">1</span>, <span class="string">&quot;审核通过&quot;</span>),</span><br><span class="line">    UN_PASS(<span class="number">2</span>, <span class="string">&quot;审核不通过&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String desc;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    OrderAuditingStatus(Integer code, String desc)&#123;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//    public static OrderAuditingStatus valueOf(Integer value) &#123;</span></span><br><span class="line"><span class="comment">//        for (OrderAuditingStatus orderLogType : values()) &#123;</span></span><br><span class="line"><span class="comment">//            if (Objects.equals(orderLogType.code, value)) &#123;</span></span><br><span class="line"><span class="comment">//                return orderLogType;</span></span><br><span class="line"><span class="comment">//            &#125;</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//        return null;</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="3：-枚举的好处"><a href="#3：-枚举的好处" class="headerlink" title="3： 枚举的好处"></a>3： 枚举的好处</h1><ul>
+<li>它是天然的 单例。线程安全。这是因为底层做了保证</li>
+<li>枚举的单例可以避免被反序列化破坏</li>
+</ul>
+<h1 id="4：-枚举的比较方式"><a href="#4：-枚举的比较方式" class="headerlink" title="4： 枚举的比较方式"></a>4： 枚举的比较方式</h1><ul>
+<li>使用 equals 或者 &#x3D;&#x3D; 都行</li>
+<li>枚举的 equals 底层也是 &#x3D;&#x3D;</li>
+</ul>
+<h1 id="5-：-啥时候使用枚举"><a href="#5-：-啥时候使用枚举" class="headerlink" title="5 ： 啥时候使用枚举"></a>5 ： 啥时候使用枚举</h1><p>当一个对象，天生有一组预定义的值，而且这些值不会轻易改变，只读不改，这个时候就可以使用枚举。</p>
+<h2 id="1：-有了常量了为啥还要用枚举"><a href="#1：-有了常量了为啥还要用枚举" class="headerlink" title="1： 有了常量了为啥还要用枚举"></a>1： 有了常量了为啥还要用枚举</h2><p>你要是使用常量也能做到，但是常量使用时候，调用者可以传递任何值都行，你要是使用枚举，那调用者在传入其他任何值的时候会编译报错，这时就规范了调用者的传参。   </p>
+<h1 id="6：-纯粹是零碎的点"><a href="#6：-纯粹是零碎的点" class="headerlink" title="6： 纯粹是零碎的点"></a>6： 纯粹是零碎的点</h1><p>只能重写枚举的 toString 方法，不能下重写 hahscode 方法，因为 hashcode 是 final 定义；</p>
+<h1 id="7：枚举与单例模式相关"><a href="#7：枚举与单例模式相关" class="headerlink" title="7：枚举与单例模式相关"></a>7：枚举与单例模式相关</h1><h2 id="1：为什么说枚举是最好的单例实现"><a href="#1：为什么说枚举是最好的单例实现" class="headerlink" title="1：为什么说枚举是最好的单例实现"></a>1：为什么说枚举是最好的单例实现</h2><p>effective java 这本书中说：</p>
+<p>​	枚举实现的单例是最佳实践；</p>
+<p>​	原因在于：</p>
+<p>​	1：写法简单；</p>
+<p>​	2：枚举类的单例是线程安全的；</p>
+<p>​	3：避免被反序列化破坏；</p>
+<p>​	4：枚举实现的单例避免反射破坏</p>
+<h2 id="2：为什么说枚举的单例是线程安全的"><a href="#2：为什么说枚举的单例是线程安全的" class="headerlink" title="2：为什么说枚举的单例是线程安全的"></a>2：为什么说枚举的单例是线程安全的</h2><p>枚举类反编译的字节码文件中可以看到：</p>
+<p>​	该类是final 修饰继承 Enum 类；</p>
+<p>​	各个属性是 final static 修饰；</p>
+<pre><code>静态代码块中加载所有属性；
+</code></pre>
+<p>既然是 static 修饰的属性，在类加载过程中就会被初始化，然而 Java 类的加载和初始化过程都是线程安全的；</p>
+<p>因此，枚举类天生是线程安全的；</p>
+<h2 id="3：枚举类如何解决反序列化破坏单例"><a href="#3：枚举类如何解决反序列化破坏单例" class="headerlink" title="3：枚举类如何解决反序列化破坏单例"></a>3：枚举类如何解决反序列化破坏单例</h2><h3 id="1：反序列化如何破坏单例"><a href="#1：反序列化如何破坏单例" class="headerlink" title="1：反序列化如何破坏单例"></a>1：反序列化如何破坏单例</h3><p>从Enum的源码中看到，大部分的方法都是final修饰的，特别是<strong>clone、readObject、writeObject</strong>这三个方法</p>
+<p>不能通过克隆、序列化和反序列化复制枚举</p>
+<h2 id="4：-枚举单例如何解决反射破坏"><a href="#4：-枚举单例如何解决反射破坏" class="headerlink" title="4： 枚举单例如何解决反射破坏"></a>4： 枚举单例如何解决反射破坏</h2><p>即使单例类的构造方法是私有的，但是还是可以通过反射来破坏它；</p>
+<p>枚举的构造方法虽然也是私有的，但是枚举是在类加载的时候加载，而普通方式实现的单例是在运行期调用的时候加载，这是两者的关键区别；因此，枚举不会被反射破坏，而普通方式ide单例会被反射破坏。</p>
+<h1 id="8-：枚举-模版模式-策略模式-工厂模式相关"><a href="#8-：枚举-模版模式-策略模式-工厂模式相关" class="headerlink" title="8 ：枚举+模版模式+策略模式+工厂模式相关"></a>8 ：枚举+模版模式+策略模式+工厂模式相关</h1><p>根据枚举值不同，调用不同的业务实现类</p>
+<h1 id="9-：-双值枚举"><a href="#9-：-双值枚举" class="headerlink" title="9 ： 双值枚举"></a>9 ： 双值枚举</h1><p>说白了也就是，默认情况下枚举只有一个值，但是你可以在常量后面加额外的值表示额外的行为</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/16/%E6%9E%9A%E4%B8%BE/" data-id="clxs9cec8001l8guwh94me1i6" data-title="枚举" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-集合体系" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" class="article-date">
@@ -132,7 +532,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" data-id="clxs96134001djwuw5ygn9pqh" data-title="集合体系" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/08/16/%E9%9B%86%E5%90%88%E4%BD%93%E7%B3%BB/" data-id="clxs9cecc001v8guw9g71dsdj" data-title="集合体系" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -179,7 +579,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/07/16/%E6%95%B0%E7%BB%84/" data-id="clxs96135001fjwuw8pxp9kad" data-title="数组" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/07/16/%E6%95%B0%E7%BB%84/" data-id="clxs9cec6001j8guw6t4zhotc" data-title="数组" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -264,7 +664,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/06/16/%E5%BA%8F%E5%88%97%E5%8C%96/" data-id="clxs961310015jwuw5way4yxb" data-title="序列化" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/06/16/%E5%BA%8F%E5%88%97%E5%8C%96/" data-id="clxs9cec5001f8guw5efx1vq9" data-title="序列化" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -380,7 +780,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/05/16/%E5%BC%82%E5%B8%B8/" data-id="clxs961300013jwuw9fkf9ayz" data-title="异常" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/05/16/%E5%BC%82%E5%B8%B8/" data-id="clxs9cec4001d8guwdat3cvid" data-title="异常" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -528,7 +928,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/04/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/" data-id="clxs96136001hjwuw08tg1o9m" data-title="注解和反射" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/04/16/%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/" data-id="clxs9ceca001p8guw48ttae2r" data-title="注解和反射" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -654,215 +1054,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/03/16/%E5%AD%97%E7%AC%A6%E4%B8%B2/" data-id="clxs9612y0011jwuw3egu0uth" data-title="字符串" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2020/03/16/%E5%AD%97%E7%AC%A6%E4%B8%B2/" data-id="clxs9cec300198guw2fz677dm" data-title="字符串" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-字符集" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/02/16/%E5%AD%97%E7%AC%A6%E9%9B%86/" class="article-date">
-  <time class="dt-published" datetime="2020-02-15T16:00:00.000Z" itemprop="datePublished">2020-02-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/02/16/%E5%AD%97%E7%AC%A6%E9%9B%86/">字符集</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：字符集的分类"><a href="#1：字符集的分类" class="headerlink" title="1：字符集的分类"></a>1：字符集的分类</h1><p>包括：</p>
-<ul>
-<li>文集中字符集</li>
-<li>内存中的字符集</li>
-</ul>
-<h2 id="1：文件中的字符集"><a href="#1：文件中的字符集" class="headerlink" title="1：文件中的字符集"></a>1：文件中的字符集</h2><p>ASCII ：它是最早的字符集；是对英文字符和二进制做了转换；</p>
-<p>​	     1 个字符占用 2  个字节。</p>
-<h3 id="2：Unicode"><a href="#2：Unicode" class="headerlink" title="2：Unicode"></a>2：Unicode</h3><p>​	    万国码，规范统一各种字符集；1 个字符占 2 个字节。char 类型使用的就是它</p>
-<h3 id="3：IOS-8859-1"><a href="#3：IOS-8859-1" class="headerlink" title="3：IOS-8859-1"></a>3：IOS-8859-1</h3><p>​	    拉丁码；欧洲使用的字符集；兼容 ASCII；</p>
-<p>​	    1 字符占1个字节。</p>
-<h3 id="4：GBK"><a href="#4：GBK" class="headerlink" title="4：GBK"></a>4：GBK</h3><p>​             为中文设计的字符集；包含繁体和日韩；向下兼容 ASCII；</p>
-<p>​             一个中文占 2 字节；一个英文占 1 个字节；</p>
-<h3 id="5：GB2312"><a href="#5：GB2312" class="headerlink" title="5：GB2312"></a>5：GB2312</h3><p>简体中文</p>
-<h3 id="6：UTF-8"><a href="#6：UTF-8" class="headerlink" title="6：UTF-8"></a>6：UTF-8</h3><p>它是变长的编码；可以存所有语言；使用 1-4 个不等的字节表示 1 个字符；1 个中文占 3 字节；1 英文占 2 字节；</p>
-<p>向下兼容 ASCII。</p>
-<h2 id="2：内存中的字符集"><a href="#2：内存中的字符集" class="headerlink" title="2：内存中的字符集"></a>2：内存中的字符集</h2><p>java 中的 char 使用 unicode 编码；</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/02/16/%E5%AD%97%E7%AC%A6%E9%9B%86/" data-id="clxs9612w000wjwuward4bxzj" data-title="字符集" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-brightloong" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/01/16/brightloong/" class="article-date">
-  <time class="dt-published" datetime="2020-01-16T09:23:59.000Z" itemprop="datePublished">2020-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/01/16/brightloong/">你好呀，欢迎来到我的博客！</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这是一个专门记录个人技术博客的网站，以及随想和一些杂谈。</p>
-<p>这是一个新的开始。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/16/brightloong/" data-id="clxs9612t000ojwuw5s690meo" data-title="你好呀，欢迎来到我的博客！" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-Java 语法糖" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/01/16/Java%20%E8%AF%AD%E6%B3%95%E7%B3%96/" class="article-date">
-  <time class="dt-published" datetime="2020-01-15T16:00:00.000Z" itemprop="datePublished">2020-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/01/16/Java%20%E8%AF%AD%E6%B3%95%E7%B3%96/">语法糖</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：-什么是语法糖"><a href="#1：-什么是语法糖" class="headerlink" title="1： 什么是语法糖"></a>1： 什么是语法糖</h1><p>便于可读性和可写性；会在编译期变为正常的语法形式；</p>
-<h1 id="2：语法糖有"><a href="#2：语法糖有" class="headerlink" title="2：语法糖有"></a>2：语法糖有</h1><h2 id="1：-泛型的类型擦除"><a href="#1：-泛型的类型擦除" class="headerlink" title="1： 泛型的类型擦除"></a>1： 泛型的类型擦除</h2><h2 id="2：-枚举"><a href="#2：-枚举" class="headerlink" title="2： 枚举"></a>2： 枚举</h2><h2 id="3：-自动拆装箱"><a href="#3：-自动拆装箱" class="headerlink" title="3： 自动拆装箱"></a>3： 自动拆装箱</h2><h2 id="4：-lambda-表达式"><a href="#4：-lambda-表达式" class="headerlink" title="4： lambda 表达式"></a>4： lambda 表达式</h2><h2 id="5：-增强-for-循环"><a href="#5：-增强-for-循环" class="headerlink" title="5： 增强 for 循环"></a>5： 增强 for 循环</h2><h2 id="6：-string-的-操作"><a href="#6：-string-的-操作" class="headerlink" title="6： string 的 + 操作"></a>6： string 的 + 操作</h2><h2 id="7：-try-with-resource"><a href="#7：-try-with-resource" class="headerlink" title="7： try with resource"></a>7： try with resource</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/16/Java%20%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="clxs9612g0004jwuwdj2c5rau" data-title="语法糖" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-搭建个人博客网站" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" class="article-date">
-  <time class="dt-published" datetime="2020-01-01T09:23:59.000Z" itemprop="datePublished">2020-01-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/">搭建个人博客网站</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>本片介绍如何使用 Hexo + Github 搭建自己的博客网站。</p>
-<h1 id="1：创建个人-Github-账号"><a href="#1：创建个人-Github-账号" class="headerlink" title="1：创建个人 Github 账号"></a>1：创建个人 Github 账号</h1><p>既然提到了 Github Page ，首先就得<a href="https://link.zhihu.com/?target=https://github.com/signup">注册自己的 Github 账号</a>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果 Github 界面打不开，建议使用 [Watt Toolkit](https://link.zhihu.com/?target=https%3A//steampp.net/) ，（不仅可以加速 Steam、橙子、育碧，同时也能加速 Github）</span><br><span class="line">注册一个 Github 账号只需要邮箱，并且进行邮箱验证就能快速完成！ヾ(•ω•`)o</span><br></pre></td></tr></table></figure>
-
-<h1 id="2-安装-Node-js"><a href="#2-安装-Node-js" class="headerlink" title="2: 安装 Node.js"></a>2: 安装 Node.js</h1><p>建议直接去Nodejs官网去下载比较新的版本。一般情况下nodejs会附带配套的npm（Node Package Manager，是一个用于Node.js环境的包<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">管理工具</a>），如果没有的话可以单独安装一下npm。</p>
-<h1 id="3-安装-Git"><a href="#3-安装-Git" class="headerlink" title="3: 安装 Git"></a>3: 安装 Git</h1><p>相信程序员伙伴们都认识这个工具，它实际上是一个非常强大的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E8%BD%AF%E4%BB%B6&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:3186231566%7D">版本控制软件</a>。</p>
-<h1 id="4-安装-Hexo"><a href="#4-安装-Hexo" class="headerlink" title="4 : 安装 Hexo"></a>4 : 安装 Hexo</h1><p>在命令行中执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<p>等待自动安装完成后，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-<p>检查是否安装成功，若安装成功，应该显示hexo的版本号。</p>
-<h1 id="5-初始化-Hexo项目"><a href="#5-初始化-Hexo项目" class="headerlink" title="5: 初始化 Hexo项目"></a>5: 初始化 Hexo项目</h1><p>创建一个文件夹用于存放Hexo项目。比如创建一个名为blog的目录。</p>
-<p>进入blog目录，运行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog</span><br></pre></td></tr></table></figure>
-
-<p>完成之后就已经成功在本地创建了一个网页，想查看的话，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo cl &amp;&amp; hexo g  &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
-
-<p>默认的网址为<a href="https://link.zhihu.com/?target=http://localhost:4000/">http://localhost:4000/</a>。</p>
-<h1 id="6-发布到-Github"><a href="#6-发布到-Github" class="headerlink" title="6 :  发布到 Github"></a>6 :  发布到 Github</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d </span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/01/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99/" data-id="clxs961320017jwuw7cgc17n7" data-title="搭建个人博客网站" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
 
     </footer>
   </div>
@@ -876,7 +1072,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; zurück</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; zurück</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">weiter &raquo;</a>
   </nav>
 
 </section>
@@ -890,7 +1086,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZK/" rel="tag">ZK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
     </div>
   </div>
 
@@ -900,7 +1096,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Dubbo/" style="font-size: 10px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+      <a href="/tags/Dubbo/" style="font-size: 12px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 16px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 18px;">Java 集合</a> <a href="/tags/Spring/" style="font-size: 14px;">Spring</a> <a href="/tags/ZK/" style="font-size: 10px;">ZK</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 12px;">杂谈</a>
     </div>
   </div>
 
@@ -909,7 +1105,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -922,23 +1118,23 @@
       <ul>
         
           <li>
+            <a href="/2023/06/16/Spring%20IOC/">Spring IOC</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/16/Spring%20Bean%20%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Spring bean 的生命周期</a>
+          </li>
+        
+          <li>
+            <a href="/2023/04/16/Spring%20AOP/">AOP</a>
+          </li>
+        
+          <li>
             <a href="/2023/02/16/RPC/">RPC</a>
           </li>
         
           <li>
-            <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/">Dubbo 基本知识</a>
-          </li>
-        
-          <li>
-            <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
-          </li>
-        
-          <li>
-            <a href="/2022/10/16/static/">static</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
+            <a href="/2023/02/16/ZK%E6%80%BB%E7%BB%93/">ZK</a>
           </li>
         
       </ul>
