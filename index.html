@@ -69,6 +69,280 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-RPC" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/16/RPC/" class="article-date">
+  <time class="dt-published" datetime="2023-02-15T16:00:00.000Z" itemprop="datePublished">2023-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/16/RPC/">RPC</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：啥是-RPC"><a href="#1：啥是-RPC" class="headerlink" title="1：啥是 RPC"></a>1：啥是 RPC</h1><p>RPC 是远程过程调用，是一种进程间的通信方式。</p>
+<p>它关注几个要素：</p>
+<ul>
+<li><p>传输协议、</p>
+</li>
+<li><p>通信框架</p>
+</li>
+<li><p>序列化协议、</p>
+</li>
+<li><p>集群、</p>
+<p>负载均衡、集群容错</p>
+</li>
+<li><p>服务注册与发现就是服务寻址</p>
+</li>
+<li><p>动态代理方案实现像本地调用一样调远程服务</p>
+</li>
+<li><p>查询结果缓存起来</p>
+</li>
+</ul>
+<p>HTTP 是超文本传输协议，它只是一个协议。</p>
+<p>RPC 通常用于服务间的调用，HTTP 常用于 web、app、第三方的调用；</p>
+<p>HTTP 的实现是基于 TCP ，RPC 也可以基于 TCP，或者 HTTP 实现。</p>
+<h1 id="2：RPC-框架有哪些"><a href="#2：RPC-框架有哪些" class="headerlink" title="2：RPC 框架有哪些"></a>2：RPC 框架有哪些</h1><ul>
+<li>Dubbo</li>
+<li>阿里的 HSF</li>
+<li>谷歌的 grpc</li>
+</ul>
+<h1 id="3：为啥-RPC-比-HTTP-更快一些"><a href="#3：为啥-RPC-比-HTTP-更快一些" class="headerlink" title="3：为啥 RPC 比 HTTP 更快一些"></a>3：为啥 RPC 比 HTTP 更快一些</h1><p>RPC 的设计目的就是为了快速传输，因此它的序列化比 HTTP 的更紧凑，没有像 HTTP 传输的还要带上 Header、body 那样，RPC 相对传输的数据量更少。</p>
+<h1 id="3：RPC-原理，如何设计一个-RPC-框架"><a href="#3：RPC-原理，如何设计一个-RPC-框架" class="headerlink" title="3：RPC 原理，如何设计一个 RPC 框架"></a>3：RPC 原理，如何设计一个 RPC 框架</h1><p>首先一个 RPC 框架的几个要素是：</p>
+<ul>
+<li><p>配置层</p>
+<p>可以 SPI 扩展</p>
+</li>
+<li><p>注册中心层</p>
+</li>
+<li><p>代理层</p>
+</li>
+<li><p>集群层</p>
+</li>
+<li><p>监控层</p>
+</li>
+<li><p>网络传输</p>
+</li>
+<li><p>序列化</p>
+</li>
+<li><p>通信协议</p>
+</li>
+</ul>
+<p>通信框架可以使用高性能的 netty，不用自己造轮子；</p>
+<p>要实现像本地方法一样调用远程方法，还得屏蔽上述细节，那就要使用代理来实现。要做到高可用，就得使用集群、还有服务注册中心、还得有一套完善的监控机制。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/16/RPC/" data-id="clxs9612k0009jwuw6mno7zr1" data-title="RPC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Dubbo 相关" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" class="article-date">
+  <time class="dt-published" datetime="2023-01-15T16:00:00.000Z" itemprop="datePublished">2023-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/">Dubbo 基本知识</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：Dubbo-基本知识"><a href="#1：Dubbo-基本知识" class="headerlink" title="1：Dubbo 基本知识"></a>1：Dubbo 基本知识</h1><ul>
+<li><p>传输协议</p>
+<p>默认 Dubbo 协议，但是也支持 Http 协议和其他协议</p>
+</li>
+<li><p>通信框架</p>
+</li>
+</ul>
+<p>  netty nio 异步通信框架</p>
+<ul>
+<li>序列化协议</li>
+</ul>
+<p>  默认 hession 协议，还有 Fastjason2</p>
+<ul>
+<li><p>传输体积</p>
+<p>8M</p>
+</li>
+<li><p>长连接</p>
+</li>
+</ul>
+<h1 id="2：Dubbo-缓存机制"><a href="#2：Dubbo-缓存机制" class="headerlink" title="2：Dubbo 缓存机制"></a>2：Dubbo 缓存机制</h1><p>就是服务端和客户端分别缓存调用结果，是为了提高查询效率；</p>
+<p>客户端缓存起来是为了下次不再远程调用，服务端缓存起来是下次不再调用具体方法；</p>
+<p>缓存淘汰策略有：</p>
+<ul>
+<li>LRU</li>
+</ul>
+<p>缓存机制有可能造成数据不一致问题，分布式缓存没事。</p>
+<h1 id="3：Dubbo-如何实现像本地调用一样调用全程服务"><a href="#3：Dubbo-如何实现像本地调用一样调用全程服务" class="headerlink" title="3：Dubbo 如何实现像本地调用一样调用全程服务"></a>3：Dubbo 如何实现像本地调用一样调用全程服务</h1><p>Dubbo 能实现本地方法一样调用远程方法的是基于动态代理。</p>
+<p>Dubbo 根据动态代理生成一个代理类，这个代理实现了本地接口，在调用本地方法时候，会通过代理类的 invoke 方法转发到远程接口的方法</p>
+<h1 id="4：Dubbo-整体架构"><a href="#4：Dubbo-整体架构" class="headerlink" title="4：Dubbo 整体架构"></a>4：Dubbo 整体架构</h1><p>Dubbo 的架构主要有：</p>
+<ul>
+<li><p>service 层</p>
+<p>是一个扩展层</p>
+</li>
+<li><p>配置层</p>
+</li>
+<li><p>注册中心层</p>
+</li>
+<li><p>代理层</p>
+</li>
+<li><p>监控层</p>
+</li>
+<li><p>网络传输层</p>
+</li>
+<li><p>通信层</p>
+</li>
+<li><p>序列化层</p>
+</li>
+<li><p>集群层</p>
+<p>负载均衡、集群容错</p>
+</li>
+<li><p>远程调用层</p>
+</li>
+</ul>
+<h1 id="5：Dubbo-的工作原理"><a href="#5：Dubbo-的工作原理" class="headerlink" title="5：Dubbo 的工作原理"></a>5：Dubbo 的工作原理</h1><h2 id="也就是原理和实现过程"><a href="#也就是原理和实现过程" class="headerlink" title="也就是原理和实现过程"></a>也就是原理和实现过程</h2><p>具体的是：</p>
+<ul>
+<li><p>调用方</p>
+<ul>
+<li><p>配置层</p>
+<p>调用者在启动的时候读取配置层的配置；</p>
+</li>
+<li><p>注册中心层</p>
+<p>根据上一步配置要找的接口，从注册中心层拉取和订阅对应的服务列表，缓存到本地，这样即使注册中心挂了，也能继续工作；</p>
+</li>
+<li><p>代理层</p>
+<p>调用者在代理层生成调用者的代理对象 Invoker;</p>
+</li>
+<li><p>集群层</p>
+<p>经过集群层负载均衡找到提供者的 Invoker </p>
+</li>
+<li><p>通信层</p>
+<p>通过 Netty 框架通信</p>
+</li>
+<li><p>序列化层</p>
+<p>序列化参数</p>
+</li>
+</ul>
+</li>
+<li><p>提供者</p>
+<ul>
+<li><p>序列化层</p>
+<p>反序列化参数</p>
+</li>
+<li><p>然后交给线程池来执行</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="6：cluster-集群层"><a href="#6：cluster-集群层" class="headerlink" title="6：cluster 集群层"></a>6：cluster 集群层</h1><h2 id="1：Dubbo-的负载均衡策略"><a href="#1：Dubbo-的负载均衡策略" class="headerlink" title="1：Dubbo 的负载均衡策略"></a>1：Dubbo 的负载均衡策略</h2><p>它是在客户端设置的负载均衡。</p>
+<ul>
+<li><p>默认是加权随机；加权随机就是：通过区间的随机算法，去获取一个目标服务器。在这个区间中，我们可以对某一个服务器加权重。</p>
+</li>
+<li><p>加权轮询</p>
+</li>
+<li><p>最小活跃优先</p>
+<p>每一个服务者都记录一个调用的 active 数，完成调用之后，活跃数会减1。活跃数下降的越快，这台服务器的性能越高。</p>
+</li>
+<li><p>最短时间优先</p>
+<p>他会去计算服务器的响应时间，根据响应时间最短的服务器配置更高的权重。</p>
+</li>
+<li><p>一致性 Hash</p>
+<p>通过一致性哈希算法，会落到某一个目标服务器上。</p>
+</li>
+</ul>
+<h2 id="2：集群容错重试"><a href="#2：集群容错重试" class="headerlink" title="2：集群容错重试"></a>2：集群容错重试</h2><ul>
+<li><p>默认是：失败切换到其他机器</p>
+<p>可以配置重试次数，默认重试2次；</p>
+</li>
+<li><p>忽略异常</p>
+<p>对于不重要的业务，如：日志</p>
+</li>
+<li><p>并行调用</p>
+<p>并行调用多个提供者，只要有一个成功，就返回；</p>
+</li>
+</ul>
+<h1 id="7：Proxy-代理层"><a href="#7：Proxy-代理层" class="headerlink" title="7：Proxy 代理层"></a>7：Proxy 代理层</h1><p>默认使用字节码动态代理</p>
+<h1 id="8：Dubbo-的扩展点-SPI"><a href="#8：Dubbo-的扩展点-SPI" class="headerlink" title="8：Dubbo 的扩展点 SPI"></a>8：Dubbo 的扩展点 SPI</h1><h2 id="1：啥是-SPI"><a href="#1：啥是-SPI" class="headerlink" title="1：啥是 SPI"></a>1：啥是 SPI</h2><p>JDK 的 SPI 是一种对服务的可扩展的机制，它是基于接口的扩展。</p>
+<p>就是我有一个接口，现在这个接口有 3 个实现类，那么系统在运行的时候，到底要加载哪一个实现类；这时候就需要 SPI；</p>
+<p>根据指定的配置或者默认配置，去找到对应的实现类加载进来；</p>
+<p>具体使用步骤：</p>
+<p>第一步：在配置文件中写</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在 src/main/resources 下创建一个 meta-inf/services 这样写：</span><br><span class="line">接口A = 实现类B 的全路径</span><br></pre></td></tr></table></figure>
+
+<p>第二步：</p>
+<p>代码中使用 ServiceLoader.load 加载实现类，通过反射创建实例执行方法。</p>
+<h2 id="2：SPI-的使用场景"><a href="#2：SPI-的使用场景" class="headerlink" title="2：SPI 的使用场景"></a>2：SPI 的使用场景</h2><p>扩展某个功能</p>
+<ul>
+<li><p>JDBC 加载不同类型的数据库驱动</p>
+<p>java 定义了一套 jdbc 的接口，但是没有实现类；实际项目中，它加载的是你配置文件中指定的 jdbc 信息</p>
+<p>它是在类加载的时候就加载所有的扩展，不是延迟加载。</p>
+</li>
+</ul>
+<h2 id="3：Dubbo-的-SPI"><a href="#3：Dubbo-的-SPI" class="headerlink" title="3：Dubbo 的 SPI"></a>3：Dubbo 的 SPI</h2><p>Dubbo 的 SPI ，它是在 java spi 的基础上增加了新的功能：按需加载、懒加载；</p>
+<p>它是放在Mata-info&#x2F;dubbo 文件下；</p>
+<p>它是用扩展类加载器加载；</p>
+<p>他能扩展许多功能：</p>
+<ul>
+<li>传输协议</li>
+<li>序列化协议</li>
+<li>负载均衡</li>
+</ul>
+<p>主要作用就是对外提供可自定义的插件式的扩展 Dubbo 功能。</p>
+<h1 id="9：Dubbo-是如何动态感知服务下线的呢"><a href="#9：Dubbo-是如何动态感知服务下线的呢" class="headerlink" title="9：Dubbo 是如何动态感知服务下线的呢"></a>9：Dubbo 是如何动态感知服务下线的呢</h1><p>首先 Dubbo 默认采用 ZK 作为注册中心。</p>
+<p>多个服务之间的通信地址通过 ZK 类维护，zk 会采用树型结构存储协议地址；ZK 通过心跳机制，判断提供者是否健康，然后决定把哪个服务剔除。zk 是咋感知的呢</p>
+<p>简单来说就是 ZK 的 watch 监听机制，监听服务端节点的变化，一旦有变化，就发送时间通知消费者做出更新本地服务列表。后续就不会发送到有问题的节点上了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" data-id="clxs961260000jwuwd9ldci8u" data-title="Dubbo 基本知识" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-泛型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/" class="article-date">
@@ -139,7 +413,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clxs8zq2l001azcuw0njgg8ux" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clxs96133001bjwuwaxr6f834" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -209,7 +483,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/16/static/" data-id="clxs8zq27000ezcuw9s25bgry" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/10/16/static/" data-id="clxs9612q000jjwuw81nfgafo" data-title="static" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -267,7 +541,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clxs8zq2b000lzcuwc38l2a10" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/" data-id="clxs9612s000mjwuw18wx7qx7" data-title="Java 包装类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -374,7 +648,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" data-id="clxs8zq2a000izcuwa6ah0830" data-title="原子类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/" data-id="clxs9612u000rjwuw1m26brt0" data-title="原子类" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -443,7 +717,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/16/Lock%20%E9%94%81/" data-id="clxs8zq210004zcuw2my377a3" data-title="lock 锁" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/07/16/Lock%20%E9%94%81/" data-id="clxs9612h0005jwuwfilg6gtn" data-title="lock 锁" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -606,7 +880,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/16/Synchronized/" data-id="clxs8zq26000czcuw8ipk4e09" data-title="Synchronized" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/06/16/Synchronized/" data-id="clxs9612n000cjwuw1crla156" data-title="Synchronized" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -687,7 +961,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/16/volatile/" data-id="clxs8zq29000hzcuw3ickbyw8" data-title="volatile" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/05/16/volatile/" data-id="clxs9612p000hjwuw3srhc06m" data-title="volatile" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -945,332 +1219,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/16/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clxs8zq2n001ezcuw0grl26cq" data-title="线程池的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2021/04/16/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clxs96137001ljwuw2g4qf7vs" data-title="线程池的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-线程基础的东西" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" class="article-date">
-  <time class="dt-published" datetime="2021-03-15T16:00:00.000Z" itemprop="datePublished">2021-03-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/">线程的基础东西</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：并发、并行"><a href="#1：并发、并行" class="headerlink" title="1：并发、并行"></a>1：并发、并行</h1><p>并发（Concurrent）:</p>
-<p>​	两个进程，交替使用同一个 CPU。CPU的处理速度很快，用户觉察不出它的停顿，看来其就像同时干很多事情，这其实是cpu时间片技术，并发完成的；</p>
-<p>并行：</p>
-<p>​	是对一个操作系统有 1 个以上的 CPU 来说的；当一个cpu 执行一个进程，另一个CPU执行另一个进程，两个进程间互不干扰可以同时进行，成为并行。</p>
-<h1 id="2：进程、线程"><a href="#2：进程、线程" class="headerlink" title="2：进程、线程"></a>2：进程、线程</h1><p>进程：一个任务就是一个进程，比如：打开一个浏览器就是一个浏览器进程，打开一个记事本，就是一个记事本进程；</p>
-<p>​	进程是分配资源的基本单位；</p>
-<p>线程：在一个进程内部，要同时干很多事，就需要同时运行多个子任务，这些子任务叫做线程；</p>
-<p>​	线程是执行任务的基本单位；线程是比进程更轻量级的执行单元；</p>
-<p>同一个进程中的多个线程共享资源；</p>
-<h1 id="3：创建内核线程的4种方式"><a href="#3：创建内核线程的4种方式" class="headerlink" title="3：创建内核线程的4种方式"></a>3：创建内核线程的4种方式</h1><ul>
-<li><p>继承 Thread 类</p>
-<p>重写 run 方法；</p>
-</li>
-<li><p>实现 runnable 接口</p>
-<p>重写 run 方法, 需要将 runnable 提交到Trhread 中才能执行；</p>
-<p>将 Runnable 作为参数传入 Thread 构造方法；</p>
-</li>
-<li><p>实现有返回值的callable </p>
-<p>重写 call 方法，跟runnable 一样，它也是一个任务，需要提交到 Thread 中才能执行</p>
-</li>
-<li><p>futureTask 创建线程</p>
-</li>
-<li><p>线程池</p>
-<p>其实使用的是线程工厂创建；</p>
-<p>DefaultThreadFactory实现ThreadFactory接口，最终还是使用new thread当时创建线程</p>
-</li>
-</ul>
-<h1 id="4：Runnable-和-Callable-区别"><a href="#4：Runnable-和-Callable-区别" class="headerlink" title="4：Runnable 和 Callable 区别"></a>4：Runnable 和 Callable 区别</h1><p>都可以用来创建线程；</p>
-<p>实现Runnable 需要重写 run 方法；实现 callable 接口，需要重写 call 方法；</p>
-<p>runnable 的 run  方法没有返回值；callable 的 call 方法返回 Object 类型；</p>
-<h1 id="5：FutureTask-实现类"><a href="#5：FutureTask-实现类" class="headerlink" title="5：FutureTask 实现类"></a>5：FutureTask 实现类</h1><h2 id="1：Future-接口"><a href="#1：Future-接口" class="headerlink" title="1：Future 接口"></a>1：Future 接口</h2><p>代表一个异步执行的结果；执行完成通过 get 获取执行结果；get 方法会阻塞；如果想取消，调用 cancel 方法；</p>
-<p>FutureTask 是 Future 接口的实现类；</p>
-<h1 id="6：线程的状态相关"><a href="#6：线程的状态相关" class="headerlink" title="6：线程的状态相关"></a>6：线程的状态相关</h1><h2 id="1：线程的6种状态"><a href="#1：线程的6种状态" class="headerlink" title="1：线程的6种状态"></a>1：线程的6种状态</h2><ul>
-<li><p>初始 new 状态</p>
-<p>新建后还没有调用 start 方法之前</p>
-</li>
-<li><p>runnable 运行状态</p>
-<p>​	Java 线程中将 ready 就绪和运行 running 统称为运行状态；</p>
-<ul>
-<li><p>就绪</p>
-<p>线程被调用了 start 方法，并不是马上就执行，需要等待获取 cpu 时间片；</p>
-</li>
-<li><p>运行</p>
-<p>就绪状态的线程获取到了 cpu 时间片，开始执行代码</p>
-</li>
-</ul>
-</li>
-<li><p>blocked 阻塞</p>
-<p>线程阻塞于锁</p>
-<p>被 sync 修饰的同步代码，所有因为获取不到锁的线程，会进入 EntryList 队列；</p>
-<p>被 Lock 修饰的同步代码，所有因为获取不到锁的线程，会进入 WaitingSet 队列(没有获取reentrantLock 锁的线程，当被唤醒时，正序唤醒 -&gt; 拿到队头节点的下一个节点 ）：	</p>
-<p>Thread 线程封装为 Node 对象 &#x3D;》AQS 维护 Waitingset队列  </p>
-</li>
-<li><p>waiting 等待</p>
-</li>
-<li><p>time-waiting 超时等待</p>
-</li>
-<li><p>线程执行完毕</p>
-</li>
-</ul>
-<h2 id="3：为啥线程没有-running-状态"><a href="#3：为啥线程没有-running-状态" class="headerlink" title="3：为啥线程没有 running 状态"></a>3：为啥线程没有 running 状态</h2><p>cpu 的时间片很短，大概在 10-20 毫秒左右；</p>
-<p>也就是说 1s 之内，同一个线程有可能处于就绪状态或者运行状态，如果明确的定义下来，其实状态时不准的；</p>
-<p>当我们看到线程时 running 状态，它有可能已经失去cpu时间；</p>
-<p>因此，对于线程，我们只需要直到它当前有没有获取时间片就行，这其实就是 runnable 状态；</p>
-<h1 id="7：线程中的关键字及区别"><a href="#7：线程中的关键字及区别" class="headerlink" title="7：线程中的关键字及区别"></a>7：线程中的关键字及区别</h1><h2 id="1：run-和-start-的区别"><a href="#1：run-和-start-的区别" class="headerlink" title="1：run 和 start 的区别"></a>1：run 和 start 的区别</h2><p>创建好线程后，想要启动线程需要调用 start 方法。因此，start 方法是启动一个线程的入口；</p>
-<p>start 方法底层加了sync 锁，底层通过 jvm 配合操作系统，调用的是操作系统的 start0 方法来启动线程；</p>
-<h2 id="2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别"><a href="#2：sleep方法-和-wait方法-、waiting-状态、time-waiting状态的区别" class="headerlink" title="2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别"></a>2：sleep方法 和 wait方法 、waiting 状态、time-waiting状态的区别</h2><ul>
-<li><p>作用的地方不同</p>
-<p>sleep方法 可以在任何地方使用；</p>
-<p>wait 方法只能在（sync）同步方法和同步代码块中使用；</p>
-</li>
-</ul>
-<p>​       为啥要在同步代码中执行：因为，wait 方法执行前必须先持有锁，调用对象的wait方法；</p>
-<ul>
-<li><p>是否释放锁</p>
-<p>wait 方法会释放锁</p>
-<p>sleep 方法不会释放锁；</p>
-</li>
-<li><p>调用 wait 方法之后</p>
-<p>JVM 会把该线程放入等待队列 waitSet 队列 </p>
-<p>会释放锁</p>
-</li>
-</ul>
-<h2 id="3：notify-和-notifyAll-的区别"><a href="#3：notify-和-notifyAll-的区别" class="headerlink" title="3：notify 和 notifyAll 的区别"></a>3：notify 和 notifyAll 的区别</h2><p>当一个线程wait 之后，必须等待其他线程调用 notify 或者 notify all 方法，才会从等待队列中移出‘；</p>
-<p>使用 notify all，会使所有线程从wait 状态唤醒，进入锁的争夺队列中，notify 只能唤醒一个线程；</p>
-<p>被唤醒的这些线程只是进入争夺队列，并不表示立即获得CPU执行权，只是表示它们可以竞争锁，只有当竞争到锁之后才能有机会</p>
-<p>被CPU调度；</p>
-<h1 id="8：用户线程和守护线程"><a href="#8：用户线程和守护线程" class="headerlink" title="8：用户线程和守护线程"></a>8：用户线程和守护线程</h1><p>用户线程执行的是用户级别的线程；</p>
-<p>守护线程执行的是后台任务；</p>
-<p>​	最典型的是 GC；</p>
-<p>这俩区别是：</p>
-<p>​	JVM在所有的用户线程执行完毕之后退出，不等守护线程是否执行完毕；</p>
-<h2 id="7-1：创建守护线程"><a href="#7-1：创建守护线程" class="headerlink" title="7.1：创建守护线程"></a>7.1：创建守护线程</h2><p>setDemo(true);</p>
-<p>isDemo 判断是否是守护线程；</p>
-<p>我们必须在线程启动之前调用 setDemo ,否则会抛出异常；</p>
-<h1 id="9：虚拟线程"><a href="#9：虚拟线程" class="headerlink" title="9：虚拟线程"></a>9：虚拟线程</h1><p>虚拟线程是jdk 21 新特性之一；它也叫做协程；它是用户态线程；</p>
-<p>虚拟线程不同于普通的线程，它不在对应操作系统中的一个轻量级进程，而是将多个虚拟线程映射到少量的操作系统线程中，通过有效的调度减少上下文切换；因为它的切换不需要操作系统的参数；那么它的切换时怎么实现的呢？它是在 jvm 层面做的一些保持和恢复线程的信息，这些成本也是很低的。</p>
-<p>创建虚拟线程：</p>
-<p>​	Thread.startVitureThread()</p>
-<h1 id="10：对线程安全的理解"><a href="#10：对线程安全的理解" class="headerlink" title="10：对线程安全的理解"></a>10：对线程安全的理解</h1><p>线程安全就是解决多线程之间共享变量的问题；这个很重要。</p>
-<p>在处理这个问题的时候要满足三个原则：</p>
-<ul>
-<li>原子性</li>
-<li>可见性 </li>
-<li>有序性</li>
-</ul>
-<h2 id="1：Java-中的变量"><a href="#1：Java-中的变量" class="headerlink" title="1：Java 中的变量"></a>1：Java 中的变量</h2><ul>
-<li><p>类变量</p>
-<p>主要是指 static 修饰的，它在方法区</p>
-</li>
-<li><p>成员变量</p>
-<p>它在栈中</p>
-</li>
-<li><p>局部变量</p>
-<p>它在堆中</p>
-</li>
-</ul>
-<h2 id="2：Java-中的共享变量有哪些"><a href="#2：Java-中的共享变量有哪些" class="headerlink" title="2：Java 中的共享变量有哪些"></a>2：Java 中的共享变量有哪些</h2><p>共享变量有：类变量、成员变量；</p>
-<p>主要集中在方法区和栈中；</p>
-<p>这些地方的共享变量需要考虑线程安全问题。</p>
-<h2 id="3：如何保证线程安全"><a href="#3：如何保证线程安全" class="headerlink" title="3：如何保证线程安全"></a>3：如何保证线程安全</h2><p>或者说线程同步的方式有哪些？</p>
-<ul>
-<li><p>互斥锁</p>
-<p>sync 锁、Lock 锁</p>
-</li>
-<li><p>并发集合类</p>
-<p>CopyOnWritexxx</p>
-<p>ConcurrentHashMap</p>
-</li>
-<li><p>原子操作类</p>
-</li>
-<li><p>ThreadLocal</p>
-</li>
-<li><p>不可变的类</p>
-</li>
-<li><p>线程同步工具</p>
-</li>
-</ul>
-<h1 id="11：关于线程上下文切换"><a href="#11：关于线程上下文切换" class="headerlink" title="11：关于线程上下文切换"></a>11：关于线程上下文切换</h1><p>线程上下切换发生在一个 CPU在多个线程之间的操作；</p>
-<p>上下文切换是指：CPU从一个线程切换到另一个线程时，需要保存当前线程的状态，以便于下次恢复这个线程的时候能正常执行；</p>
-<p>上下文信息包括：</p>
-<p>​	当前这个线程的状态、程序计数器、寄存器、栈指针等；</p>
-<p>上下文切换这个动作会降低CPU的执行效率，这个动作是操作系统级别的切换；</p>
-<p>底层需要操作系统在用户态和内核态之间切换，为啥这样呢？因为，一个Java线程它是对应操作系统中的一个轻量级进程，线程的创建和启动等动作，都需要操作系统参与；</p>
-<h1 id="12：线程中断机制"><a href="#12：线程中断机制" class="headerlink" title="12：线程中断机制"></a>12：线程中断机制</h1><p>调用了 inturrupt 中断方法的线程，并不会立马中断；</p>
-<p>中断只是一个协商机制</p>
-<h1 id="13：线程顺序执行"><a href="#13：线程顺序执行" class="headerlink" title="13：线程顺序执行"></a>13：线程顺序执行</h1><p>让线程能够顺序执行，主要就是想办法让多个线程之间能通信或者排队；</p>
-<ul>
-<li><p>通信</p>
-<ul>
-<li><p>join方法</p>
-<p>join 的原理是：将当前子线程加入主线程，主线程阻塞，等到加入的子线程执行完后再执行</p>
-</li>
-<li><p>线程同步工具</p>
-</li>
-</ul>
-</li>
-<li><p>排队</p>
-<ul>
-<li><p>线程池</p>
-<p>线程池内部使用的是队列来存任务，所以线程的执行顺序会按照加入队列的顺序执行，但这不是绝对的，有可能后面加入的先执行；但是我们可以定义一下只有一个线程的线程池，加入一些任务。</p>
-</li>
-<li><p>java 8 的 compalteFuture</p>
-<p>它是一个异步编程工具，提供任务的创建组合及转换管理功能</p>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="14：创建线程有哪些方式"><a href="#14：创建线程有哪些方式" class="headerlink" title="14：创建线程有哪些方式"></a>14：创建线程有哪些方式</h1><h2 id="1：内核方式创建线程"><a href="#1：内核方式创建线程" class="headerlink" title="1：内核方式创建线程"></a>1：内核方式创建线程</h2><p>Java 中的线程都是采用内核方式创建的线程，你初始化一个线程，他会经过应用程序调用操作系统然后，操作系统调用内核中的C++库，包含有启动线程的 start0 方法，之后再交由硬件的 cpu 来调度线程；</p>
-<p>操作系统支持创建的线程个数是有上限的， 无限制的创建，会出现 OOM，Linux 中线程上限是 1W多；</p>
-<h2 id="2：用户线程"><a href="#2：用户线程" class="headerlink" title="2：用户线程"></a>2：用户线程</h2><h2 id="3：内核和用户的混合方式创建线程"><a href="#3：内核和用户的混合方式创建线程" class="headerlink" title="3：内核和用户的混合方式创建线程"></a>3：内核和用户的混合方式创建线程</h2><h1 id="15：为啥需要多线程"><a href="#15：为啥需要多线程" class="headerlink" title="15：为啥需要多线程"></a>15：为啥需要多线程</h1><p>是为了充分利用多核CPU</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/16/%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%9C%E8%A5%BF/" data-id="clxs8zq2k0016zcuwedpb2q8q" data-title="线程的基础东西" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-基本数据类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="article-date">
-  <time class="dt-published" datetime="2021-02-15T16:00:00.000Z" itemprop="datePublished">2021-02-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Java 基本数据类型</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="1：基本数据类型的分类"><a href="#1：基本数据类型的分类" class="headerlink" title="1：基本数据类型的分类"></a>1：基本数据类型的分类</h1><ul>
-<li><p>byte</p>
-<p>-128 - 127 ，占1字节;</p>
-<p>1 个 byte 等于 8 个 bit </p>
-</li>
-<li><p>short</p>
-<p>占 2 字节</p>
-</li>
-<li><p>char</p>
-<p>占 2 字节，unicode 字符集</p>
-</li>
-<li><p>int</p>
-<p>-2  ^ 31 - 2 ^ 31-1, 大约 21 亿，占 4 字节</p>
-</li>
-<li><p>float</p>
-<p>4 字节；单精度，小数点之后可以精确到7 位；</p>
-<p>定义 float 时，结尾要加 f , 啥也不加就是 double 类型了</p>
-</li>
-<li><p>double</p>
-<p>8 字节；双精度，它的精度是 float 的 2 倍；</p>
-<p>写一个小数，后面啥也不加，默认数据类型是 double 类型, 当然，也可以加一个 d, 表示是 double 类型；</p>
-<p>浮点数都有舍入误差，例如：0.1 + 0.2 ≠ 0.3</p>
-</li>
-<li><p>long</p>
-<p>8 字节；定义 long 类型，后面需要加上 L</p>
-</li>
-<li><p>boolean </p>
-<p>4 字节；默认是 false</p>
-</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">关于浮点类型：</span><br><span class="line"></span><br><span class="line">java 中的浮点类型都只是一个近似值，为什么说它是一个近似值呢？可能是因为：一个10 进制的负次幂，转化为计算机底层的</span><br><span class="line"></span><br><span class="line">二进制之后，并不能精确。也就是说二进制不能精确表示 10 的负次幂这样。</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="2：基本数据类型之间的运算"><a href="#2：基本数据类型之间的运算" class="headerlink" title="2：基本数据类型之间的运算"></a>2：基本数据类型之间的运算</h1><ol>
-<li><p>byte、short、char 三个之间或者自己和自己做运算时，会首先把各自的类型提升为 int</p>
-</li>
-<li><p>long l &#x3D; 123;</p>
-</li>
-</ol>
-<p>   123 默认是 int 类型，它自动提升为 long 类型</p>
-<ol start="3">
-<li>long l  &#x3D; 123d;</li>
-</ol>
-<p>   123d 是 double 类型，double 类型赋值给 long 类型，double 会自动转为 long 类型</p>
-<ol start="4">
-<li>long l &#x3D; 23 亿；</li>
-</ol>
-<p>   编译报错，23 亿超出 int 的最大值范围</p>
-<ol start="5">
-<li>int i &#x3D; (int)0.5；</li>
-</ol>
-<p>   编译不报错，这里做了一个强制类型转换，将 double 类型强转为 int 类型，会丢失精度</p>
-<h1 id="3：十进制浮点型转化为二进制"><a href="#3：十进制浮点型转化为二进制" class="headerlink" title="3：十进制浮点型转化为二进制"></a>3：十进制浮点型转化为二进制</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用浮点小数 * 2 = 积</span><br><span class="line"></span><br><span class="line">将上一步的积取整，剩下的小数部分 * 2 = 积</span><br><span class="line"></span><br><span class="line">。。。。</span><br><span class="line"></span><br><span class="line">如此进行，直到积中的小数部分为 0 </span><br></pre></td></tr></table></figure>
-
-<h1 id="4：金融计算使用-BigDecimal-代替浮点"><a href="#4：金融计算使用-BigDecimal-代替浮点" class="headerlink" title="4：金融计算使用 BigDecimal 代替浮点"></a>4：金融计算使用 BigDecimal 代替浮点</h1><ol>
-<li>比较两个 Bigdecimal 的大小时候，不能使用 BigDecimal 的 equals 方法，要使用它的 CompareTo 方法，这是阿里巴巴开发手册上写的。更不能使用 &#x3D;&#x3D; 比较，因为 Big 是对象。</li>
-</ol>
-<p>   原因是：equals 方法比较的是两个数字的整数部分和小数部分，不会忽略精度。假如 0.1 和 0.10 的两个 BigDecimal 作 equals 比较，结果是fasle </p>
-<ol start="2">
-<li><p>减法：sub</p>
-<p>乘法：mu</p>
-<p>除法：div</p>
-<p>​	需要指定保留几位</p>
-</li>
-<li><p>Bigdecimal(0.1) 和 BigDecimal(“0.1”) 的区别</p>
-<p>它们的舍入误差不一样；0.1转化为 BigDecimal 时，得先转化为二进制之后是 0.1111111……；</p>
-<p>阿里巴巴开发手册中说：进制把浮点转化为 BigDecimal</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/16/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" data-id="clxs8zq2e000qzcuwg1960u5a" data-title="Java 基本数据类型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li></ul>
 
     </footer>
   </div>
@@ -1298,7 +1251,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
     </div>
   </div>
 
@@ -1308,7 +1261,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+      <a href="/tags/Dubbo/" style="font-size: 10px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
     </div>
   </div>
 
@@ -1317,7 +1270,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
     </div>
   </div>
 
@@ -1330,6 +1283,14 @@
       <ul>
         
           <li>
+            <a href="/2023/02/16/RPC/">RPC</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/">Dubbo 基本知识</a>
+          </li>
+        
+          <li>
             <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
           </li>
         
@@ -1339,14 +1300,6 @@
         
           <li>
             <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/16/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">原子类</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/Lock%20%E9%94%81/">lock 锁</a>
           </li>
         
       </ul>

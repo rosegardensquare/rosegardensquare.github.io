@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RPC | 张帅的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1：啥是 RPCRPC 是远程过程调用，是一种进程间的通信方式。 它关注几个要素：  传输协议、  通信框架  序列化协议、  集群、 负载均衡、集群容错  服务注册与发现就是服务寻址  动态代理方案实现像本地调用一样调远程服务  查询结果缓存起来   HTTP 是超文本传输协议，它只是一个协议。 RPC 通常用于服务间的调用，HTTP 常用于 web、app、第三方的调用； HTTP 的实现是基">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RPC">
+<meta property="og:url" content="http://example.com/2023/02/16/RPC/index.html">
+<meta property="og:site_name" content="张帅的个人博客">
+<meta property="og:description" content="1：啥是 RPCRPC 是远程过程调用，是一种进程间的通信方式。 它关注几个要素：  传输协议、  通信框架  序列化协议、  集群、 负载均衡、集群容错  服务注册与发现就是服务寻址  动态代理方案实现像本地调用一样调远程服务  查询结果缓存起来   HTTP 是超文本传输协议，它只是一个协议。 RPC 通常用于服务间的调用，HTTP 常用于 web、app、第三方的调用； HTTP 的实现是基">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-02-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-06-24T00:41:29.753Z">
+<meta property="article:author" content="张帅">
+<meta property="article:tag" content="Dubbo">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="张帅的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">张帅的个人博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-RPC" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/16/RPC/" class="article-date">
+  <time class="dt-published" datetime="2023-02-15T16:00:00.000Z" itemprop="datePublished">2023-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RPC
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1：啥是-RPC"><a href="#1：啥是-RPC" class="headerlink" title="1：啥是 RPC"></a>1：啥是 RPC</h1><p>RPC 是远程过程调用，是一种进程间的通信方式。</p>
+<p>它关注几个要素：</p>
+<ul>
+<li><p>传输协议、</p>
+</li>
+<li><p>通信框架</p>
+</li>
+<li><p>序列化协议、</p>
+</li>
+<li><p>集群、</p>
+<p>负载均衡、集群容错</p>
+</li>
+<li><p>服务注册与发现就是服务寻址</p>
+</li>
+<li><p>动态代理方案实现像本地调用一样调远程服务</p>
+</li>
+<li><p>查询结果缓存起来</p>
+</li>
+</ul>
+<p>HTTP 是超文本传输协议，它只是一个协议。</p>
+<p>RPC 通常用于服务间的调用，HTTP 常用于 web、app、第三方的调用；</p>
+<p>HTTP 的实现是基于 TCP ，RPC 也可以基于 TCP，或者 HTTP 实现。</p>
+<h1 id="2：RPC-框架有哪些"><a href="#2：RPC-框架有哪些" class="headerlink" title="2：RPC 框架有哪些"></a>2：RPC 框架有哪些</h1><ul>
+<li>Dubbo</li>
+<li>阿里的 HSF</li>
+<li>谷歌的 grpc</li>
+</ul>
+<h1 id="3：为啥-RPC-比-HTTP-更快一些"><a href="#3：为啥-RPC-比-HTTP-更快一些" class="headerlink" title="3：为啥 RPC 比 HTTP 更快一些"></a>3：为啥 RPC 比 HTTP 更快一些</h1><p>RPC 的设计目的就是为了快速传输，因此它的序列化比 HTTP 的更紧凑，没有像 HTTP 传输的还要带上 Header、body 那样，RPC 相对传输的数据量更少。</p>
+<h1 id="3：RPC-原理，如何设计一个-RPC-框架"><a href="#3：RPC-原理，如何设计一个-RPC-框架" class="headerlink" title="3：RPC 原理，如何设计一个 RPC 框架"></a>3：RPC 原理，如何设计一个 RPC 框架</h1><p>首先一个 RPC 框架的几个要素是：</p>
+<ul>
+<li><p>配置层</p>
+<p>可以 SPI 扩展</p>
+</li>
+<li><p>注册中心层</p>
+</li>
+<li><p>代理层</p>
+</li>
+<li><p>集群层</p>
+</li>
+<li><p>监控层</p>
+</li>
+<li><p>网络传输</p>
+</li>
+<li><p>序列化</p>
+</li>
+<li><p>通信协议</p>
+</li>
+</ul>
+<p>通信框架可以使用高性能的 netty，不用自己造轮子；</p>
+<p>要实现像本地方法一样调用远程方法，还得屏蔽上述细节，那就要使用代理来实现。要做到高可用，就得使用集群、还有服务注册中心、还得有一套完善的监控机制。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/16/RPC/" data-id="clxs9612k0009jwuw6mno7zr1" data-title="RPC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Dubbo 基本知识</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80/" rel="tag">Java 基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">Java 并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E9%9B%86%E5%90%88/" rel="tag">Java 集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Dubbo/" style="font-size: 10px;">Dubbo</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80/" style="font-size: 20px;">Java 基础</a> <a href="/tags/Java-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 13.33px;">Java 并发编程</a> <a href="/tags/Java-%E9%9B%86%E5%90%88/" style="font-size: 16.67px;">Java 集合</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 10px;">杂谈</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/16/RPC/">RPC</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/16/Dubbo%20%E7%9B%B8%E5%85%B3/">Dubbo 基本知识</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/16/%E6%B3%9B%E5%9E%8B/">Java 泛型</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/16/static/">static</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/16/%E5%8C%85%E8%A3%85%E7%B1%BB/">Java 包装类</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 张帅<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
