@@ -14,7 +14,7 @@
 <meta property="og:description" content="1：对泛型的理解泛型是 jdk 1.5 开始的，允许在定义类、接口、方法的时候使用类型参数；定义的类型参数在使用的时候会用具体的类型替换。泛型最主要是用在集合中或者封装的一些组件中； 简单来说，Java 泛型就是在创建或者调用的时候才明确下具体的类型； 2： 泛型的好处1：方便提高代码的复用性；假如有一个 List，不用泛型，想存字符串得 new 一个，想存数字，又得 new 一个。此时，可以使用">
 <meta property="og:locale">
 <meta property="article:published_time" content="2022-11-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-05-16T09:43:26.211Z">
+<meta property="article:modified_time" content="2024-06-24T00:36:47.205Z">
 <meta property="article:author" content="张帅">
 <meta property="article:tag" content="Java 基础">
 <meta name="twitter:card" content="summary">
@@ -97,7 +97,7 @@
         <h1 id="1：对泛型的理解"><a href="#1：对泛型的理解" class="headerlink" title="1：对泛型的理解"></a>1：对泛型的理解</h1><p>泛型是 jdk 1.5 开始的，允许在定义类、接口、方法的时候使用类型参数；定义的类型参数在使用的时候会用具体的类型替换。泛型最主要是用在集合中或者封装的一些组件中；</p>
 <p>简单来说，Java 泛型就是在创建或者调用的时候才明确下具体的类型；</p>
 <h1 id="2：-泛型的好处"><a href="#2：-泛型的好处" class="headerlink" title="2： 泛型的好处"></a>2： 泛型的好处</h1><h2 id="1：方便"><a href="#1：方便" class="headerlink" title="1：方便"></a>1：方便</h2><p>提高代码的复用性；假如有一个 List，不用泛型，想存字符串得 new 一个，想存数字，又得 new 一个。此时，可以使用泛型List<T></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyList</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> T[] array;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyList</span><span class="params">()</span> &#123;</span><br><span class="line">        array = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">10</span>];</span><br><span class="line">        size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(T element)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (size == array.length) &#123;</span><br><span class="line">            <span class="comment">// 扩容数组</span></span><br><span class="line">            T[] newArray = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[array.length * <span class="number">2</span>];</span><br><span class="line">            System.arraycopy(array, <span class="number">0</span>, newArray, <span class="number">0</span>, array.length);</span><br><span class="line">            array = newArray;</span><br><span class="line">        &#125;</span><br><span class="line">        array[size++] = element;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= size) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IndexOutOfBoundsException</span>(<span class="string">&quot;Index out of range&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> array[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">size</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------</span><br><span class="line"></span><br><span class="line">MyList&lt;String&gt; stringList = <span class="keyword">new</span> <span class="title class_">MyList</span>&lt;&gt;();</span><br><span class="line">stringList.add(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">stringList.add(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">System.out.println(stringList.get(<span class="number">0</span>));  <span class="comment">// 输出 &quot;Hello&quot;</span></span><br><span class="line"></span><br><span class="line">MyList&lt;Integer&gt; integerList = <span class="keyword">new</span> <span class="title class_">MyList</span>&lt;&gt;();</span><br><span class="line">integerList.add(<span class="number">1</span>);</span><br><span class="line">integerList.add(<span class="number">2</span>);</span><br><span class="line">System.out.println(integerList.get(<span class="number">1</span>)); <span class="comment">// 输出 2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyList</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> T[] array;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyList</span><span class="params">()</span> &#123;</span><br><span class="line">        array = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">10</span>];</span><br><span class="line">        size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(T element)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (size == array.length) &#123;</span><br><span class="line">            <span class="comment">// 扩容数组</span></span><br><span class="line">            T[] newArray = (T[]) <span class="keyword">new</span> <span class="title class_">Object</span>[array.length * <span class="number">2</span>];</span><br><span class="line">            System.arraycopy(array, <span class="number">0</span>, newArray, <span class="number">0</span>, array.length);</span><br><span class="line">            array = newArray;</span><br><span class="line">        &#125;</span><br><span class="line">        array[size++] = element;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= size) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IndexOutOfBoundsException</span>(<span class="string">&quot;Index out of range&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> array[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">size</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="2：安全"><a href="#2：安全" class="headerlink" title="2：安全"></a>2：安全</h2><p>没有泛型的时候，通过向上转型存入任何类型的元素；在获取的时候就麻烦了，向下转型可能会出现类型转换异常。</p>
 <p>泛型是在编译期间做检查，不用再等到运行期间报 classcastException 异常；</p>
@@ -124,37 +124,25 @@
 <p>所以 Java 中引入泛型的概念，也是对集合中的使用更加标准化。</p>
 <h1 id="5-：泛型-extends、super"><a href="#5-：泛型-extends、super" class="headerlink" title="5 ：泛型 extends、super"></a>5 ：泛型 extends、super</h1><p>泛型的 extends、super （协变、逆变）</p>
 <p>其实解决的就是一个参数范围：向上或者向下</p>
-<h2 id="1：协变"><a href="#1：协变" class="headerlink" title="1：协变"></a>1：协变</h2><? extends Numer>
-
-其实跟那个泛型通配符一样，只是后面会多加一个 extends 父类，表示任何一个父类的子类都可以
-
-## 2：逆变
-
-<？ super E>
-
-表示任何一个 E 的父类都可以
-
-## 3 ： extends 和 super 什么时候用？
-
-啥时候用，其实这里要遵守一个 PECS 原则；
-
-就是说，泛型的所在的对象，它在未来使用的时候，它是生成者还是消费者，如果是生产者那就用 extends; 
-
-如何集合是一个消费者，对外产生元素供读取，那么此时使用 extends;
-
-举个例子：
-
-​	如果你要从一个泛型集合中读取一个元素，那么使用 extends, extends 只能读取元素不能添加元素;
-
-​        如何是往泛型集合中添加元素，那么使用 super，super 只能添加元素，不能读取元素;
+<h2 id="1：协变"><a href="#1：协变" class="headerlink" title="1：协变"></a>1：协变</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;? extends Numer&gt;</span><br><span class="line"></span><br><span class="line">其实跟那个泛型通配符一样，只是后面会多加一个 extends 父类，表示任何一个父类的子类都可以</span><br></pre></td></tr></table></figure>
 
 
 
+<h2 id="2：逆变"><a href="#2：逆变" class="headerlink" title="2：逆变"></a>2：逆变</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;？ <span class="built_in">super</span> E&gt;</span><br><span class="line"></span><br><span class="line">表示任何一个 E 的父类都可以</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-：-extends-和-super-什么时候用？"><a href="#3-：-extends-和-super-什么时候用？" class="headerlink" title="3 ： extends 和 super 什么时候用？"></a>3 ： extends 和 super 什么时候用？</h2><p>啥时候用，其实这里要遵守一个 PECS 原则；</p>
+<p>就是说，泛型的所在的对象，它在未来使用的时候，它是生成者还是消费者，如果是生产者那就用 extends; </p>
+<p>如何集合是一个消费者，对外产生元素供读取，那么此时使用 extends;</p>
+<p>举个例子：</p>
+<p>​	如果你要从一个泛型集合中读取一个元素，那么使用 extends, extends 只能读取元素不能添加元素;</p>
+<p>​        如何是往泛型集合中添加元素，那么使用 super，super 只能添加元素，不能读取元素;</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clwirposg0015rkuwafkueewy" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2022/11/16/%E6%B3%9B%E5%9E%8B/" data-id="clxs8zq2l001azcuw0njgg8ux" data-title="Java 泛型" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
